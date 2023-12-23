@@ -1,0 +1,16 @@
+package com.shiftthedev.vaultcoinpouch;
+
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+
+@Mod(VaultCoinPouch.MOD_ID)
+public class VaultCoinPouch {
+    public static final String MOD_ID = "vaultcoinpouch";
+
+    public static VCPConfig CONFIG = new VCPConfig();
+
+    public VaultCoinPouch() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, VCPConfig.CONFIG, MOD_ID + ".toml");
+    }
+}

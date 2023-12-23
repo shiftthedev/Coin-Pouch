@@ -1,0 +1,14 @@
+{
+  "required" : true,
+  "minVersion" : "0.8",
+  "package" : "com.shiftthedev.vaultcoinpouch.mixins",
+  "compatibilityLevel" : "JAVA_8",
+  "refmap" : "vaultcoinpouch.refmap.json",
+  "mixins" : [
+    "InventoryMixin",
+    "ShopPedestalBlockMixin"
+  ],
+  "injectors" : {
+    "defaultRequire" : 1
+  }
+}

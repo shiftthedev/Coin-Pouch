@@ -1,0 +1,11 @@
+{
+  "item.vaultcoinpouch.coin_pouch": "Coin Pouch",
+
+  "tooltip.vaultcoinpouch.info": "Stores unlimited amounts of coins.\nCoins picked up will go directly into the pouch.\nAlso converts coins up and down like a compacting drawer.\n",
+  
+  "tooltip.vaultcoinpouch.bronze": "%s Bronze Coin(s)",
+  "tooltip.vaultcoinpouch.silver": "%s Silver Coin(s)",
+  "tooltip.vaultcoinpouch.gold": "%s Gold Coin(s)",
+  "tooltip.vaultcoinpouch.platinum": "%s Platinum Coin(s)",
+  "tooltip.vaultcoinpouch.empty": "Empty"
+}
