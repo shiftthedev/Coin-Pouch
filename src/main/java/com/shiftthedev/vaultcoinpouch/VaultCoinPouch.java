@@ -8,9 +8,8 @@ import net.minecraftforge.fml.config.ModConfig;
 public class VaultCoinPouch {
     public static final String MOD_ID = "vaultcoinpouch";
 
-    public static VCPConfig CONFIG = new VCPConfig();
 
     public VaultCoinPouch() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, VCPConfig.CONFIG, MOD_ID + ".toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, VCPConfig.CONFIG);
     }
 }

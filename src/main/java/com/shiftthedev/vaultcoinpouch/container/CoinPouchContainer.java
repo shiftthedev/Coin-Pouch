@@ -5,6 +5,9 @@ import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.container.oversized.OverSizedSlotContainer;
 import iskallia.vault.container.slot.ConditionalReadSlot;
 import iskallia.vault.init.ModBlocks;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -49,7 +52,6 @@ public class CoinPouchContainer extends OverSizedSlotContainer {
         Slot silver = this.addSlot(new CompactingSlot(pouchHandler, 1, 70, 24, this, ModBlocks.SILVER_COIN_PILE.asItem()));
         Slot gold = this.addSlot(new CompactingSlot(pouchHandler, 2, 90, 16, this, ModBlocks.GOLD_COIN_PILE.asItem()));
         Slot plat = this.addSlot(new CompactingSlot(pouchHandler, 3, 110, 24, this, ModBlocks.PLATINUM_COIN_PILE.asItem()));
-
         ((CompactingSlot) bronze).setupSlots(null, silver);
         ((CompactingSlot) silver).setupSlots(bronze, gold);
         ((CompactingSlot) gold).setupSlots(silver, plat);

@@ -1,5 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.item;
 
+import com.shiftthedev.vaultcoinpouch.VCPConfig;
+import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
 import com.shiftthedev.vaultcoinpouch.container.CoinPouchContainer;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.init.ModBlocks;
@@ -32,6 +34,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -61,9 +64,12 @@ public class CoinPouchItem extends Item {
         tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".gold", contained[2].getCount()).withStyle(ChatFormatting.GOLD));
         tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".platinum", contained[3].getCount()).withStyle(Style.EMPTY.withColor(16119285)));
 
+        if(!VCPConfig.GENERAL.soulboundEnabled()) return;
         if (AttributeGearData.read(stack).has(ModGearAttributes.SOULBOUND)) {
-            tooltip.add(new TextComponent(""));
-            tooltip.add(new TextComponent(ModGearAttributes.SOULBOUND.getReader().getModifierName()).withStyle(ModGearAttributes.SOULBOUND.getReader().getColoredTextStyle()));
+            tooltip.add(new TextComponent("\n" + ModGearAttributes.SOULBOUND.getReader().getModifierName()).withStyle(ModGearAttributes.SOULBOUND.getReader().getColoredTextStyle()));
+        } 
+        else {
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".soulbound").withStyle(ChatFormatting.GRAY));
         }
     }
 
@@ -78,7 +84,6 @@ public class CoinPouchItem extends Item {
         return false;
     }
 
-    
     public static int extractCoins(ItemStack pouch, ItemStack currency) {
         ItemStack[] contained = getContainedStacks(pouch);
         int required = currency.getCount();
@@ -89,19 +94,7 @@ public class CoinPouchItem extends Item {
 
                 int toReduce = Math.min(required, itemStack.getCount());
                 itemStack.setCount(itemStack.getCount() - toReduce);
-                setContainedStack(pouch, i, itemStack);
-
-                if (i == 0) {
-                    compactUp(1, 3, itemStack.getCount(), pouch, contained);
-                } else if (i == 1) {
-                    compactUp(2, 2, itemStack.getCount(), pouch, contained);
-                    compactDown(0, 1, itemStack.getCount(), pouch, contained);
-                } else if (i == 2) {
-                    compactUp(3, 1, itemStack.getCount(), pouch, contained);
-                    compactDown(1, 2, itemStack.getCount(), pouch, contained);
-                } else if (i == 3) {
-                    compactDown(2, 3, itemStack.getCount(), pouch, contained);
-                }
+                setContainedStack(pouch, i, itemStack.getCount());
 
                 required -= toReduce;
                 break;
@@ -111,37 +104,6 @@ public class CoinPouchItem extends Item {
         return required;
     }
 
-    private static void compactUp(int start, int range, int count, ItemStack pouch, ItemStack[] contained) {
-        ItemStack stack = contained[start];
-        int stackCount = Mth.intFloorDiv(count, 9);
-        
-        if(stackCount != stack.getCount()){
-            stack.setCount(stackCount);
-            setContainedStack(pouch, start, stack);
-        }
-        
-        if(range > 1){
-            compactUp(start + 1, range - 1, stackCount, pouch, contained);
-        }
-    }
-
-    private static void compactDown(int start, int range, int count, ItemStack pouch, ItemStack[] contained) {
-        ItemStack stack = contained[start];
-        int stackCount = stack.getCount();
-        stackCount -= Mth.intFloorDiv(stackCount, 9) * 9;
-        stackCount += count * 9;
-
-        if (stackCount != stack.getCount()) {
-            stack.setCount(stackCount);
-            setContainedStack(pouch, start, stack);
-        }
-
-        if (range > 1) {
-            compactDown(start - 1, range - 1, stackCount, pouch, contained);
-        }
-    }
-
-    
     public static ItemStack[] getContainedStacks(ItemStack pouch) {
         CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
 
@@ -157,21 +119,57 @@ public class CoinPouchItem extends Item {
         };
     }
 
-    public static void setContainedStack(ItemStack pouch, int slot, ItemStack contained) {
+    public static void setContainedStack(ItemStack pouch, int slot, int count) {
         CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
 
         switch (slot) {
             case 0 -> {
-                invTag.putInt("BronzeStackSize", contained.getCount());
+                invTag.putInt("BronzeStackSize", count);
+                invTag.putInt("SilverStackSize", Mth.intFloorDiv(count, 9));
+                invTag.putInt("GoldStackSize", Mth.intFloorDiv(count, 81));
+                invTag.putInt("PlatinumStackSize", Mth.intFloorDiv(count, 729));
             }
             case 1 -> {
-                invTag.putInt("SilverStackSize", contained.getCount());
+                int newCount = invTag.getInt("BronzeStackSize");
+
+                newCount -= Mth.intFloorDiv(newCount, 9) * 9;
+                newCount += count * 9;
+
+                setContainedStack(pouch, 0, newCount);
             }
             case 2 -> {
-                invTag.putInt("GoldStackSize", contained.getCount());
+                int newCount = invTag.getInt("BronzeStackSize");
+
+                newCount -= Mth.intFloorDiv(newCount, 81) * 81;
+                newCount += count * 81;
+
+                setContainedStack(pouch, 0, newCount);
             }
             case 3 -> {
-                invTag.putInt("PlatinumStackSize", contained.getCount());
+                int newCount = invTag.getInt("BronzeStackSize");
+
+                newCount -= Mth.intFloorDiv(newCount, 729) * 729;
+                newCount += count * 729;
+
+                setContainedStack(pouch, 0, newCount);
+            }
+        }
+    }
+
+    public static void setContainedStackFromGUI(ItemStack pouch, int slot, ItemStack stack) {
+        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
+        switch (slot) {
+            case 0 -> {
+                invTag.putInt("BronzeStackSize", stack.getCount());
+            }
+            case 1 -> {
+                invTag.putInt("SilverStackSize", stack.getCount());
+            }
+            case 2 -> {
+                invTag.putInt("GoldStackSize", stack.getCount());
+            }
+            case 3 -> {
+                invTag.putInt("PlatinumStackSize", stack.getCount());
             }
         }
     }
@@ -187,23 +185,27 @@ public class CoinPouchItem extends Item {
                 pouchSlot = player.getInventory().selected;
             }
 
-            NetworkHooks.openGui((ServerPlayer) player, new MenuProvider() {
-                @Override
-                public Component getDisplayName() {
-                    return new TranslatableComponent("item." + MOD_ID + ".coin_pouch");
-                }
-
-                @Nullable
-                @Override
-                public AbstractContainerMenu createMenu(int windowId, Inventory inventory, Player player) {
-                    return new CoinPouchContainer(windowId, inventory, pouchSlot);
-                }
-            }, friendlyByteBuf -> {
-                friendlyByteBuf.writeInt(pouchSlot);
-            });
+            openGUI(player, pouchSlot);
         }
 
         return InteractionResultHolder.pass(stack);
+    }
+    
+    public static void openGUI(Player player, int pouchSlot){
+        NetworkHooks.openGui((ServerPlayer) player, new MenuProvider() {
+            @Override
+            public Component getDisplayName() {
+                return new TranslatableComponent("item." + MOD_ID + ".coin_pouch");
+            }
+
+            @Nullable
+            @Override
+            public AbstractContainerMenu createMenu(int windowId, Inventory inventory, Player player) {
+                return new CoinPouchContainer(windowId, inventory, pouchSlot);
+            }
+        }, friendlyByteBuf -> {
+            friendlyByteBuf.writeInt(pouchSlot);
+        });
     }
 
     @Override
@@ -216,7 +218,7 @@ public class CoinPouchItem extends Item {
             @NotNull
             @Override
             public IItemHandler get() {
-                return new CoinHandler(itemStack);
+                return new Handler(itemStack);
             }
         };
     }
@@ -231,5 +233,99 @@ public class CoinPouchItem extends Item {
                 return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? LazyOptional.of(CoinPouchItem.getInventorySupplier(stack)).cast() : LazyOptional.empty();
             }
         };
+    }
+
+    public static class Handler extends ItemStackHandler {
+        protected final ItemStack delegate;
+
+        public Handler(ItemStack delegate) {
+            super();
+            this.delegate = delegate;
+
+            ItemStack[] containedStacks = CoinPouchItem.getContainedStacks(this.delegate);
+            setSize(containedStacks.length);
+            for (int i = 0; i < containedStacks.length; i++) {
+                this.stacks.set(i, containedStacks[i]);
+            }
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            //super.onContentsChanged(slot);
+            CoinPouchItem.setContainedStack(this.delegate, slot, this.getStackInSlot(slot).getCount());
+        }
+        
+        protected void onGuiContentChanged(int slot){
+            //super.onContentsChanged(slot);
+            CoinPouchItem.setContainedStackFromGUI(this.delegate, slot, this.getStackInSlot(slot));
+        }
+
+        public void setStackInSlotGUI(int slot, @NotNull ItemStack stack) {
+            validateSlotIndex(slot);
+            this.stacks.set(slot, stack);
+            this.onGuiContentChanged(slot);
+        }
+        
+        public ItemStack extractItemGUI(int slot, int amount, boolean simulate){
+            if (amount == 0)
+                return ItemStack.EMPTY;
+
+            validateSlotIndex(slot);
+
+            ItemStack existing = this.stacks.get(slot);
+
+            if (existing.isEmpty())
+                return ItemStack.EMPTY;
+
+            int toExtract = Math.min(amount, existing.getMaxStackSize());
+
+            if (existing.getCount() <= toExtract)
+            {
+                if (!simulate)
+                {
+                    this.stacks.set(slot, ItemStack.EMPTY);
+                    onGuiContentChanged(slot);
+                    return existing;
+                }
+                else
+                {
+                    return existing.copy();
+                }
+            }
+            else
+            {
+                if (!simulate)
+                {
+                    this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+                    onGuiContentChanged(slot);
+                }
+
+                return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+            }
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return switch (slot) {
+                case 0 -> 2147483582;
+                case 1 -> 238609286;
+                case 2 -> 26512142;
+                case 3 -> 2945793;
+                default -> 0;
+            };
+        }
+
+        @Override
+        protected int getStackLimit(int slot, @NotNull ItemStack stack) {
+            return this.getSlotLimit(slot);
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return (stack.getItem().asItem() == ModBlocks.BRONZE_COIN_PILE.asItem() && slot == 0) ||
+                    (stack.getItem().asItem() == ModBlocks.SILVER_COIN_PILE.asItem() && slot == 1) ||
+                    (stack.getItem().asItem() == ModBlocks.GOLD_COIN_PILE.asItem() && slot == 2) ||
+                    (stack.getItem().asItem() == ModBlocks.PLATINUM_COIN_PILE.asItem() && slot == 3);
+        }
     }
 }

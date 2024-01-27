@@ -1,7 +1,9 @@
 package com.shiftthedev.vaultcoinpouch.container;
 
+import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.container.slot.ConditionalReadSlot;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,10 +19,13 @@ public class CompactingSlot extends ConditionalReadSlot {
     private final ItemStack defaultStack;
     private Slot prevSlot;
     private Slot nextSlot;
+    
+    private CoinPouchContainer coinContainer;
 
     public CompactingSlot(IItemHandler inventory, int index, int xPosition, int yPosition, CoinPouchContainer container, Item defaultItem) {
         super(inventory, index, xPosition, yPosition, (slot, stack) -> container.canAccess(slot, stack) && stack.getItem() == defaultItem);
         this.defaultStack = new ItemStack(defaultItem);
+        this.coinContainer = container;
     }
 
     public void setupSlots(@Nullable Slot prevSlot, @Nullable Slot nextSlot) {
@@ -29,7 +34,7 @@ public class CompactingSlot extends ConditionalReadSlot {
     }
 
     @Override
-    public int getMaxStackSize() {
+    public int getMaxStackSize(@NotNull ItemStack stack) {
         return this.getItemHandler().getSlotLimit(this.getSlotIndex());
     }
 
@@ -39,17 +44,28 @@ public class CompactingSlot extends ConditionalReadSlot {
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        ((IItemHandlerModifiable) this.getItemHandler()).setStackInSlot(this.getSlotIndex(), stack);
-        //compact(stack.getCount());
+        ((CoinPouchItem.Handler) this.getItemHandler()).setStackInSlotGUI(this.getSlotIndex(), stack);
         this.setChanged();
+       
+        compact(stack.getCount());
     }
 
     @NotNull
     @Override
     public ItemStack remove(int amount) {
-        ItemStack stack = super.remove(amount);
-        //compact(getItem().getCount());
+        ItemStack stack = ((CoinPouchItem.Handler) this.getItemHandler()).extractItemGUI(getSlotIndex(), amount, false);
+        this.setChanged();
+
+        compact(getItem().getCount());
         return stack;
+    }
+
+    @Override
+    public void onTake(Player p_150645_, ItemStack stack) {
+        this.setChanged();
+
+        ((CoinPouchItem.Handler) this.getItemHandler()).setStackInSlotGUI(this.getSlotIndex(), getItem());
+        compact(getItem().getCount());
     }
 
     private void compact(int count) {
