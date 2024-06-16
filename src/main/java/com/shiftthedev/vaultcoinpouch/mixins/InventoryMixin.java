@@ -18,20 +18,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({Inventory.class})
-public abstract class InventoryMixin implements InventorySnapshotData.InventoryAccessor {
-
-    @Shadow
-    @Final
-    public Player player;
-
-    public InventoryMixin() {
-    }
-
-    @Inject(
-            method = {"add(Lnet/minecraft/world/item/ItemStack;)Z"},
-            at = {@At("HEAD")},
-            cancellable = true
-    )
+public abstract class InventoryMixin implements InventorySnapshotData.InventoryAccessor 
+{
+    @Inject(method = {"add(Lnet/minecraft/world/item/ItemStack;)Z"}, at = {@At("HEAD")}, cancellable = true)
     public void coinAdd(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
         if (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof CoinPileDecorBlock) {
             if (!(this.player.containerMenu instanceof CoinPouchContainer)) {
@@ -72,5 +61,12 @@ public abstract class InventoryMixin implements InventorySnapshotData.InventoryA
                 }
             }
         }
+    }
+
+    @Shadow
+    @Final
+    public Player player;
+
+    public InventoryMixin() {
     }
 }

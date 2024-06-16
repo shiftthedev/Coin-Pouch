@@ -10,6 +10,38 @@
   "tooltip.vaultcoinpouch.platinum": "%s Platinum Coin(s)",
   "tooltip.vaultcoinpouch.empty": "Empty",
   
-  "key.vaultcoinpouch.open": "Open Coin Pouch",
-  "key.categories.vaultcoinpouch": "Vault Coin Pouch"
+  "configs.vaultcoinpouch.title": "Coin Pouch Configs",
+  
+  "configs.vaultcoinpouch.soulbound.name": "Enable Soulbound",
+  "configs.vaultcoinpouch.soulbound.tooltip": "Enable / Disable the possibility\nto add Soulbound to the pouch.",
+
+  "configs.vaultcoinpouch.shopPedestalInteraction.name": "Enable Shop Pedestal Interaction",
+  "configs.vaultcoinpouch.shopPedestalInteraction.tooltip": "Enable / Disable interaction with Shop Pedestal\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.vaultForgeInteraction.name": "Enable Vault Forge Interaction",
+  "configs.vaultcoinpouch.vaultForgeInteraction.tooltip": "Enable / Disable interaction with Vault Forge\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.toolStationInteraction.name": "Enable Tool Station Interaction",
+  "configs.vaultcoinpouch.toolStationInteraction.tooltip": "Enable / Disable interaction with Tool Station\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.inscriptionTableInteraction.name": "Enable Inscription Table Interaction",
+  "configs.vaultcoinpouch.inscriptionTableInteraction.tooltip": "Enable / Disable interaction with Inscription Table\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.modifierWorkbenchInteraction.name": "Enable Modifier Workbench Interaction",
+  "configs.vaultcoinpouch.modifierWorkbenchInteraction.tooltip": "Enable / Disable interaction with Modifier Workbench\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.alchemyTableInteraction.name": "Enable Alchemy Table Interaction",
+  "configs.vaultcoinpouch.alchemyTableInteraction.tooltip": "Enable / Disable interaction with Alchemy Table\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.transmogTableInteraction.name": "Enable Transmog Table Interaction",
+  "configs.vaultcoinpouch.transmogTableInteraction.tooltip": "Enable / Disable interaction with Transmog Table\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.vaultArtisanStationInteraction.name": "Enable Vault Artisan Station Interaction",
+  "configs.vaultcoinpouch.vaultArtisanStationInteraction.tooltip": "Enable / Disable interaction with Vault Artisan Station\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.jewelCuttingStationInteraction.name": "Enable Jewel Cutting Station Interaction",
+  "configs.vaultcoinpouch.jewelCuttingStationInteraction.tooltip": "Enable / Disable interaction with Jewel Cutting Station\n without taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.spiritExtractorInteraction.name": "Enable Spirit Extractor Interaction",
+  "configs.vaultcoinpouch.spiritExtractorInteraction.tooltip": "Enable / Disable interaction with Spirit Extractor\n without taking coins out of the pouch."
 }

@@ -1,8 +1,8 @@
 package com.shiftthedev.vaultcoinpouch.item;
 
-import com.shiftthedev.vaultcoinpouch.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
+import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.container.CoinPouchContainer;
+import iskallia.vault.block.CoinPileDecorBlock;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModGearAttributes;
@@ -22,6 +22,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -73,35 +74,65 @@ public class CoinPouchItem extends Item {
         }
     }
 
-    public static boolean hasEnoughCoins(ItemStack pouch, ItemStack currency) {
-        ItemStack[] contained = getContainedStacks(pouch);
-        for (ItemStack itemStack : contained) {
-            if (itemStack.getItem().asItem() == currency.getItem().asItem()) {
-                return itemStack.getCount() >= currency.getCount();
-            }
+    public static int getCoinCount(ItemStack pouch) {
+        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
+        return invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
+    }
+    
+    public static int extractCoins(ItemStack pouch, int currency) {
+        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
+        int bronzeCount = invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
+        int left = bronzeCount - currency;
+        if(left >= 0) {
+            setContainedStack(pouch, 0, left);
+            return currency;
         }
 
-        return false;
+        setContainedStack(pouch, 0, 0);
+        return currency - bronzeCount;
     }
 
-    public static int extractCoins(ItemStack pouch, ItemStack currency) {
-        ItemStack[] contained = getContainedStacks(pouch);
-        int required = currency.getCount();
+    public static int getCoinCount(ItemStack pouch, ItemStack coin)
+    {
+        if(!(coin.getItem() instanceof BlockItem blockItem))
+            return 0;
+        if(!(blockItem.getBlock() instanceof CoinPileDecorBlock))
+            return 0;
 
-        for (int i = 0; i < contained.length; i++) {
-            ItemStack itemStack = contained[i];
-            if (itemStack.getItem().asItem() == currency.getItem().asItem()) {
+        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
+        if (blockItem.getBlock() == ModBlocks.BRONZE_COIN_PILE)
+            return invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
+        if (blockItem.getBlock() == ModBlocks.SILVER_COIN_PILE)
+            return invTag.contains("SilverStackSize") ? invTag.getInt("SilverStackSize") : 0;
+        if (blockItem.getBlock() == ModBlocks.GOLD_COIN_PILE)
+            return invTag.contains("GoldStackSize") ? invTag.getInt("GoldStackSize") : 0;
+        if (blockItem.getBlock() == ModBlocks.PLATINUM_COIN_PILE)
+            return invTag.contains("PlatinumStackSize") ? invTag.getInt("PlatinumStackSize") : 0;
 
-                int toReduce = Math.min(required, itemStack.getCount());
-                itemStack.setCount(itemStack.getCount() - toReduce);
-                setContainedStack(pouch, i, itemStack.getCount());
+        return 0;
+    }
 
-                required -= toReduce;
-                break;
-            }
+    public static void extractCoins(ItemStack pouch, ItemStack coin, int currency) {
+        if(!(coin.getItem() instanceof BlockItem blockItem))
+            return;
+        if(!(blockItem.getBlock() instanceof CoinPileDecorBlock))
+            return;
+        
+        int coinAmount = blockItem.getBlock() == ModBlocks.BRONZE_COIN_PILE ? currency :
+                blockItem.getBlock() == ModBlocks.SILVER_COIN_PILE ? currency * 9 :
+                blockItem.getBlock() == ModBlocks.GOLD_COIN_PILE ? currency * 81 :
+                blockItem.getBlock() == ModBlocks.PLATINUM_COIN_PILE ? currency * 729 : 0;
+
+        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
+        int bronzeCount = invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
+        int left = bronzeCount - coinAmount;
+
+        if(left >= 0) {
+            setContainedStack(pouch, 0, left);
+            return;
         }
 
-        return required;
+        setContainedStack(pouch, 0, 0);
     }
 
     public static ItemStack[] getContainedStacks(ItemStack pouch) {

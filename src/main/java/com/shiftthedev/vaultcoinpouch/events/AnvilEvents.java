@@ -1,7 +1,6 @@
 package com.shiftthedev.vaultcoinpouch.events;
 
-import com.shiftthedev.vaultcoinpouch.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
+import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.init.ModGearAttributes;

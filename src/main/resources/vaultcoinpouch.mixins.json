@@ -6,9 +6,26 @@
   "refmap" : "vaultcoinpouch.refmap.json",
   "mixins" : [
     "InventoryMixin",
-    "ShopPedestalBlockMixin"
+    "ModNetworkMixin",
+    "alchemy.WorkbenchListElementMixin",
+    "artisan.GearModificationActionMixin",
+    "jewelcutting.VaultJewelCuttingStationTileEntityMixin",
+    "modifier.WorkbenchListElementMixin",
+    "shop.ShopPedestalBlockMixin",
+    "spirit.SpiritExtractorTileEntityMixin",
+    "transmog.TransmogButtonMessageMixin",
+    "transmog.TransmogTableContainerMixin"
   ],
   "injectors" : {
     "defaultRequire" : 1
-  }
+  },
+  "client" : [
+    "ForgeRecipeContainerScreenMixin",
+    "alchemy.AlchemyTableScreenMixin",
+    "artisan.ModificationButtonElementMixin",
+    "jewelcutting.JewelCuttingButtonElementMixin",
+    "jewelcutting.VaultJewelCuttingStationScreenMixin",
+    "modifier.ModifierWorkbenchScreenMixin",
+    "spirit.SpiritExtractorScreenMixin"
+  ]
 }
