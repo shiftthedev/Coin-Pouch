@@ -87,7 +87,7 @@ public class VCPConfig
 
     public static void saveConfig()
     {
-        CONFIG.save();
+        CONFIG_FILE.save();
     }
 
     static
