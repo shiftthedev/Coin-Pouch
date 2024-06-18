@@ -12,15 +12,17 @@ import org.jetbrains.annotations.NotNull;
 public class ShiftSpiritRecycleLockButton extends ButtonElement<ShiftSpiritRecycleLockButton>
 {
     private final SpiritExtractorContainer container;
-    
-    public ShiftSpiritRecycleLockButton(IPosition position, SpiritExtractorContainer container, Runnable onClick) {
+
+    public ShiftSpiritRecycleLockButton(IPosition position, SpiritExtractorContainer container, Runnable onClick)
+    {
         super(position, ScreenTextures.BUTTON_TOGGLE_OFF_TEXTURES, onClick);
         this.container = container;
     }
 
-    public void render(IElementRenderer renderer, @NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void render(IElementRenderer renderer, @NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    {
         ButtonElement.ButtonTextures textures = this.container.isRecycleUnlocked() ? ScreenTextures.BUTTON_TOGGLE_ON_TEXTURES : ScreenTextures.BUTTON_TOGGLE_OFF_TEXTURES;
-        TextureAtlasRegion texture = textures.selectTexture(this.isDisabled(), this.containsMouse((double)mouseX, (double)mouseY), false);
+        TextureAtlasRegion texture = textures.selectTexture(this.isDisabled(), this.containsMouse((double) mouseX, (double) mouseY), false);
         renderer.render(texture, poseStack, this.worldSpatial);
     }
 }

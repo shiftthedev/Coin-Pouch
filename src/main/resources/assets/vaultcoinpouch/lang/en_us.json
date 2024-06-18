@@ -11,37 +11,41 @@
   "tooltip.vaultcoinpouch.empty": "Empty",
   
   "configs.vaultcoinpouch.title": "Coin Pouch Configs",
+  "configs.vaultcoinpouch.save": "Save Configs",
+  "configs.vaultcoinpouch.save.tooltip": "Save all changed configs.",
+  "configs.vaultcoinpouch.cancel": "Cancel",
+  "configs.vaultcoinpouch.cancel.tooltip": "Discard all changed configs.",
   
-  "configs.vaultcoinpouch.soulbound.name": "Enable Soulbound",
-  "configs.vaultcoinpouch.soulbound.tooltip": "Enable / Disable the possibility\nto add Soulbound to the pouch.",
+  "configs.vaultcoinpouch.soulbound.name": "Soulbound: %s",
+  "configs.vaultcoinpouch.soulbound.tooltip": "Enable / Disable the possibility to add §9Soulbound§r §rto the pouch.",
 
-  "configs.vaultcoinpouch.shopPedestalInteraction.name": "Enable Shop Pedestal Interaction",
-  "configs.vaultcoinpouch.shopPedestalInteraction.tooltip": "Enable / Disable interaction with Shop Pedestal\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.shopPedestalInteraction.name": "Shop Pedestal: %s",
+  "configs.vaultcoinpouch.shopPedestalInteraction.tooltip": "Enable / Disable interaction with §6Shop§r §6Pedestal§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.vaultForgeInteraction.name": "Enable Vault Forge Interaction",
-  "configs.vaultcoinpouch.vaultForgeInteraction.tooltip": "Enable / Disable interaction with Vault Forge\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.vaultForgeInteraction.name": "Vault Forge: %s",
+  "configs.vaultcoinpouch.vaultForgeInteraction.tooltip": "Enable / Disable interaction with §6Vault§r §6Forge§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.toolStationInteraction.name": "Enable Tool Station Interaction",
-  "configs.vaultcoinpouch.toolStationInteraction.tooltip": "Enable / Disable interaction with Tool Station\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.toolStationInteraction.name": "Tool Station: %s",
+  "configs.vaultcoinpouch.toolStationInteraction.tooltip": "Enable / Disable interaction with §6Tool§r §6Station§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.inscriptionTableInteraction.name": "Enable Inscription Table Interaction",
-  "configs.vaultcoinpouch.inscriptionTableInteraction.tooltip": "Enable / Disable interaction with Inscription Table\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.inscriptionTableInteraction.name": "Inscription Table: %s",
+  "configs.vaultcoinpouch.inscriptionTableInteraction.tooltip": "Enable / Disable interaction with §6Inscription§r §6Table§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.modifierWorkbenchInteraction.name": "Enable Modifier Workbench Interaction",
-  "configs.vaultcoinpouch.modifierWorkbenchInteraction.tooltip": "Enable / Disable interaction with Modifier Workbench\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.modifierWorkbenchInteraction.name": "Modifier Workbench: %s",
+  "configs.vaultcoinpouch.modifierWorkbenchInteraction.tooltip": "Enable / Disable interaction with §6Modifier§r §6Workbench§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.alchemyTableInteraction.name": "Enable Alchemy Table Interaction",
-  "configs.vaultcoinpouch.alchemyTableInteraction.tooltip": "Enable / Disable interaction with Alchemy Table\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.alchemyTableInteraction.name": "Alchemy Table: %s",
+  "configs.vaultcoinpouch.alchemyTableInteraction.tooltip": "Enable / Disable interaction with §6Alchemy§r §6Table§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.transmogTableInteraction.name": "Enable Transmog Table Interaction",
-  "configs.vaultcoinpouch.transmogTableInteraction.tooltip": "Enable / Disable interaction with Transmog Table\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.transmogTableInteraction.name": "Transmog Table: %s",
+  "configs.vaultcoinpouch.transmogTableInteraction.tooltip": "Enable / Disable interaction with §6Transmog§r §6Table§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.vaultArtisanStationInteraction.name": "Enable Vault Artisan Station Interaction",
-  "configs.vaultcoinpouch.vaultArtisanStationInteraction.tooltip": "Enable / Disable interaction with Vault Artisan Station\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.vaultArtisanStationInteraction.name": "Vault Artisan Station: %s",
+  "configs.vaultcoinpouch.vaultArtisanStationInteraction.tooltip": "Enable / Disable interaction with §6Vault§r §6Artisan§r §6Station§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.jewelCuttingStationInteraction.name": "Enable Jewel Cutting Station Interaction",
-  "configs.vaultcoinpouch.jewelCuttingStationInteraction.tooltip": "Enable / Disable interaction with Jewel Cutting Station\n without taking coins out of the pouch.",
+  "configs.vaultcoinpouch.jewelCuttingStationInteraction.name": "Jewel Cutting Station: %s",
+  "configs.vaultcoinpouch.jewelCuttingStationInteraction.tooltip": "Enable / Disable interaction with §6Jewel§r §6Cutting§r §6Station §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.spiritExtractorInteraction.name": "Enable Spirit Extractor Interaction",
-  "configs.vaultcoinpouch.spiritExtractorInteraction.tooltip": "Enable / Disable interaction with Spirit Extractor\n without taking coins out of the pouch."
+  "configs.vaultcoinpouch.spiritExtractorInteraction.name": "Spirit Extractor: %s",
+  "configs.vaultcoinpouch.spiritExtractorInteraction.tooltip": "Enable / Disable interaction with §6Spirit§r §6Extractor§r §rwithout taking coins out of the pouch."
 }

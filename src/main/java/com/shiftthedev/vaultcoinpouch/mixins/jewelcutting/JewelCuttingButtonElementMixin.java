@@ -1,8 +1,8 @@
 package com.shiftthedev.vaultcoinpouch.mixins.jewelcutting;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
+import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.block.entity.VaultJewelCuttingStationTileEntity;
 import iskallia.vault.client.ClientExpertiseData;
@@ -45,7 +45,7 @@ public abstract class JewelCuttingButtonElementMixin extends ButtonElement
     @Inject(method = "<init>", at = @At("RETURN"))
     private void inti_impl(IPosition position, Runnable onClick, VaultJewelCuttingStationContainer container, CallbackInfo ci)
     {
-        if(VCPConfig.GENERAL.jewelCuttingStationEnabled())
+        if (VCPConfig.GENERAL.jewelCuttingStationEnabled())
         {
             this.tooltip(Tooltips.multi(() -> {
                 Player player = Minecraft.getInstance().player;
@@ -186,7 +186,7 @@ public abstract class JewelCuttingButtonElementMixin extends ButtonElement
 
     @Shadow
     protected abstract Component addTooltipDots(int amount, ChatFormatting formatting);
-    
+
     public JewelCuttingButtonElementMixin(IPosition position, ButtonTextures textures, Runnable onClick)
     {
         super(position, textures, onClick);

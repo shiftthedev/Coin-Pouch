@@ -1,8 +1,8 @@
 package com.shiftthedev.vaultcoinpouch.mixins;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
+import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
 import iskallia.vault.block.entity.InscriptionTableTileEntity;
 import iskallia.vault.block.entity.ToolStationTileEntity;
 import iskallia.vault.block.entity.VaultForgeTileEntity;
@@ -41,55 +41,55 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
     @Inject(method = "getMissingRecipeInputs", at = @At("HEAD"), cancellable = true)
     private void getMissingRecipeInputs_impl(List<ItemStack> inputs, CallbackInfoReturnable<List<ItemStack>> cir)
     {
-        ForgeRecipeTileEntity tile = ((ForgeRecipeContainer)this.menu).getTile();
-        if(tile == null)
+        ForgeRecipeTileEntity tile = ((ForgeRecipeContainer) this.menu).getTile();
+        if (tile == null)
         {
             cir.setReturnValue(inputs);
             cir.cancel();
             return;
         }
-        
-        if(tile instanceof VaultForgeTileEntity && VCPConfig.GENERAL.vaultForgeEnabled())
+
+        if (tile instanceof VaultForgeTileEntity && VCPConfig.GENERAL.vaultForgeEnabled())
         {
             cir.setReturnValue(ShiftInventoryUtils.getMissingInputs(inputs, this.getPlayerInventory(), tile.getInventory()));
             cir.cancel();
             return;
         }
-        else if(tile instanceof ToolStationTileEntity && VCPConfig.GENERAL.toolStationEnabled())
+        else if (tile instanceof ToolStationTileEntity && VCPConfig.GENERAL.toolStationEnabled())
         {
             cir.setReturnValue(ShiftInventoryUtils.getMissingInputs(inputs, this.getPlayerInventory(), tile.getInventory()));
             cir.cancel();
             return;
         }
-        else if(tile instanceof InscriptionTableTileEntity && VCPConfig.GENERAL.inscriptionTableEnabled())
+        else if (tile instanceof InscriptionTableTileEntity && VCPConfig.GENERAL.inscriptionTableEnabled())
         {
             cir.setReturnValue(ShiftInventoryUtils.getMissingInputs(inputs, this.getPlayerInventory(), tile.getInventory()));
             cir.cancel();
             return;
         }
     }
-    
+
     @Inject(method = "onCraftClick", at = @At("HEAD"), cancellable = true)
     private void onCraftClick_impl(CallbackInfo ci)
     {
-        if(this.selectedRecipe != null)
+        if (this.selectedRecipe != null)
         {
-            ForgeRecipeTileEntity tile = ((ForgeRecipeContainer)this.menu).getTile();
-            if(tile != null)
+            ForgeRecipeTileEntity tile = ((ForgeRecipeContainer) this.menu).getTile();
+            if (tile != null)
             {
-                if(tile instanceof VaultForgeTileEntity && VCPConfig.GENERAL.vaultForgeEnabled())
+                if (tile instanceof VaultForgeTileEntity && VCPConfig.GENERAL.vaultForgeEnabled())
                 {
                     ModNetwork.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
                     ci.cancel();
                     return;
                 }
-                else if(tile instanceof ToolStationTileEntity && VCPConfig.GENERAL.toolStationEnabled())
+                else if (tile instanceof ToolStationTileEntity && VCPConfig.GENERAL.toolStationEnabled())
                 {
                     ModNetwork.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
                     ci.cancel();
                     return;
                 }
-                else if(tile instanceof InscriptionTableTileEntity && VCPConfig.GENERAL.inscriptionTableEnabled())
+                else if (tile instanceof InscriptionTableTileEntity && VCPConfig.GENERAL.inscriptionTableEnabled())
                 {
                     ModNetwork.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
                     ci.cancel();

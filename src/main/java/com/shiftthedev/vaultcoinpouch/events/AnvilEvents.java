@@ -13,13 +13,18 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(
         bus = Mod.EventBusSubscriber.Bus.FORGE
 )
-public class AnvilEvents {
+public class AnvilEvents
+{
 
     @SubscribeEvent
-    public static void applySoulbound(AnvilUpdateEvent event) {
-        if (VCPConfig.GENERAL.soulboundEnabled()) {
-            if (event.getLeft().getItem() instanceof CoinPouchItem) {
-                if (event.getRight().getItem() == ModItems.ECHO_POG) {
+    public static void applySoulbound(AnvilUpdateEvent event)
+    {
+        if (VCPConfig.GENERAL.soulboundEnabled())
+        {
+            if (event.getLeft().getItem() instanceof CoinPouchItem)
+            {
+                if (event.getRight().getItem() == ModItems.ECHO_POG)
+                {
                     ItemStack result = event.getLeft().copy();
                     AttributeGearData data = AttributeGearData.empty();
                     data.updateAttribute(ModGearAttributes.SOULBOUND, true);

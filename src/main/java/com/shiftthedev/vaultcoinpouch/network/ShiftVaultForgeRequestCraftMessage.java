@@ -31,34 +31,42 @@ public class ShiftVaultForgeRequestCraftMessage
     private final ResourceLocation recipe;
     private final int level;
 
-    public ShiftVaultForgeRequestCraftMessage(ResourceLocation recipe, int level) {
+    public ShiftVaultForgeRequestCraftMessage(ResourceLocation recipe, int level)
+    {
         this.recipe = recipe;
         this.level = level;
     }
 
-    public static void encode(ShiftVaultForgeRequestCraftMessage message, FriendlyByteBuf buffer) {
+    public static void encode(ShiftVaultForgeRequestCraftMessage message, FriendlyByteBuf buffer)
+    {
         buffer.writeResourceLocation(message.recipe);
         buffer.writeInt(message.level);
     }
 
-    public static ShiftVaultForgeRequestCraftMessage decode(FriendlyByteBuf buffer) {
+    public static ShiftVaultForgeRequestCraftMessage decode(FriendlyByteBuf buffer)
+    {
         return new ShiftVaultForgeRequestCraftMessage(buffer.readResourceLocation(), buffer.readInt());
     }
 
-    public static void handle(ShiftVaultForgeRequestCraftMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = (NetworkEvent.Context)contextSupplier.get();
+    public static void handle(ShiftVaultForgeRequestCraftMessage message, Supplier<NetworkEvent.Context> contextSupplier)
+    {
+        NetworkEvent.Context context = (NetworkEvent.Context) contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayer requester = context.getSender();
-            if (requester != null) {
+            if (requester != null)
+            {
                 AbstractContainerMenu patt2079$temp = requester.containerMenu;
-                if (patt2079$temp instanceof ForgeRecipeContainer) {
-                    ForgeRecipeContainer container = (ForgeRecipeContainer)patt2079$temp;
-                    if (!container.getResultSlot().getItem().isEmpty()) {
+                if (patt2079$temp instanceof ForgeRecipeContainer)
+                {
+                    ForgeRecipeContainer container = (ForgeRecipeContainer) patt2079$temp;
+                    if (!container.getResultSlot().getItem().isEmpty())
+                    {
                         return;
                     }
 
                     ForgeRecipeTileEntity tile = container.getTile();
-                    if (tile == null) {
+                    if (tile == null)
+                    {
                         return;
                     }
 
@@ -66,23 +74,27 @@ public class ShiftVaultForgeRequestCraftMessage
                     ForgeRecipeType[] var6 = tile.getSupportedRecipeTypes();
                     int var7 = var6.length;
 
-                    for(int var8 = 0; var8 < var7; ++var8) {
+                    for (int var8 = 0; var8 < var7; ++var8)
+                    {
                         ForgeRecipeType type = var6[var8];
                         VaultForgeRecipe found = type.getRecipe(message.recipe);
-                        if (found != null && found.canCraft(requester)) {
+                        if (found != null && found.canCraft(requester))
+                        {
                             recipe = found;
                             break;
                         }
                     }
 
-                    if (recipe == null) {
+                    if (recipe == null)
+                    {
                         return;
                     }
 
                     Inventory playerInventory = requester.getInventory();
                     OverSizedInventory tileInventory = tile.getInventory();
                     List<OverSizedItemStack> consumed = new ArrayList();
-                    if (ShiftInventoryUtils.consumeInputs(recipe.getInputs(), playerInventory, tileInventory, true) && ShiftInventoryUtils.consumeInputs(recipe.getInputs(), playerInventory, tileInventory, false, consumed)) {
+                    if (ShiftInventoryUtils.consumeInputs(recipe.getInputs(), playerInventory, tileInventory, true) && ShiftInventoryUtils.consumeInputs(recipe.getInputs(), playerInventory, tileInventory, false, consumed))
+                    {
                         int level = Mth.clamp(message.level, 0, Math.min(ModConfigs.LEVELS_META.getMaxLevel(), SidedHelper.getVaultLevel(requester)));
                         container.getResultSlot().set(recipe.createOutput(consumed, requester, level));
                         requester.level.levelEvent(1030, tile.getBlockPos(), 0);

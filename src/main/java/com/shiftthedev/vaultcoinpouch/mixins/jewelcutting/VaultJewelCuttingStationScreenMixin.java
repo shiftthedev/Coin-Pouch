@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.jewelcutting;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.utils.JewelCuttingStationHelper;
+import com.shiftthedev.vaultcoinpouch.helpers.JewelCuttingStationHelper;
 import iskallia.vault.client.gui.framework.ScreenTextures;
 import iskallia.vault.client.gui.framework.element.JewelCuttingButtonElement;
 import iskallia.vault.client.gui.framework.element.LabelElement;
@@ -38,7 +38,7 @@ public abstract class VaultJewelCuttingStationScreenMixin extends AbstractElemen
     @Inject(method = "<init>", at = @At("RETURN"))
     private void init_impl(VaultJewelCuttingStationContainer container, Inventory inventory, Component title, CallbackInfo ci)
     {
-        if(VCPConfig.GENERAL.jewelCuttingStationEnabled())
+        if (VCPConfig.GENERAL.jewelCuttingStationEnabled())
         {
             this.removeAllElements();
 
@@ -89,7 +89,7 @@ public abstract class VaultJewelCuttingStationScreenMixin extends AbstractElemen
     @Shadow
     @Final
     private Inventory playerInventory;
-    
+
     public VaultJewelCuttingStationScreenMixin(VaultJewelCuttingStationContainer container, Inventory inventory, Component title, IElementRenderer elementRenderer, ITooltipRendererFactory<AbstractElementContainerScreen<VaultJewelCuttingStationContainer>> tooltipRendererFactory)
     {
         super(container, inventory, title, elementRenderer, tooltipRendererFactory);

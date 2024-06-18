@@ -1,9 +1,11 @@
 package com.shiftthedev.vaultcoinpouch.mixins;
 
+import com.shiftthedev.vaultcoinpouch.network.ConfigSyncMessage;
 import com.shiftthedev.vaultcoinpouch.network.ShiftAlchemyTableEffectCraftMessage;
 import com.shiftthedev.vaultcoinpouch.network.ShiftModifierWorkbenchCraftMessage;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
 import iskallia.vault.init.ModNetwork;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,6 +13,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Optional;
 
 @Mixin(value = ModNetwork.class, remap = false)
 public abstract class ModNetworkMixin
@@ -25,5 +29,7 @@ public abstract class ModNetworkMixin
         CHANNEL.registerMessage(ModNetwork.nextId(), ShiftVaultForgeRequestCraftMessage.class, ShiftVaultForgeRequestCraftMessage::encode, ShiftVaultForgeRequestCraftMessage::decode, ShiftVaultForgeRequestCraftMessage::handle);
         CHANNEL.registerMessage(ModNetwork.nextId(), ShiftModifierWorkbenchCraftMessage.class, ShiftModifierWorkbenchCraftMessage::encode, ShiftModifierWorkbenchCraftMessage::decode, ShiftModifierWorkbenchCraftMessage::handle);
         CHANNEL.registerMessage(ModNetwork.nextId(), ShiftAlchemyTableEffectCraftMessage.class, ShiftAlchemyTableEffectCraftMessage::encode, ShiftAlchemyTableEffectCraftMessage::decode, ShiftAlchemyTableEffectCraftMessage::handle);
+
+        CHANNEL.registerMessage(ModNetwork.nextId(), ConfigSyncMessage.class, ConfigSyncMessage::encode, ConfigSyncMessage::decode, ConfigSyncMessage::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 }

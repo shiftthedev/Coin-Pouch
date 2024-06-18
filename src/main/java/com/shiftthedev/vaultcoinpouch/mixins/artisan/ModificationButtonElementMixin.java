@@ -1,9 +1,8 @@
 package com.shiftthedev.vaultcoinpouch.mixins.artisan;
 
-import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
+import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
-import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.element.ModificationButtonElement;
 import iskallia.vault.client.gui.framework.render.Tooltips;
@@ -119,7 +118,7 @@ public abstract class ModificationButtonElementMixin extends ButtonElement
                                     {
                                         bronzeAmount += CoinPouchItem.getCoinCount(plStack);
                                     }
-                                    else if (ShiftInventoryUtils.isEqualCrafting(plStack, bronze))//plStack.is(ModBlocks.BRONZE_COIN_PILE.asItem()))
+                                    else if (plStack.is(ModBlocks.VAULT_BRONZE))
                                     {
                                         bronzeAmount += plStack.getCount();
                                     }

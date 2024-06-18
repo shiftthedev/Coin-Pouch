@@ -6,15 +6,15 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 
 import static com.shiftthedev.vaultcoinpouch.VaultCoinPouch.MOD_ID;
 
-public class CoinPouchScreen extends AbstractContainerScreen<CoinPouchContainer> {
+public class CoinPouchScreen extends AbstractContainerScreen<CoinPouchContainer>
+{
     private static final ResourceLocation TEXTURE = new ResourceLocation(MOD_ID, "textures/gui/coin_pouch.png");
 
-    public CoinPouchScreen(CoinPouchContainer screenContainer, Inventory inventory, Component titleIn) {
+    public CoinPouchScreen(CoinPouchContainer screenContainer, Inventory inventory, Component titleIn)
+    {
         super(screenContainer, inventory, titleIn);
         this.imageWidth = 176;
         this.imageHeight = 137;
@@ -23,7 +23,8 @@ public class CoinPouchScreen extends AbstractContainerScreen<CoinPouchContainer>
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y)
+    {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int offsetX = (this.width - this.imageWidth) / 2;
@@ -32,14 +33,16 @@ public class CoinPouchScreen extends AbstractContainerScreen<CoinPouchContainer>
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    {
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean isPauseScreen()
+    {
         return false;
     }
 }

@@ -16,33 +16,40 @@ public class ShiftInventoryUtils
 {
     private static final Set<Item> COINS_TYPE = new HashSet<>();
 
-    public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, boolean simulate) {
+    public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, boolean simulate)
+    {
         return consumeInputs(recipeInputs, playerInventory, OverSizedInventory.EMPTY, simulate);
     }
-    
-    public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory tileInv, boolean simulate) {
+
+    public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory tileInv, boolean simulate)
+    {
         return consumeInputs(recipeInputs, playerInventory, tileInv, simulate, new ArrayList());
     }
-    
+
     public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory tileInv, boolean simulate, List<OverSizedItemStack> consumed)
     {
         boolean success = true;
         Iterator var6 = recipeInputs.iterator();
 
-        while(var6.hasNext()) {
-            ItemStack input = (ItemStack)var6.next();
+        while (var6.hasNext())
+        {
+            ItemStack input = (ItemStack) var6.next();
             int neededCount = input.getCount();
             NonNullList<OverSizedItemStack> overSizedContents = tileInv.getOverSizedContents();
 
-            for(int slot = 0; slot < overSizedContents.size(); ++slot) {
-                OverSizedItemStack overSized = (OverSizedItemStack)overSizedContents.get(slot);
-                if (neededCount <= 0) {
+            for (int slot = 0; slot < overSizedContents.size(); ++slot)
+            {
+                OverSizedItemStack overSized = (OverSizedItemStack) overSizedContents.get(slot);
+                if (neededCount <= 0)
+                {
                     break;
                 }
 
-                if (isEqualCrafting(input, overSized.stack())) {
+                if (isEqualCrafting(input, overSized.stack()))
+                {
                     int deductedAmount = Math.min(neededCount, overSized.amount());
-                    if (!simulate) {
+                    if (!simulate)
+                    {
                         tileInv.setOverSizedStack(slot, overSized.addCopy(-deductedAmount));
                         consumed.add(overSized.copyAmount(deductedAmount));
                     }
@@ -55,15 +62,19 @@ public class ShiftInventoryUtils
             NonNullList<ItemStack> pouchStacks = NonNullList.create();
             Iterator var16 = items.iterator();
 
-            while(var16.hasNext()) {
-                ItemStack plStack = (ItemStack)var16.next();
-                if (neededCount <= 0) {
+            while (var16.hasNext())
+            {
+                ItemStack plStack = (ItemStack) var16.next();
+                if (neededCount <= 0)
+                {
                     break;
                 }
 
-                if (isEqualCrafting(input, plStack)) {
+                if (isEqualCrafting(input, plStack))
+                {
                     int deductedAmount = Math.min(neededCount, plStack.getCount());
-                    if (!simulate) {
+                    if (!simulate)
+                    {
                         plStack.shrink(deductedAmount);
                         ItemStack deducted = plStack.copy();
                         deducted.setCount(deductedAmount);
@@ -74,7 +85,7 @@ public class ShiftInventoryUtils
                 }
 
                 // Coin Pouch check
-                if(COINS_TYPE.contains(input.getItem()) && plStack.is(VCPRegistry.COIN_POUCH))
+                if (COINS_TYPE.contains(input.getItem()) && plStack.is(VCPRegistry.COIN_POUCH))
                 {
                     pouchStacks.add(plStack);
                 }
@@ -83,11 +94,12 @@ public class ShiftInventoryUtils
 
             // Coin Pouch remove
             var16 = pouchStacks.iterator();
-            while(var16.hasNext())
+            while (var16.hasNext())
             {
                 ItemStack pouchStack = (ItemStack) var16.next();
                 int deductedAmount = Math.min(neededCount, CoinPouchItem.getCoinCount(pouchStack, input));
-                if (!simulate) {
+                if (!simulate)
+                {
                     CoinPouchItem.extractCoins(pouchStack, input, deductedAmount);
                     ItemStack deducted = input.copy();
                     deducted.setCount(deductedAmount);
@@ -98,7 +110,8 @@ public class ShiftInventoryUtils
             }
             // End of Coin Pouch remove
 
-            if (neededCount > 0) {
+            if (neededCount > 0)
+            {
                 success = false;
             }
         }
@@ -106,46 +119,56 @@ public class ShiftInventoryUtils
         return success;
     }
 
-    public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory) {
+    public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory)
+    {
         return getMissingInputs(recipeInputs, playerInventory, OverSizedInventory.EMPTY);
     }
 
-    public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory containerInventory) {
+    public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory containerInventory)
+    {
         List<ItemStack> missing = new ArrayList();
         Iterator var4 = recipeInputs.iterator();
 
-        while(var4.hasNext()) {
-            ItemStack input = (ItemStack)var4.next();
+        while (var4.hasNext())
+        {
+            ItemStack input = (ItemStack) var4.next();
             int neededCount = input.getCount();
             Iterator var7 = containerInventory.getOverSizedContents().iterator();
 
-            while(var7.hasNext()) {
-                OverSizedItemStack overSized = (OverSizedItemStack)var7.next();
-                if (isEqualCrafting(input, overSized.stack())) {
+            while (var7.hasNext())
+            {
+                OverSizedItemStack overSized = (OverSizedItemStack) var7.next();
+                if (isEqualCrafting(input, overSized.stack()))
+                {
                     neededCount -= overSized.amount();
                 }
             }
 
             var7 = playerInventory.items.iterator();
-            while(var7.hasNext()) {
-                ItemStack plStack = (ItemStack)var7.next();
-                
-                if (isEqualCrafting(input, plStack)) {
+            while (var7.hasNext())
+            {
+                ItemStack plStack = (ItemStack) var7.next();
+
+                if (isEqualCrafting(input, plStack))
+                {
                     neededCount -= plStack.getCount();
                 }
 
                 // Coin Pouch check
-                if(COINS_TYPE.contains(input.getItem()) && plStack.is(VCPRegistry.COIN_POUCH))
+                if (COINS_TYPE.contains(input.getItem()) && plStack.is(VCPRegistry.COIN_POUCH))
                 {
                     neededCount -= CoinPouchItem.getCoinCount(plStack, input);
                 }
                 // End of Coin Pouch check
-                
-                if(neededCount <= 0)
+
+                if (neededCount <= 0)
+                {
                     break;
+                }
             }
 
-            if (neededCount > 0) {
+            if (neededCount > 0)
+            {
                 missing.add(input);
             }
         }
@@ -153,7 +176,8 @@ public class ShiftInventoryUtils
         return missing;
     }
 
-    public static boolean isEqualCrafting(ItemStack thisStack, ItemStack thatStack) {
+    public static boolean isEqualCrafting(ItemStack thisStack, ItemStack thatStack)
+    {
         return thisStack.getItem() == thatStack.getItem() && thisStack.getDamageValue() == thatStack.getDamageValue() && (thisStack.getTag() == null || thisStack.areShareTagsEqual(thatStack));
     }
 

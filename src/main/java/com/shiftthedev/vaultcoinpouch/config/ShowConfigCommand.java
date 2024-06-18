@@ -3,6 +3,7 @@ package com.shiftthedev.vaultcoinpouch.config;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
+import com.shiftthedev.vaultcoinpouch.events.ClientRegistryEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -13,7 +14,7 @@ public class ShowConfigCommand
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
         dispatcher.register(Commands.literal("coinpouch")
-                .requires(commandSourceStack -> commandSourceStack.hasPermission(0))
+                .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
                 .then(Commands.literal("open")
                         .executes(commandContext -> {
                             Minecraft.getInstance().tell(() -> {
@@ -30,17 +31,17 @@ public class ShowConfigCommand
                             return 1;
                         })));
     }
-    
+
     private static void openConfigScreen() throws CommandSyntaxException
     {
-        if(Minecraft.getInstance().player == null)
+        if (Minecraft.getInstance().player == null)
         {
-            throw new CommandSyntaxException(null, new TextComponent("Not in client!"));
+            throw new CommandSyntaxException(null, new TextComponent("Not in single-player!"));
         }
 
         Minecraft mc = Minecraft.getInstance();
         mc.mouseHandler.releaseMouse();
-        VCPRegistry.CONFIG_SCREEN.setup(mc, null);
-        mc.setScreen(VCPRegistry.CONFIG_SCREEN);
+        ClientRegistryEvents.CONFIG_SCREEN.setup(mc, null);
+        mc.setScreen(ClientRegistryEvents.CONFIG_SCREEN);
     }
 }
