@@ -19,9 +19,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-@Mixin(value = GearModificationAction.class, remap = false)
+@Mixin(value = GearModificationAction.class, remap = false, priority = 900)
 public abstract class GearModificationActionMixin
 {
+    @Inject(method = "apply", at = @At("HEAD"), cancellable = true)
+    private void apply_coinpouch(VaultArtisanStationContainer container, ServerPlayer player, CallbackInfo ci)
+    {
+        if (VCPConfig.GENERAL.vaultArtisanStationEnabled())
+        {
+            VaultArtisanStationHelper.apply(container, player, this.getCorrespondingSlot(container), this.modification(), this.rand);
+            ci.cancel();
+            return;
+        }
+    }
+
+    @Inject(method = "canApply", at = @At("HEAD"), cancellable = true)
+    private void canApply_coinpouch(VaultArtisanStationContainer container, Player player, CallbackInfoReturnable<Boolean> cir)
+    {
+        if (VCPConfig.GENERAL.vaultArtisanStationEnabled())
+        {
+            cir.setReturnValue(VaultArtisanStationHelper.canApply(container, player, this.getCorrespondingSlot(container), this.modification(), this.rand));
+            return;
+        }
+    }
+
     @Shadow
     @Nullable
     public abstract Slot getCorrespondingSlot(VaultArtisanStationContainer container);
@@ -32,26 +53,4 @@ public abstract class GearModificationActionMixin
     @Shadow
     @Final
     private static Random rand;
-
-    @Inject(method = "apply", at = @At("HEAD"), cancellable = true)
-    private void apply_impl(VaultArtisanStationContainer container, ServerPlayer player, CallbackInfo ci)
-    {
-        if (VCPConfig.GENERAL.vaultArtisanStationEnabled())
-        {
-            VaultArtisanStationHelper.Apply(container, player, this.getCorrespondingSlot(container), this.modification(), this.rand);
-            ci.cancel();
-            return;
-        }
-    }
-
-    @Inject(method = "canApply", at = @At("HEAD"), cancellable = true)
-    private void canApply_impl(VaultArtisanStationContainer container, Player player, CallbackInfoReturnable<Boolean> cir)
-    {
-        if (VCPConfig.GENERAL.vaultArtisanStationEnabled())
-        {
-            cir.setReturnValue(VaultArtisanStationHelper.CanApply(container, player, this.getCorrespondingSlot(container), this.modification(), this.rand));
-            cir.cancel();
-            return;
-        }
-    }
 }

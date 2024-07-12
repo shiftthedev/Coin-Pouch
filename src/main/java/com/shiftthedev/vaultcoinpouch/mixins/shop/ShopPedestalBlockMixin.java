@@ -13,26 +13,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(value = ShopPedestalBlock.class, remap = false)
+@Mixin(value = ShopPedestalBlock.class, remap = false, priority = 900)
 public abstract class ShopPedestalBlockMixin
 {
     @Inject(method = "hasEnoughCurrency", at = @At("HEAD"), cancellable = true)
-    private void hasEnoughtCurrency_impl(List<InventoryUtil.ItemAccess> allItems, ItemStack currency, CallbackInfoReturnable<Boolean> cir)
+    private void hasEnoughtCurrency_coinpouch(List<InventoryUtil.ItemAccess> allItems, ItemStack currency, CallbackInfoReturnable<Boolean> cir)
     {
         if (VCPConfig.GENERAL.shopPedestalEnabled())
         {
-            cir.setReturnValue(ShopPedestalHelper.HasEnoughCurrency(allItems, currency));
+            cir.setReturnValue(ShopPedestalHelper.hasEnoughCurrency(allItems, currency));
             cir.cancel();
             return;
         }
     }
 
     @Inject(method = "extractCurrency", at = @At("HEAD"), cancellable = true)
-    private void extractCurrency_impl(Player player, List<InventoryUtil.ItemAccess> allItems, ItemStack price, CallbackInfoReturnable<Boolean> cir)
+    private void extractCurrency_coinpouch(Player player, List<InventoryUtil.ItemAccess> allItems, ItemStack price, CallbackInfoReturnable<Boolean> cir)
     {
         if (VCPConfig.GENERAL.shopPedestalEnabled())
         {
-            cir.setReturnValue(ShopPedestalHelper.ExtractCurrency(player, allItems, price));
+            cir.setReturnValue(ShopPedestalHelper.extractCurrency(player, allItems, price));
             cir.cancel();
             return;
         }

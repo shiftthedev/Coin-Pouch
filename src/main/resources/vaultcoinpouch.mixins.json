@@ -1,29 +1,33 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.shiftthedev.vaultcoinpouch.mixins",
-  "compatibilityLevel": "JAVA_8",
-  "refmap": "vaultcoinpouch.refmap.json",
-  "mixins": [
+  "required" : true,
+  "minVersion" : "0.8",
+  "package" : "com.shiftthedev.vaultcoinpouch.mixins",
+  "compatibilityLevel" : "JAVA_8",
+  "refmap" : "vaultcoinpouch.refmap.json",
+  "mixins" : [
     "InventoryMixin",
     "ModNetworkMixin",
     "SpiritEntityMixin",
+    "alchemy.AlchemyTableEffectCraftMessageAccessor",
+    "alchemy.AlchemyTableEffectCraftMessageMixin",
     "alchemy.AlchemyWorkbenchListElementMixin",
     "artisan.GearModificationActionMixin",
     "jewelcutting.VaultJewelCuttingStationTileEntityMixin",
+    "modifier.ModifierWorkbenchCraftMessageAccessor",
+    "modifier.ModifierWorkbenchCraftMessageMixin",
     "modifier.ModifierWorkbenchListElementMixin",
     "shop.ShopPedestalBlockMixin",
     "spirit.SpiritExtractorTileEntityMixin",
     "transmog.TransmogButtonMessageMixin",
     "transmog.TransmogTableContainerMixin"
   ],
-  "injectors": {
-    "defaultRequire": 1
+  "injectors" : {
+    "defaultRequire" : 1
   },
-  "client": [
-    "ForgeRecipeContainerScreenMixin",
+  "client" : [
     "alchemy.AlchemyTableScreenMixin",
     "artisan.ModificationButtonElementMixin",
+    "forge.ForgeRecipeContainerScreenMixin",
     "jewelcutting.JewelCuttingButtonElementMixin",
     "jewelcutting.VaultJewelCuttingStationScreenMixin",
     "modifier.ModifierWorkbenchScreenMixin",

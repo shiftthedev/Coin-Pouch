@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = TransmogTableContainer.class, remap = false)
+@Mixin(value = TransmogTableContainer.class, remap = false, priority = 900)
 public abstract class TransmogTableContainerMixin extends OverSizedSlotContainer
 {
     @Inject(method = "priceFulfilled", at = @At("HEAD"), cancellable = true)
-    private void priceFulfilled_impl(CallbackInfoReturnable<Boolean> cir)
+    private void priceFulfilled_coinpouch(CallbackInfoReturnable<Boolean> cir)
     {
         if (VCPConfig.GENERAL.transmogTableEnabled())
         {

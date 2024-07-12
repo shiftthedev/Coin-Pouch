@@ -1,8 +1,8 @@
-package com.shiftthedev.vaultcoinpouch.mixins.transmog;
+package com.shiftthedev.vaultcoinpouch.mixins.alchemy;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.TransmogTableHelper;
-import iskallia.vault.network.message.transmog.TransmogButtonMessage;
+import com.shiftthedev.vaultcoinpouch.helpers.AlchemyTableHelper;
+import iskallia.vault.network.message.AlchemyTableEffectCraftMessage;
 import net.minecraftforge.network.NetworkEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,22 +11,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Supplier;
 
-@Mixin(value = TransmogButtonMessage.class, remap = false, priority = 900)
-public class TransmogButtonMessageMixin
+@Mixin(value = AlchemyTableEffectCraftMessage.class, remap = false, priority = 900)
+public abstract class AlchemyTableEffectCraftMessageMixin
 {
     @Inject(method = "handle", at = @At("HEAD"), cancellable = true)
-    private static void handle_coinpouch(TransmogButtonMessage message, Supplier<NetworkEvent.Context> contextSupplier, CallbackInfo ci)
+    private static void handle_coinpouch(AlchemyTableEffectCraftMessage message, Supplier<NetworkEvent.Context> contextSupplier, CallbackInfo ci)
     {
-        if (VCPConfig.GENERAL.transmogTableEnabled())
+        if (VCPConfig.GENERAL.alchemyTableEnabled())
         {
             NetworkEvent.Context context = (NetworkEvent.Context) contextSupplier.get();
-            context.enqueueWork(() -> TransmogTableHelper.enqueueWork(context, message));
+            context.enqueueWork(() -> AlchemyTableHelper.enqueueWork(context, message));
             context.setPacketHandled(true);
 
             ci.cancel();
             return;
         }
     }
-
-
 }

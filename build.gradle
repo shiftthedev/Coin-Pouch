@@ -75,12 +75,21 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven { url "https://cursemaven.com" }
+    repositories {
+        maven {
+            name = "Illusive Soulworks maven"
+            url = "https://maven.theillusivec4.top/"
+        }
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.9.0:api"))
+    runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.9.0"))
 
     // Curseforge mod dependencies
     implementation fg.deobf("curse.maven:vault-hunters-official-mod-458203:${vault_hunters_version}")
@@ -92,7 +101,7 @@ dependencies {
     implementation fg.deobf("curse.maven:mekanism-268560:${mekanism_version}")
     implementation fg.deobf("curse.maven:simple-storage-network-268495:${simple_storage_version}")
     implementation fg.deobf("curse.maven:architects-palette-433862:${architects_palette_version}")
-    implementation fg.deobf("curse.maven:curios-309927:${curious_version}")
+    //implementation fg.deobf("curse.maven:curios-309927:${curious_version}")
     implementation fg.deobf("curse.maven:autoreglib-250363:${autoreglib_version}")
     implementation fg.deobf("curse.maven:sophisticated-core-618298:${sophisticated_core_version}")
     implementation fg.deobf("curse.maven:sophisticated-backpacks-422301:${sophisticated_backpacks_version}")

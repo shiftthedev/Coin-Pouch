@@ -17,56 +17,61 @@ public class ShopPedestalHelper
 {
     private static Map<Item, ShiftCoinDefinition> COIN_DEFINITIONS;
 
-    public static boolean HasEnoughCurrency(List<InventoryUtil.ItemAccess> allItems, ItemStack currency)
+    public static boolean hasEnoughCurrency(List<InventoryUtil.ItemAccess> allItems, ItemStack currency)
     {
-        return (Boolean) getCoinDefinition(currency.getItem()).map((priceCoinDefinition) -> {
-            int priceValue = priceCoinDefinition.coinValue() * currency.getCount();
-            Iterator var4 = allItems.iterator();
-
-            do
-            {
-                if (!var4.hasNext())
-                {
-                    return false;
-                }
-
-                InventoryUtil.ItemAccess itemAccess = (InventoryUtil.ItemAccess) var4.next();
-                if (itemAccess.getStack().is(VCPRegistry.COIN_POUCH))
-                {
-                    priceValue -= CoinPouchItem.getCoinCount(itemAccess.getStack());
-                }
-                else
-                {
-                    priceValue -= (Integer) getCoinDefinition(itemAccess.getStack().getItem()).map((coinDefinition) -> {
-                        return coinDefinition.coinValue() * itemAccess.getStack().getCount();
-                    }).orElse(0);
-                }
-            }
-            while (priceValue > 0);
-
-            return true;
-        }).orElse(false);
+        return (Boolean) getCoinDefinition(currency.getItem()).map((priceCoinDefinition) -> hasEnoughCoin(priceCoinDefinition, currency, allItems)).orElse(false);
     }
 
-    public static boolean ExtractCurrency(Player player, List<InventoryUtil.ItemAccess> allItems, ItemStack price)
+    private static boolean hasEnoughCoin(ShiftCoinDefinition priceCoinDefinition, ItemStack currency, List<InventoryUtil.ItemAccess> allItems)
     {
-        getCoinDefinition(price.getItem()).ifPresent((priceCoinDefinition) -> {
-            int priceValue = priceCoinDefinition.coinValue() * price.getCount();
-            priceValue = deductCoins(allItems, priceValue, priceCoinDefinition);
-            if (priceValue > 0)
+        int priceValue = priceCoinDefinition.coinValue() * currency.getCount();
+        Iterator var4 = allItems.iterator();
+
+        do
+        {
+            if (!var4.hasNext())
             {
-                priceValue = payUsingLowerDenominations(allItems, priceValue, priceCoinDefinition);
-                priceValue = payUsingHigherDenominations(allItems, priceValue, priceCoinDefinition);
+                return false;
             }
 
-            if (priceValue < 0)
+            InventoryUtil.ItemAccess itemAccess = (InventoryUtil.ItemAccess) var4.next();
+            if (itemAccess.getStack().is(VCPRegistry.COIN_POUCH))
             {
-                int change = -priceValue;
-                returnChangeToPlayer(player, change);
+                priceValue -= CoinPouchItem.getCoinCount(itemAccess.getStack());
             }
+            else
+            {
+                priceValue -= (Integer) getCoinDefinition(itemAccess.getStack().getItem()).map((coinDefinition) -> {
+                    return coinDefinition.coinValue() * itemAccess.getStack().getCount();
+                }).orElse(0);
+            }
+        }
+        while (priceValue > 0);
 
-        });
         return true;
+    }
+
+    public static boolean extractCurrency(Player player, List<InventoryUtil.ItemAccess> allItems, ItemStack price)
+    {
+        getCoinDefinition(price.getItem()).ifPresent((priceCoinDefinition) -> extractCoin(priceCoinDefinition, price, allItems, player));
+        return true;
+    }
+
+    private static void extractCoin(ShiftCoinDefinition priceCoinDefinition, ItemStack price, List<InventoryUtil.ItemAccess> allItems, Player player)
+    {
+        int priceValue = priceCoinDefinition.coinValue() * price.getCount();
+        priceValue = deductCoins(allItems, priceValue, priceCoinDefinition);
+        if (priceValue > 0)
+        {
+            priceValue = payUsingLowerDenominations(allItems, priceValue, priceCoinDefinition);
+            priceValue = payUsingHigherDenominations(allItems, priceValue, priceCoinDefinition);
+        }
+
+        if (priceValue < 0)
+        {
+            int change = -priceValue;
+            returnChangeToPlayer(player, change);
+        }
     }
 
     private static void returnChangeToPlayer(Player player, int change)

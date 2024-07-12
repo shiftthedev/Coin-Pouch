@@ -16,16 +16,26 @@ public class ShiftInventoryUtils
 {
     private static final Set<Item> COINS_TYPE = new HashSet<>();
 
+    /**
+     * Called in utils/AlchemyTableHelper
+     * Called in utils/ModifierWorkbenchHelper
+     **/
     public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, boolean simulate)
     {
         return consumeInputs(recipeInputs, playerInventory, OverSizedInventory.EMPTY, simulate);
     }
 
+    /**
+     * Called in mixins/ForgeRecipeContainerScreenMixin
+     **/
     public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory tileInv, boolean simulate)
     {
         return consumeInputs(recipeInputs, playerInventory, tileInv, simulate, new ArrayList());
     }
 
+    /**
+     * Called in mixins/ForgeRecipeContainerScreenMixin
+     **/
     public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory tileInv, boolean simulate, List<OverSizedItemStack> consumed)
     {
         boolean success = true;
@@ -119,11 +129,18 @@ public class ShiftInventoryUtils
         return success;
     }
 
+    /**
+     * Called in mixins/AlchemyTableScreenMixin
+     * Called in mixins/AlchemyWorkbenchListElementMixin
+     **/
     public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory)
     {
         return getMissingInputs(recipeInputs, playerInventory, OverSizedInventory.EMPTY);
     }
 
+    /**
+     * Called in mixins/ForgeRecipeContainerScreenMixin
+     **/
     public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory containerInventory)
     {
         List<ItemStack> missing = new ArrayList();
@@ -176,7 +193,7 @@ public class ShiftInventoryUtils
         return missing;
     }
 
-    public static boolean isEqualCrafting(ItemStack thisStack, ItemStack thatStack)
+    private static boolean isEqualCrafting(ItemStack thisStack, ItemStack thatStack)
     {
         return thisStack.getItem() == thatStack.getItem() && thisStack.getDamageValue() == thatStack.getDamageValue() && (thisStack.getTag() == null || thisStack.areShareTagsEqual(thatStack));
     }

@@ -1,41 +1,28 @@
 package com.shiftthedev.vaultcoinpouch.mixins.modifier;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.ModifierWorkbenchHelper;
-import iskallia.vault.client.gui.framework.element.SelectableButtonElement;
+import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.WorkbenchCraftSelectorElement;
-import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
-import iskallia.vault.client.gui.framework.spatial.spi.IPosition;
+import iskallia.vault.util.InventoryUtil;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
-@Mixin(value = WorkbenchCraftSelectorElement.WorkbenchListElement.class, remap = false)
-public abstract class ModifierWorkbenchListElementMixin<E extends WorkbenchCraftSelectorElement.WorkbenchListElement<E>> extends SelectableButtonElement<E>
+@Mixin(value = WorkbenchCraftSelectorElement.WorkbenchListElement.class, remap = false, priority = 900)
+public abstract class ModifierWorkbenchListElementMixin
 {
-    @Shadow
-    protected abstract List<ItemStack> getInputs();
-
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void render_impl(IElementRenderer renderer, PoseStack poseStack, int mouseX, int mouseY, float partialTick, CallbackInfo ci)
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Liskallia/vault/util/InventoryUtil;getMissingInputs(Ljava/util/List;Lnet/minecraft/world/entity/player/Inventory;)Ljava/util/List;"))
+    private List<ItemStack> render_getMissingInputs_coinpouch(List<ItemStack> recipeInputs, Inventory playerInventory)
     {
         if (VCPConfig.GENERAL.modifierWorkbenchEnabled())
         {
-            super.render(renderer, poseStack, mouseX, mouseY, partialTick);
-            ModifierWorkbenchHelper.Render(poseStack, this.worldSpatial, this.getInputs());
-            ci.cancel();
-            return;
+            return ShiftInventoryUtils.getMissingInputs(recipeInputs, playerInventory);
         }
-    }
 
-    public ModifierWorkbenchListElementMixin(IPosition position, ButtonTextures textures, Runnable onClick)
-    {
-        super(position, textures, onClick);
+        return InventoryUtil.getMissingInputs(recipeInputs, playerInventory);
     }
 }

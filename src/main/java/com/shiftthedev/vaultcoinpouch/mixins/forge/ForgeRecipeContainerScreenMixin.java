@@ -1,4 +1,4 @@
-package com.shiftthedev.vaultcoinpouch.mixins;
+package com.shiftthedev.vaultcoinpouch.mixins.forge;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(value = ForgeRecipeContainerScreen.class, remap = false)
+@Mixin(value = ForgeRecipeContainerScreen.class, remap = false, priority = 900)
 public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileEntity, T extends ForgeRecipeContainer<V>> extends AbstractElementContainerScreen<T>
 {
     @Shadow
@@ -39,7 +39,7 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
     protected abstract int getCraftedLevel();
 
     @Inject(method = "getMissingRecipeInputs", at = @At("HEAD"), cancellable = true)
-    private void getMissingRecipeInputs_impl(List<ItemStack> inputs, CallbackInfoReturnable<List<ItemStack>> cir)
+    private void getMissingRecipeInputs_coinpouch(List<ItemStack> inputs, CallbackInfoReturnable<List<ItemStack>> cir)
     {
         ForgeRecipeTileEntity tile = ((ForgeRecipeContainer) this.menu).getTile();
         if (tile == null)
@@ -70,7 +70,7 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
     }
 
     @Inject(method = "onCraftClick", at = @At("HEAD"), cancellable = true)
-    private void onCraftClick_impl(CallbackInfo ci)
+    private void onCraftClick_coinpouch(CallbackInfo ci)
     {
         if (this.selectedRecipe != null)
         {

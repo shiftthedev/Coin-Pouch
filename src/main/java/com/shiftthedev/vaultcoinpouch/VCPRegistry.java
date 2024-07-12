@@ -2,6 +2,8 @@ package com.shiftthedev.vaultcoinpouch;
 
 import com.shiftthedev.vaultcoinpouch.container.CoinPouchContainer;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -24,11 +26,14 @@ public class VCPRegistry
 
     public static void registerMenu(RegistryEvent.Register<MenuType<?>> event)
     {
-        COIN_POUCH_CONTAINER = IForgeMenuType.create((windowId, inv, data) -> {
-            int pouchSlot = data.readInt();
-            return new CoinPouchContainer(windowId, inv, pouchSlot);
-        });
+        COIN_POUCH_CONTAINER = IForgeMenuType.create((windowId, inv, data) -> createPouch(windowId, inv, data));
 
         event.getRegistry().registerAll(new MenuType[]{(MenuType) COIN_POUCH_CONTAINER.setRegistryName("coin_pouch_container")});
+    }
+
+    private static CoinPouchContainer createPouch(int windowId, Inventory inv, FriendlyByteBuf data)
+    {
+        int pouchSlot = data.readInt();
+        return new CoinPouchContainer(windowId, inv, pouchSlot);
     }
 }

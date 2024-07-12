@@ -1,248 +1,105 @@
 package com.shiftthedev.vaultcoinpouch.helpers;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.block.entity.VaultJewelCuttingStationTileEntity;
+import iskallia.vault.client.ClientExpertiseData;
 import iskallia.vault.config.VaultJewelCuttingConfig;
 import iskallia.vault.container.VaultJewelCuttingStationContainer;
 import iskallia.vault.container.oversized.OverSizedInventory;
+import iskallia.vault.gear.VaultGearRarity;
 import iskallia.vault.gear.attribute.VaultGearAttributeInstance;
 import iskallia.vault.gear.attribute.VaultGearModifier;
 import iskallia.vault.gear.data.VaultGearData;
 import iskallia.vault.init.ModGearAttributes;
-import iskallia.vault.init.ModNetwork;
-import iskallia.vault.init.ModSounds;
-import iskallia.vault.network.message.JewelCuttingParticleMessage;
-import iskallia.vault.skill.base.Skill;
+import iskallia.vault.item.tool.JewelItem;
+import iskallia.vault.skill.base.LearnableSkill;
+import iskallia.vault.skill.base.TieredSkill;
 import iskallia.vault.skill.expertise.type.JewelExpertise;
-import iskallia.vault.skill.tree.ExpertiseTree;
 import iskallia.vault.util.MiscUtils;
-import iskallia.vault.world.data.PlayerExpertisesData;
-import net.minecraft.core.BlockPos;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.world.item.TooltipFlag;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 public class JewelCuttingStationHelper
 {
-    public static void CutJewel(VaultJewelCuttingStationContainer container, ServerPlayer player, int sizeToRemove, OverSizedInventory inventory, BlockPos blockPos,
-                                VaultJewelCuttingConfig.JewelCuttingOutput recipeOutput, VaultJewelCuttingConfig.JewelCuttingInput recipeInput, Level level)
+    /**
+     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
+     **/
+    public static void withdraw(VaultJewelCuttingStationContainer container, ServerPlayer player, VaultJewelCuttingConfig.JewelCuttingInput recipeInput)
     {
-        if (container.getJewelInputSlot() != null)
+        int bronzeCount = container.getBronzeSlot().getItem().getCount();
+        ItemStack secondInput = recipeInput.getSecondInput();
+        int recipeCount = secondInput.getCount();
+        int remaining = recipeCount - bronzeCount;
+
+        if (remaining <= 0)
         {
-            ItemStack stack = container.getJewelInputSlot().getItem();
-            if (!stack.isEmpty())
+            return;
+        }
+
+        NonNullList<ItemStack> pouchStacks = NonNullList.create();
+        Iterator it = player.getInventory().items.iterator();
+        int toRemove = 0;
+        while (it.hasNext())
+        {
+            if (remaining <= 0)
             {
-                VaultGearData data = VaultGearData.read(stack);
-                Random random = new Random();
-                boolean broken = false;
-                boolean chipped = false;
-                int freeCuts = 0;
-                ExpertiseTree expertises = PlayerExpertisesData.get(player.getLevel()).getExpertises(player);
-
-                JewelExpertise expertise;
-                for (Iterator var10 = expertises.getAll(JewelExpertise.class, Skill::isUnlocked).iterator(); var10.hasNext(); freeCuts = expertise.getNumberOfFreeCuts())
-                {
-                    expertise = (JewelExpertise) var10.next();
-                }
-
-                Iterator var18 = data.getModifiers(ModGearAttributes.JEWEL_SIZE, VaultGearData.Type.ALL_MODIFIERS).iterator();
-
-                while (var18.hasNext())
-                {
-                    VaultGearAttributeInstance<Integer> sizeAttribute = (VaultGearAttributeInstance) var18.next();
-                    sizeAttribute.setValue(Math.max(10, (Integer) sizeAttribute.getValue() - sizeToRemove));
-                    data.write(stack);
-                }
-
-                if ((freeCuts <= 0 || !stack.getOrCreateTag().contains("freeCuts") || stack.getOrCreateTag().getInt("freeCuts") < freeCuts) && freeCuts != 0)
-                {
-                    if (freeCuts > 0 && (!stack.getOrCreateTag().contains("freeCuts") || stack.getOrCreateTag().getInt("freeCuts") < freeCuts))
-                    {
-                        stack.getOrCreateTag().putInt("freeCuts", stack.getOrCreateTag().getInt("freeCuts") + 1);
-                    }
-                }
-                else
-                {
-                    List<VaultGearModifier<?>> prefix = new ArrayList(data.getModifiers(VaultGearModifier.AffixType.PREFIX));
-                    List<VaultGearModifier<?>> suffix = new ArrayList(data.getModifiers(VaultGearModifier.AffixType.SUFFIX));
-                    int affixSize = prefix.size() + suffix.size();
-                    if (affixSize <= 1)
-                    {
-                        breakJewel(blockPos, recipeOutput, level, inventory);
-                        container.getJewelInputSlot().set(ItemStack.EMPTY);
-                        broken = true;
-                    }
-                    else
-                    {
-                        Collections.shuffle(prefix, random);
-                        Collections.shuffle(suffix, random);
-                        if (suffix.size() > 0 && prefix.size() > 0)
-                        {
-                            boolean removedAffix = false;
-                            VaultGearModifier modifier;
-                            Iterator var25;
-                            if (random.nextBoolean())
-                            {
-                                var25 = prefix.iterator();
-
-                                while (var25.hasNext())
-                                {
-                                    modifier = (VaultGearModifier) var25.next();
-                                    if (data.removeModifier(modifier))
-                                    {
-                                        data.updateAttribute(ModGearAttributes.PREFIXES, Math.max(0, (Integer) data.getFirstValue(ModGearAttributes.PREFIXES).orElse(0) - 1));
-                                        data.setRarity(VaultJewelCuttingStationTileEntity.getNewRarity(affixSize - 1));
-                                        removedAffix = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (!removedAffix)
-                            {
-                                var25 = suffix.iterator();
-
-                                while (var25.hasNext())
-                                {
-                                    modifier = (VaultGearModifier) var25.next();
-                                    if (data.removeModifier(modifier))
-                                    {
-                                        data.updateAttribute(ModGearAttributes.SUFFIXES, Math.max(0, (Integer) data.getFirstValue(ModGearAttributes.SUFFIXES).orElse(0) - 1));
-                                        data.setRarity(VaultJewelCuttingStationTileEntity.getNewRarity(affixSize - 1));
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Iterator var14;
-                            VaultGearModifier modifier;
-                            if (suffix.size() > 0)
-                            {
-                                var14 = suffix.iterator();
-
-                                while (var14.hasNext())
-                                {
-                                    modifier = (VaultGearModifier) var14.next();
-                                    if (data.removeModifier(modifier))
-                                    {
-                                        data.updateAttribute(ModGearAttributes.SUFFIXES, Math.max(0, (Integer) data.getFirstValue(ModGearAttributes.SUFFIXES).orElse(0) - 1));
-                                        data.setRarity(VaultJewelCuttingStationTileEntity.getNewRarity(affixSize - 1));
-                                        break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var14 = prefix.iterator();
-
-                                while (var14.hasNext())
-                                {
-                                    modifier = (VaultGearModifier) var14.next();
-                                    if (data.removeModifier(modifier))
-                                    {
-                                        data.updateAttribute(ModGearAttributes.PREFIXES, Math.max(0, (Integer) data.getFirstValue(ModGearAttributes.PREFIXES).orElse(0) - 1));
-                                        data.setRarity(VaultJewelCuttingStationTileEntity.getNewRarity(affixSize - 1));
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        chipped = true;
-                    }
-                }
-
-                ItemStack scrap = container.getScrapSlot().getItem();
-                scrap.shrink(recipeInput.getMainInput().getCount());
-                container.getScrapSlot().set(scrap);
-
-                ItemStack gold = container.getBronzeSlot().getItem();
-                ItemStack secondInput = recipeInput.getSecondInput();
-                int goldMissing = secondInput.getCount();
-                int goldToRemove = Math.min(goldMissing, gold.getCount());
-                gold.shrink(goldToRemove);
-                container.getBronzeSlot().set(gold);
-
-                // Coin Pouch remove
-                goldMissing -= goldToRemove;
-                if (goldMissing > 0)
-                {
-                    NonNullList<ItemStack> pouchStacks = NonNullList.create();
-                    Iterator it = player.getInventory().items.iterator();
-                    while (it.hasNext())
-                    {
-                        if (goldMissing <= 0)
-                        {
-                            break;
-                        }
-
-                        ItemStack plStack = (ItemStack) it.next();
-                        if (VaultJewelCuttingStationTileEntity.canMerge(plStack, secondInput))
-                        {
-                            goldToRemove = Math.min(goldMissing, plStack.getCount());
-                            plStack.shrink(goldToRemove);
-                            goldMissing -= goldToRemove;
-                        }
-
-                        if (plStack.is(VCPRegistry.COIN_POUCH))
-                        {
-                            pouchStacks.add(plStack);
-                        }
-                    }
-
-                    it = pouchStacks.iterator();
-                    while (it.hasNext())
-                    {
-                        if (goldMissing <= 0)
-                        {
-                            break;
-                        }
-
-                        ItemStack pouchStack = (ItemStack) it.next();
-                        goldToRemove = Math.min(goldMissing, CoinPouchItem.getCoinCount(pouchStack, secondInput));
-                        CoinPouchItem.extractCoins(pouchStack, secondInput, goldToRemove);
-                        goldMissing -= goldToRemove;
-                    }
-                }
-                // End of Coin Pouch remove
-
-                if (level != null)
-                {
-                    if (broken)
-                    {
-                        level.playSound((Player) null, container.getTilePos(), ModSounds.JEWEL_CUT, SoundSource.BLOCKS, 0.8F, level.random.nextFloat() * 0.1F + 0.9F);
-                    }
-                    else
-                    {
-                        if (chipped)
-                        {
-                            level.playSound((Player) null, container.getTilePos(), ModSounds.JEWEL_CUT, SoundSource.BLOCKS, 0.3F, level.random.nextFloat() * 0.1F + 0.7F);
-                        }
-                        else
-                        {
-                            level.playSound((Player) null, container.getTilePos(), ModSounds.JEWEL_CUT, SoundSource.BLOCKS, 0.3F, level.random.nextFloat() * 0.1F + 0.7F);
-                            level.playSound((Player) null, container.getTilePos(), ModSounds.JEWEL_CUT_SUCCESS, SoundSource.BLOCKS, 0.2F, level.random.nextFloat() * 0.1F + 0.9F);
-                        }
-
-                        data.write(stack);
-                        container.getJewelInputSlot().set(stack);
-                    }
-                }
+                break;
             }
+
+            ItemStack plStack = (ItemStack) it.next();
+            if (VaultJewelCuttingStationTileEntity.canMerge(plStack, secondInput))
+            {
+                toRemove = Math.min(remaining, plStack.getCount());
+                plStack.shrink(toRemove);
+                remaining -= toRemove;
+            }
+
+            if (plStack.is(VCPRegistry.COIN_POUCH))
+            {
+                pouchStacks.add(plStack);
+            }
+        }
+
+        if (remaining <= 0)
+        {
+            return;
+        }
+
+        it = pouchStacks.iterator();
+        while (it.hasNext())
+        {
+            if (remaining <= 0)
+            {
+                break;
+            }
+
+            ItemStack pouchStack = (ItemStack) it.next();
+            toRemove = Math.min(remaining, CoinPouchItem.getCoinCount(pouchStack, secondInput));
+            CoinPouchItem.extractCoins(pouchStack, secondInput, toRemove);
+            remaining -= toRemove;
         }
     }
 
+    /**
+     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
+     **/
     public static boolean canCraft(VaultJewelCuttingStationTileEntity tileEntity, Player player)
     {
         VaultJewelCuttingConfig.JewelCuttingOutput output = tileEntity.getRecipeOutput();
@@ -278,6 +135,181 @@ public class JewelCuttingStationHelper
         }
 
         return MiscUtils.canFullyMergeIntoSlot(inventory, 4, output.getExtraOutput2Matching());
+    }
+
+    /**
+     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
+     **/
+    public static boolean setDisabled_coinpouch(VaultJewelCuttingStationContainer menu, Player player)
+    {
+        if (menu.getTileEntity() != null && !JewelCuttingStationHelper.canCraft(menu.getTileEntity(), player))
+        {
+            return true;
+        }
+        else if (menu.getJewelInputSlot().getItem().getItem() instanceof JewelItem)
+        {
+            VaultGearData data = VaultGearData.read(menu.getJewelInputSlot().getItem());
+            return (Integer) data.getFirstValue(ModGearAttributes.JEWEL_SIZE).orElse(0) <= 10;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
+     **/
+    public static Object setDisabled_vh(VaultJewelCuttingStationContainer menu)
+    {
+        if (menu.getTileEntity() != null && !menu.getTileEntity().canCraft())
+        {
+            return true;
+        }
+        else if (menu.getJewelInputSlot().getItem().getItem() instanceof JewelItem)
+        {
+            VaultGearData data = VaultGearData.read(menu.getJewelInputSlot().getItem());
+            return (Integer) data.getFirstValue(ModGearAttributes.JEWEL_SIZE).orElse(0) <= 10;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Called in mixins/JewelCuttingButtonElementMixin
+     **/
+    public static List<Component> tooltip(VaultJewelCuttingStationContainer container)
+    {
+        Player player = Minecraft.getInstance().player;
+        if (player == null)
+        {
+            return List.of();
+        }
+        else
+        {
+            long window = Minecraft.getInstance().getWindow().getWindow();
+            boolean shiftDown = InputConstants.isKeyDown(window, 340) || InputConstants.isKeyDown(window, 344);
+            ItemStack inputItem = ItemStack.EMPTY;
+            Slot inputSlot = container.getJewelInputSlot();
+            if (inputSlot != null && !inputSlot.getItem().isEmpty())
+            {
+                inputItem = inputSlot.getItem();
+            }
+
+            boolean hasInput = !inputItem.isEmpty();
+            List<Component> tooltip = new ArrayList();
+            VaultJewelCuttingConfig.JewelCuttingInput input = container.getTileEntity().getRecipeInput();
+            VaultJewelCuttingConfig.JewelCuttingRange range = container.getTileEntity().getJewelCuttingRange();
+            float chance = container.getTileEntity().getJewelCuttingModifierRemovalChance();
+            int numberOfFreeCuts = 0;
+            Iterator var14 = ClientExpertiseData.getLearnedTalentNodes().iterator();
+
+            while (var14.hasNext())
+            {
+                TieredSkill learnedTalentNode = (TieredSkill) var14.next();
+                LearnableSkill patt3197$temp = learnedTalentNode.getChild();
+                if (patt3197$temp instanceof JewelExpertise)
+                {
+                    JewelExpertise jewelExpertise = (JewelExpertise) patt3197$temp;
+                    numberOfFreeCuts = jewelExpertise.getNumberOfFreeCuts();
+                }
+            }
+
+            ItemStack scrap = container.getScrapSlot().getItem();
+            ItemStack bronze = container.getBronzeSlot().getItem();
+            if (hasInput)
+            {
+                VaultGearData data = VaultGearData.read(inputItem);
+                List<VaultGearModifier<?>> prefix = new ArrayList(data.getModifiers(VaultGearModifier.AffixType.PREFIX));
+                List<VaultGearModifier<?>> suffix = new ArrayList(data.getModifiers(VaultGearModifier.AffixType.SUFFIX));
+                int affixSize = prefix.size() + suffix.size();
+                VaultGearRarity lowerRarity = VaultJewelCuttingStationTileEntity.getNewRarity(affixSize - 1);
+                String var10000 = lowerRarity.name();
+                String jewelLowerRarity = "item.the_vault.jewel." + var10000.toLowerCase(Locale.ROOT);
+                MutableComponent lowerRarityComponent = (new TranslatableComponent(jewelLowerRarity)).withStyle(ChatFormatting.YELLOW);
+                VaultGearRarity rarity = VaultJewelCuttingStationTileEntity.getNewRarity(affixSize);
+                var10000 = rarity.name();
+                String jewelRarity = "item.the_vault.jewel." + var10000.toLowerCase(Locale.ROOT);
+                MutableComponent rarityComponent = (new TranslatableComponent(jewelRarity)).withStyle(ChatFormatting.YELLOW);
+                if (affixSize < 2)
+                {
+                    tooltip.add(new TextComponent("Cut the Jewel into a Gemstone"));
+                }
+                else
+                {
+                    int var10003 = range.getMin();
+                    tooltip.add((new TextComponent("Cut the jewel down in size (" + var10003 + "-" + range.getMax() + "), making it ")).append(lowerRarityComponent).append(new TextComponent(".")));
+                    tooltip.add(new TextComponent("This will make it lose a random affix."));
+                }
+
+                if (numberOfFreeCuts > 0)
+                {
+                    tooltip.add(TextComponent.EMPTY);
+                    tooltip.add((new TextComponent("")).append((new TextComponent("* ")).withStyle(ChatFormatting.GOLD)).append(new TextComponent("Your ")).append((new TextComponent("Jeweler Expertise")).withStyle(ChatFormatting.LIGHT_PURPLE)).append(new TextComponent(" gives you ")).append((new TextComponent(String.valueOf(numberOfFreeCuts))).withStyle(ChatFormatting.YELLOW)).append(new TextComponent(" free cut" + (numberOfFreeCuts == 1 ? "" : "s"))));
+                    tooltip.add(new TextComponent("retaining its current grade."));
+                    int usedFreeCuts = !inputItem.getOrCreateTag().contains("freeCuts") ? 0 : inputItem.getOrCreateTag().getInt("freeCuts");
+                    int remaining = numberOfFreeCuts - usedFreeCuts;
+                    tooltip.add((new TextComponent("Expertise Cuts: ")).append(addTooltipDots(usedFreeCuts, ChatFormatting.YELLOW)).append(addTooltipDots(remaining, ChatFormatting.GRAY)));
+                }
+
+                tooltip.add(TextComponent.EMPTY);
+                tooltip.add(new TextComponent("Cost"));
+                MutableComponent var10001 = (new TextComponent("- ")).append(input.getMainInput().getHoverName());
+                int var10002 = input.getMainInput().getCount();
+                tooltip.add(var10001.append(" x" + var10002).append(" [%s]".formatted(scrap.getCount())).withStyle(input.getMainInput().getCount() > scrap.getCount() ? ChatFormatting.RED : ChatFormatting.GREEN));
+                var10001 = (new TextComponent("- ")).append(input.getSecondInput().getHoverName());
+                var10002 = input.getSecondInput().getCount();
+
+                // Coin Pouch check
+                int goldMAmount = bronze.getCount();
+                Iterator it = container.getPlayer().getInventory().items.iterator();
+                while (it.hasNext())
+                {
+                    ItemStack plStack = (ItemStack) it.next();
+                    if (VaultJewelCuttingStationTileEntity.canMerge(plStack, input.getSecondInput()))
+                    {
+                        goldMAmount += plStack.getCount();
+                    }
+                    else if (plStack.is(VCPRegistry.COIN_POUCH))
+                    {
+                        goldMAmount += CoinPouchItem.getCoinCount(plStack, input.getSecondInput());
+                    }
+                }
+
+                tooltip.add(var10001.append(" x" + var10002).append(" [%s]".formatted(goldMAmount)).withStyle(input.getSecondInput().getCount() > goldMAmount ? ChatFormatting.RED : ChatFormatting.GREEN));
+                // End of Coin Pouch check
+
+                tooltip.add(new TextComponent(""));
+                if (shiftDown)
+                {
+                    tooltip.addAll(inputItem.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.ADVANCED));
+                }
+                else
+                {
+                    tooltip.addAll(inputItem.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL));
+                }
+
+                Iterator var32 = data.getModifiers(ModGearAttributes.JEWEL_SIZE, VaultGearData.Type.ALL_MODIFIERS).iterator();
+
+                while (var32.hasNext())
+                {
+                    VaultGearAttributeInstance<Integer> sizeAttribute = (VaultGearAttributeInstance) var32.next();
+                    if ((Integer) sizeAttribute.getValue() <= 10)
+                    {
+                        tooltip.add(new TextComponent(""));
+                        tooltip.add((new TextComponent("Cannot cut size to lower than 10")).withStyle(ChatFormatting.RED));
+                    }
+                }
+            }
+            else
+            {
+                tooltip.add((new TextComponent("Requires Jewel")).withStyle(ChatFormatting.RED));
+            }
+
+            return tooltip;
+        }
     }
 
     private static boolean hasGold(ItemStack goldInput, ItemStack goldInventory, Player player)
@@ -318,34 +350,8 @@ public class JewelCuttingStationHelper
         return goldMissing <= 0;
     }
 
-    private static void breakJewel(BlockPos blockPos, VaultJewelCuttingConfig.JewelCuttingOutput output, Level level, OverSizedInventory inventory)
+    private static Component addTooltipDots(int amount, ChatFormatting formatting)
     {
-        if (output != null)
-        {
-            if (level != null)
-            {
-                level.playSound((Player) null, blockPos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.5F + (new Random()).nextFloat() * 0.25F, 0.75F + (new Random()).nextFloat() * 0.25F);
-            }
-
-            ItemStack input = inventory.getItem(0).copy();
-            VaultJewelCuttingStationTileEntity.addStackToSlot(inventory, 2, getUseRelatedOutput(output.generateMainOutput()));
-            VaultJewelCuttingStationTileEntity.addStackToSlot(inventory, 3, getUseRelatedOutput(output.generateExtraOutput1()));
-            VaultJewelCuttingStationTileEntity.addStackToSlot(inventory, 4, getUseRelatedOutput(output.generateExtraOutput2()));
-            ModNetwork.CHANNEL.send(PacketDistributor.ALL.noArg(), new JewelCuttingParticleMessage(blockPos, inventory.getItem(5)));
-        }
-    }
-
-    private static ItemStack getUseRelatedOutput(ItemStack output)
-    {
-        float out = (float) output.getCount();
-        int resultCount = Mth.floor(out);
-        if (resultCount < 1 && out > 0.0F && (new Random()).nextFloat() < out)
-        {
-            ++resultCount;
-        }
-
-        ItemStack copyOut = output.copy();
-        copyOut.setCount(resultCount);
-        return copyOut;
+        return (new TextComponent("⬢ ".repeat(Math.max(0, amount)))).withStyle(formatting);
     }
 }

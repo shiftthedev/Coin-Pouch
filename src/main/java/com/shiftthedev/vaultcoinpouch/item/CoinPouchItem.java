@@ -47,7 +47,6 @@ import static com.shiftthedev.vaultcoinpouch.VaultCoinPouch.MOD_ID;
 
 public class CoinPouchItem extends Item
 {
-
     public CoinPouchItem(String id)
     {
         super(new Item.Properties().stacksTo(1).tab(ModItems.VAULT_MOD_GROUP));
@@ -344,13 +343,11 @@ public class CoinPouchItem extends Item
         @Override
         protected void onContentsChanged(int slot)
         {
-            //super.onContentsChanged(slot);
             CoinPouchItem.setContainedStack(this.delegate, slot, this.getStackInSlot(slot).getCount());
         }
 
         protected void onGuiContentChanged(int slot)
         {
-            //super.onContentsChanged(slot);
             CoinPouchItem.setContainedStackFromGUI(this.delegate, slot, this.getStackInSlot(slot));
         }
 

@@ -1,102 +1,249 @@
 package com.shiftthedev.vaultcoinpouch.helpers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.shiftthedev.vaultcoinpouch.network.ShiftModifierWorkbenchCraftMessage;
+import com.shiftthedev.vaultcoinpouch.mixins.modifier.ModifierWorkbenchCraftMessageAccessor;
 import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
-import iskallia.vault.client.gui.framework.spatial.spi.IMutableSpatial;
-import iskallia.vault.client.gui.helper.LightmapHelper;
+import iskallia.vault.block.entity.ModifierWorkbenchTileEntity;
+import iskallia.vault.client.gui.framework.render.TooltipDirection;
+import iskallia.vault.client.gui.framework.render.spi.ITooltipRenderer;
 import iskallia.vault.config.gear.VaultGearWorkbenchConfig;
 import iskallia.vault.container.ModifierWorkbenchContainer;
+import iskallia.vault.gear.VaultGearModifierHelper;
 import iskallia.vault.gear.attribute.VaultGearModifier;
+import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.gear.data.VaultGearData;
-import iskallia.vault.init.ModNetwork;
+import iskallia.vault.gear.item.VaultGearItem;
+import iskallia.vault.gear.tooltip.GearTooltip;
+import iskallia.vault.gear.tooltip.VaultGearTooltipItem;
+import iskallia.vault.network.message.ModifierWorkbenchCraftMessage;
+import iskallia.vault.util.InventoryUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.network.NetworkEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 public class ModifierWorkbenchHelper
 {
-    public static void TryCraft(iskallia.vault.gear.crafting.ModifierWorkbenchHelper.CraftingOption selectedOption, ModifierWorkbenchContainer menu, Inventory playerInventory)
+    /**
+     * Called in mixins/ModifierWorkbenchCraftMessageMixin
+     **/
+    public static void enqueueWork(NetworkEvent.Context context, ModifierWorkbenchCraftMessage message)
     {
-        if (selectedOption != null)
+        ServerPlayer player = context.getSender();
+        BlockPos pos = ((ModifierWorkbenchCraftMessageAccessor) message).getPos();
+        BlockEntity tile = player.getLevel().getBlockEntity(pos);
+        if (tile instanceof ModifierWorkbenchTileEntity workbenchTile)
         {
-            ItemStack gear = menu.getInput();
-            if (!gear.isEmpty())
+            ItemStack input = workbenchTile.getInventory().getItem(0);
+            if (!input.isEmpty() && input.getItem() instanceof VaultGearItem && AttributeGearData.hasData(input))
             {
-                ItemStack gearCopy = gear.copy();
-                VaultGearWorkbenchConfig.CraftableModifierConfig cfg = selectedOption.cfg();
-                if (cfg != null)
+                if (VaultGearData.read(input).isModifiable())
                 {
-                    if (VaultGearData.read(gearCopy).getItemLevel() < cfg.getMinLevel())
-                    {
-                        return;
-                    }
-
-                    VaultGearModifier<?> modifier = (VaultGearModifier) cfg.createModifier().orElse(null);
-                    if (modifier != null)
-                    {
-                        iskallia.vault.gear.crafting.ModifierWorkbenchHelper.removeCraftedModifiers(gearCopy);
-                        VaultGearData data = VaultGearData.read(gearCopy);
-                        Set<String> modGroups = data.getExistingModifierGroups(VaultGearData.Type.EXPLICIT_MODIFIERS);
-                        if (modGroups.contains(modifier.getModifierGroup()))
-                        {
-                            return;
-                        }
-                    }
-                }
-
-                List<ItemStack> inputs = selectedOption.getCraftingCost(gear);
-                List<ItemStack> missing = ShiftInventoryUtils.getMissingInputs(inputs, playerInventory);
-                if (missing.isEmpty())
-                {
-                    ResourceLocation craftKey = cfg == null ? null : cfg.getWorkbenchCraftIdentifier();
-                    ModNetwork.CHANNEL.sendToServer(new ShiftModifierWorkbenchCraftMessage(menu.getTilePos(), craftKey));
+                    VaultGearWorkbenchConfig.getConfig(input.getItem()).ifPresent((cfg) -> getConfig(input, message, cfg, player, tile));
                 }
             }
         }
     }
 
-    public static void Render(PoseStack poseStack, IMutableSpatial worldSpatial, List<ItemStack> inputs)
+    /**
+     * Called in mixins/ModifierWorkbenchScreenMixin
+     **/
+    public static boolean tooltip(ModifierWorkbenchContainer menu, iskallia.vault.gear.crafting.ModifierWorkbenchHelper.CraftingOption selectedOption, Inventory playerInventory, ITooltipRenderer tooltipRenderer, @NotNull PoseStack poseStack, int mouseX, int mouseY)
     {
-        ItemRenderer ir = Minecraft.getInstance().getItemRenderer();
-        Font font = Minecraft.getInstance().font;
-        int offsetX = worldSpatial.x() + worldSpatial.width() - 18;
-        int offsetY = worldSpatial.y() + worldSpatial.height() - 18;
-        List<ItemStack> missingInputs = new ArrayList();
-        if (Minecraft.getInstance().player != null)
+        if (selectedOption == null)
         {
-            missingInputs = ShiftInventoryUtils.getMissingInputs(inputs, Minecraft.getInstance().player.getInventory());
+            return false;
         }
-
-        for (Iterator var12 = inputs.iterator(); var12.hasNext(); offsetX -= 17)
+        else
         {
-            ItemStack stack = (ItemStack) var12.next();
-            ir.renderGuiItem(stack, offsetX, offsetY);
-            MutableComponent text = new TextComponent(String.valueOf(stack.getCount()));
-            if (((List) missingInputs).contains(stack))
+            ItemStack gear = menu.getInput();
+            if (gear.isEmpty())
             {
-                text.withStyle(ChatFormatting.RED);
+                return false;
+            }
+            else if (AttributeGearData.hasData(gear) && !AttributeGearData.read(gear).isModifiable())
+            {
+                Component cmp = (new TranslatableComponent("the_vault.gear_modification.unmodifiable")).withStyle(ChatFormatting.RED);
+                tooltipRenderer.renderTooltip(poseStack, cmp, mouseX, mouseY, TooltipDirection.RIGHT);
+                return true;
+            }
+            else
+            {
+                List<ItemStack> inputs = selectedOption.getCraftingCost(gear);
+                List<ItemStack> missing = ShiftInventoryUtils.getMissingInputs(inputs, playerInventory);
+                if (missing.isEmpty())
+                {
+                    List<Component> tooltip = new ArrayList();
+                    tooltip.add(gear.getHoverName());
+                    Item patt5771$temp = gear.getItem();
+                    if (patt5771$temp instanceof VaultGearTooltipItem)
+                    {
+                        VaultGearTooltipItem gearTooltipItem = (VaultGearTooltipItem) patt5771$temp;
+                        tooltip.addAll(gearTooltipItem.createTooltip(gear, GearTooltip.craftingView()));
+                    }
+
+                    tooltipRenderer.renderComponentTooltip(poseStack, tooltip, mouseX, mouseY, TooltipDirection.RIGHT);
+                    return true;
+                }
+                else
+                {
+                    Component cmpx = (new TranslatableComponent("the_vault.gear_workbench.missing_inputs")).withStyle(ChatFormatting.RED);
+                    tooltipRenderer.renderTooltip(poseStack, cmpx, mouseX, mouseY, TooltipDirection.RIGHT);
+                    return true;
+                }
+            }
+        }
+    }
+
+    /**
+     * Called in mixins/ModifierWorkbenchScreenMixin
+     **/
+    public static boolean setDisabled_coinpouch(ModifierWorkbenchContainer menu, iskallia.vault.gear.crafting.ModifierWorkbenchHelper.CraftingOption selectedOption, Inventory playerInventory)
+    {
+        ItemStack gear = menu.getInput();
+        if (gear.isEmpty())
+        {
+            return true;
+        }
+        else if (selectedOption != null)
+        {
+            List<ItemStack> inputs = selectedOption.getCraftingCost(gear);
+            List<ItemStack> missing = ShiftInventoryUtils.getMissingInputs(inputs, playerInventory);
+            return !missing.isEmpty();
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Called in mixins/ModifierWorkbenchScreenMixin
+     **/
+    public static boolean setDisabled_vh(ModifierWorkbenchContainer menu, iskallia.vault.gear.crafting.ModifierWorkbenchHelper.CraftingOption selectedOption, Inventory playerInventory)
+    {
+        ItemStack gear = menu.getInput();
+        if (gear.isEmpty())
+        {
+            return true;
+        }
+        else if (selectedOption != null)
+        {
+            List<ItemStack> inputs = selectedOption.getCraftingCost(gear);
+            List<ItemStack> missing = InventoryUtil.getMissingInputs(inputs, playerInventory);
+            return !missing.isEmpty();
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+
+    private static void getConfig(ItemStack input, ModifierWorkbenchCraftMessage message, VaultGearWorkbenchConfig cfg, ServerPlayer player, BlockEntity tile)
+    {
+        ItemStack inputCopy = input.copy();
+        VaultGearModifier.AffixType targetAffix = null;
+        VaultGearModifier<?> createdModifier = null;
+        List<ItemStack> cost = new ArrayList();
+        if (((ModifierWorkbenchCraftMessageAccessor) message).getCraftModifierIdentifier() == null)
+        {
+            if (!iskallia.vault.gear.crafting.ModifierWorkbenchHelper.hasCraftedModifier(inputCopy))
+            {
+                return;
             }
 
-            poseStack.pushPose();
-            poseStack.translate(0.0, 0.0, 200.0);
-            MultiBufferSource.BufferSource buffers = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-            font.drawInBatch(text, (float) (offsetX + 17 - font.width(text)), (float) (offsetY + 9), 16777215, true, poseStack.last().pose(), buffers, false, 0, LightmapHelper.getPackedFullbrightCoords());
-            buffers.endBatch();
-            poseStack.popPose();
+            cost.addAll(cfg.getCostRemoveCraftedModifiers());
+        }
+        else
+        {
+            VaultGearWorkbenchConfig.CraftableModifierConfig modifierConfig = cfg.getConfig(((ModifierWorkbenchCraftMessageAccessor) message).getCraftModifierIdentifier());
+            if (modifierConfig == null)
+            {
+                return;
+            }
+
+            if (!modifierConfig.hasPrerequisites(player))
+            {
+                return;
+            }
+
+            boolean hadCraftedModifiers = iskallia.vault.gear.crafting.ModifierWorkbenchHelper.hasCraftedModifier(inputCopy);
+            iskallia.vault.gear.crafting.ModifierWorkbenchHelper.removeCraftedModifiers(inputCopy);
+            VaultGearData data = VaultGearData.read(inputCopy);
+            if (data.getItemLevel() < modifierConfig.getMinLevel())
+            {
+                return;
+            }
+
+            targetAffix = modifierConfig.getAffixGroup().getTargetAffixType();
+            if (targetAffix == VaultGearModifier.AffixType.PREFIX)
+            {
+                if (!VaultGearModifierHelper.hasOpenPrefix(inputCopy))
+                {
+                    return;
+                }
+            }
+            else if (!VaultGearModifierHelper.hasOpenSuffix(inputCopy))
+            {
+                return;
+            }
+
+            createdModifier = (VaultGearModifier) modifierConfig.createModifier().orElse(null);
+            if (createdModifier == null)
+            {
+                return;
+            }
+
+            Set<String> existingModGroups = data.getExistingModifierGroups(VaultGearData.Type.EXPLICIT_MODIFIERS);
+            if (existingModGroups.contains(createdModifier.getModifierGroup()))
+            {
+                return;
+            }
+
+            cost.addAll(modifierConfig.createCraftingCost(inputCopy));
+            if (hadCraftedModifiers)
+            {
+                cost.addAll(cfg.getCostRemoveCraftedModifiers());
+            }
+        }
+
+        List<ItemStack> missing = ShiftInventoryUtils.getMissingInputs(cost, player.getInventory());
+        if (missing.isEmpty())
+        {
+            if (ShiftInventoryUtils.consumeInputs(cost, player.getInventory(), true))
+            {
+                if (ShiftInventoryUtils.consumeInputs(cost, player.getInventory(), false))
+                {
+                    if (createdModifier == null)
+                    {
+                        iskallia.vault.gear.crafting.ModifierWorkbenchHelper.removeCraftedModifiers(input);
+                    }
+                    else
+                    {
+                        createdModifier.setCategory(VaultGearModifier.AffixCategory.CRAFTED);
+                        createdModifier.setGameTimeAdded(player.getLevel().getGameTime());
+                        iskallia.vault.gear.crafting.ModifierWorkbenchHelper.removeCraftedModifiers(input);
+                        VaultGearData datax = VaultGearData.read(input);
+                        datax.addModifier(targetAffix, createdModifier);
+                        datax.write(input);
+                    }
+
+                    player.getLevel().levelEvent(1030, tile.getBlockPos(), 0);
+                }
+
+            }
         }
     }
 }

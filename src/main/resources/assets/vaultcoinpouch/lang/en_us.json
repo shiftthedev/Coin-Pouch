@@ -1,5 +1,6 @@
 {
   "item.vaultcoinpouch.coin_pouch": "Coin Pouch",
+  "curios.identifier.coin_pouch": "Coin Pouch",
 
   "tooltip.vaultcoinpouch.info": "Stores unlimited amounts of coins.\nCoins picked up will go directly into the pouch.\nAlso converts coins up and down like a compacting drawer.\n",
   "tooltip.vaultcoinpouch.soulbound": "\nCombine with Echo Pog in an Anvil to add Soulbound.",
