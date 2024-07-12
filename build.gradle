@@ -13,6 +13,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'me.modmuss50.mod-publish-plugin' version "0.5.2"
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -30,7 +31,6 @@ java {
 
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
-    //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
 
     runs {
@@ -146,4 +146,32 @@ tasks.named('jar', Jar).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+publishMods {
+    def tokens = file('./oaths.txt').readLines()
+
+    dryRun = tokens[0] == null
+    changelog = file("./CHANGELOG.md").text
+    version = "${mod_version}"
+    type = STABLE
+
+    def forgeOptions = publishOptions {
+        file = jar.archiveFile
+        modLoaders.add("forge")
+    }
+
+    def curseforgeOptions = curseforgeOptions {
+        accessToken = tokens[0]
+        projectId = "${curse_id}"
+        minecraftVersions.add("${minecraft_version}")
+        javaVersions.add(JavaVersion.VERSION_17)
+        clientRequired = true
+        serverRequired = true
+    }
+
+    curseforge("curseforgeForge") {
+        from(curseforgeOptions, forgeOptions)
+        requires ( "vault-hunters-official-mod" )
+    }
 }
