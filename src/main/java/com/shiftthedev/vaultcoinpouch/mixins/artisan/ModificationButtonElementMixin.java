@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 
-@Mixin(value = ModificationButtonElement.class, remap = false, priority = 900)
+@Mixin(value = ModificationButtonElement.class, remap = false, priority = 1100)
 public abstract class ModificationButtonElementMixin extends ButtonElement
 {
     @Inject(method = "<init>", at = @At("RETURN"))

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = SpiritEntity.class, remap = false, priority = 900)
+@Mixin(value = SpiritEntity.class, remap = false, priority = 1100)
 public class SpiritEntityMixin
 {
     @Inject(method = "shouldAddItem", at = @At("HEAD"), cancellable = true)

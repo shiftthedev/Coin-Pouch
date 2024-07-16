@@ -2,8 +2,7 @@ package com.shiftthedev.vaultcoinpouch.config;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.shiftthedev.vaultcoinpouch.VCPRegistry;
-import com.shiftthedev.vaultcoinpouch.events.ClientRegistryEvents;
+import com.shiftthedev.vaultcoinpouch.events.ClientEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -41,7 +40,7 @@ public class ShowConfigCommand
 
         Minecraft mc = Minecraft.getInstance();
         mc.mouseHandler.releaseMouse();
-        ClientRegistryEvents.CONFIG_SCREEN.setup(mc, null);
-        mc.setScreen(ClientRegistryEvents.CONFIG_SCREEN);
+        ClientEvents.CONFIG_SCREEN.setup(mc, null);
+        mc.setScreen(ClientEvents.CONFIG_SCREEN);
     }
 }

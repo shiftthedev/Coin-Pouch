@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-@Mixin(value = GearModificationAction.class, remap = false, priority = 900)
+@Mixin(value = GearModificationAction.class, remap = false, priority = 1100)
 public abstract class GearModificationActionMixin
 {
     @Inject(method = "apply", at = @At("HEAD"), cancellable = true)

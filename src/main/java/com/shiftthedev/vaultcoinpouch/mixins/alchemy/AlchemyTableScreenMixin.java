@@ -2,7 +2,7 @@ package com.shiftthedev.vaultcoinpouch.mixins.alchemy;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.helpers.AlchemyTableHelper;
-import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
+import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.AlchemyCraftSelectorElement;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.List;
 import java.util.function.Supplier;
 
-@Mixin(value = AlchemyTableScreen.class, remap = false, priority = 900)
+@Mixin(value = AlchemyTableScreen.class, remap = false, priority = 1100)
 public abstract class AlchemyTableScreenMixin extends AbstractElementContainerScreen<AlchemyTableContainer>
 {
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Liskallia/vault/client/gui/framework/element/ButtonElement;setDisabled(Ljava/util/function/Supplier;)Liskallia/vault/client/gui/framework/element/ButtonElement;"))

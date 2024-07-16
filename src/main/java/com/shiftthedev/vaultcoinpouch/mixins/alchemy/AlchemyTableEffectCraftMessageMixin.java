@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Supplier;
 
-@Mixin(value = AlchemyTableEffectCraftMessage.class, remap = false, priority = 900)
+@Mixin(value = AlchemyTableEffectCraftMessage.class, remap = false, priority = 1100)
 public abstract class AlchemyTableEffectCraftMessageMixin
 {
     @Inject(method = "handle", at = @At("HEAD"), cancellable = true)

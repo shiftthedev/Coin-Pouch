@@ -22,7 +22,7 @@ import static com.shiftthedev.vaultcoinpouch.VCPRegistry.COIN_POUCH_CONTAINER;
         bus = EventBusSubscriber.Bus.MOD,
         value = {Dist.CLIENT}
 )
-public class ClientRegistryEvents
+public class ClientEvents
 {
     @OnlyIn(Dist.CLIENT)
     public static VCPConfigScreen CONFIG_SCREEN = new VCPConfigScreen();

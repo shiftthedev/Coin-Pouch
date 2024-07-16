@@ -1,8 +1,8 @@
 package com.shiftthedev.vaultcoinpouch.mixins.forge;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
+import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
-import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
 import iskallia.vault.block.entity.InscriptionTableTileEntity;
 import iskallia.vault.block.entity.ToolStationTileEntity;
 import iskallia.vault.block.entity.VaultForgeTileEntity;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(value = ForgeRecipeContainerScreen.class, remap = false, priority = 900)
+@Mixin(value = ForgeRecipeContainerScreen.class, remap = false, priority = 1100)
 public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileEntity, T extends ForgeRecipeContainer<V>> extends AbstractElementContainerScreen<T>
 {
     @Shadow

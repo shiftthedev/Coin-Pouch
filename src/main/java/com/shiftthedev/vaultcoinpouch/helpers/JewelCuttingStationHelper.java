@@ -30,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,6 +55,11 @@ public class JewelCuttingStationHelper
         }
 
         NonNullList<ItemStack> pouchStacks = NonNullList.create();
+        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        {
+            pouchStacks.add(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack());
+        }
+
         Iterator it = player.getInventory().items.iterator();
         int toRemove = 0;
         while (it.hasNext())
@@ -264,6 +270,11 @@ public class JewelCuttingStationHelper
 
                 // Coin Pouch check
                 int goldMAmount = bronze.getCount();
+                if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+                {
+                    goldMAmount += CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), input.getSecondInput());
+                }
+
                 Iterator it = container.getPlayer().getInventory().items.iterator();
                 while (it.hasNext())
                 {
@@ -345,6 +356,11 @@ public class JewelCuttingStationHelper
                 toRemove = Math.min(goldMissing, CoinPouchItem.getCoinCount(plStack, goldInput));
                 goldMissing -= toRemove;
             }
+        }
+
+        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        {
+            goldMissing -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), goldInput);
         }
 
         return goldMissing <= 0;

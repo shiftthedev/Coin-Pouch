@@ -11,18 +11,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Supplier;
 
-@Mixin(value = ModifierWorkbenchCraftMessage.class, remap = false, priority = 900)
+@Mixin(value = ModifierWorkbenchCraftMessage.class, remap = false, priority = 1100)
 public abstract class ModifierWorkbenchCraftMessageMixin
 {
     @Inject(method = "handle", at = @At("HEAD"), cancellable = true)
     private static void handle_coinpouch(ModifierWorkbenchCraftMessage message, Supplier<NetworkEvent.Context> contextSupplier, CallbackInfo ci)
     {
-        if(VCPConfig.GENERAL.modifierWorkbenchEnabled())
+        if (VCPConfig.GENERAL.modifierWorkbenchEnabled())
         {
-            NetworkEvent.Context context = (NetworkEvent.Context)contextSupplier.get();
+            NetworkEvent.Context context = (NetworkEvent.Context) contextSupplier.get();
             context.enqueueWork(() -> ModifierWorkbenchHelper.enqueueWork(context, message));
             context.setPacketHandled(true);
-            
+
             ci.cancel();
             return;
         }

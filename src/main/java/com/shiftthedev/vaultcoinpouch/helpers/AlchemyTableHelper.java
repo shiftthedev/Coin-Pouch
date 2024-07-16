@@ -2,7 +2,6 @@ package com.shiftthedev.vaultcoinpouch.helpers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.shiftthedev.vaultcoinpouch.mixins.alchemy.AlchemyTableEffectCraftMessageAccessor;
-import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
 import iskallia.vault.block.entity.AlchemyTableTileEntity;
 import iskallia.vault.client.gui.framework.element.AlchemyCraftSelectorElement;
 import iskallia.vault.client.gui.framework.render.TooltipDirection;

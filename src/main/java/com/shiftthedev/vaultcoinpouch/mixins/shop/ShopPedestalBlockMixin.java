@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(value = ShopPedestalBlock.class, remap = false, priority = 900)
+@Mixin(value = ShopPedestalBlock.class, remap = false, priority = 1100)
 public abstract class ShopPedestalBlockMixin
 {
     @Inject(method = "hasEnoughCurrency", at = @At("HEAD"), cancellable = true)

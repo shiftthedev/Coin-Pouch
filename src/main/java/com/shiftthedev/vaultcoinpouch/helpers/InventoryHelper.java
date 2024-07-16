@@ -9,25 +9,30 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import top.theillusivec4.curios.api.CuriosApi;
 
+import java.util.Optional;
+
 public class InventoryHelper
 {
     public static boolean try_pickupCoinToPouch(Player player, ItemStack itemStack, Inventory thisInventory)
     {
         ItemStack pouchStack = ItemStack.EMPTY;
 
-        pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
-        if (pouchStack.isEmpty())
+        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
         {
-            pouchStack = thisInventory.items.stream().filter(plStack -> plStack.is(VCPRegistry.COIN_POUCH)).findFirst().get();
-
-            if (pouchStack.isEmpty())
+            pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
+        }
+        else
+        {
+            Optional<ItemStack> possiblePouch = thisInventory.items.stream().filter(plStack -> plStack.is(VCPRegistry.COIN_POUCH)).findFirst();
+            if (possiblePouch.isEmpty())
             {
                 return false;
             }
+
+            pouchStack = possiblePouch.get();
         }
 
         pouchStack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(iItemHandler -> handleCoinPouch(itemStack, iItemHandler));
-
         if (itemStack.isEmpty())
         {
             return true;

@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = JewelCuttingButtonElement.class, remap = false, priority = 900)
+@Mixin(value = JewelCuttingButtonElement.class, remap = false, priority = 1100)
 public abstract class JewelCuttingButtonElementMixin extends ButtonElement
 {
     @Inject(method = "<init>", at = @At("RETURN"))

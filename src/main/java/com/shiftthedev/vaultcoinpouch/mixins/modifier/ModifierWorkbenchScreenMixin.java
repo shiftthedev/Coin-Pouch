@@ -2,7 +2,7 @@ package com.shiftthedev.vaultcoinpouch.mixins.modifier;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.helpers.ModifierWorkbenchHelper;
-import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
+import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
 import iskallia.vault.client.gui.framework.render.spi.ITooltipRendererFactory;
@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.List;
 import java.util.function.Supplier;
 
-@Mixin(value = ModifierWorkbenchScreen.class, remap = false, priority = 900)
+@Mixin(value = ModifierWorkbenchScreen.class, remap = false, priority = 1100)
 public abstract class ModifierWorkbenchScreenMixin extends AbstractElementContainerScreen<ModifierWorkbenchContainer>
 {
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Liskallia/vault/client/gui/framework/element/ButtonElement;setDisabled(Ljava/util/function/Supplier;)Liskallia/vault/client/gui/framework/element/ButtonElement;"))

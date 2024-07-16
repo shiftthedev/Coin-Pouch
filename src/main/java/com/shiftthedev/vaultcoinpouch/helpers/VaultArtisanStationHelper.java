@@ -25,11 +25,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
 
 public class VaultArtisanStationHelper
 {
+    /**
+     * Called in mixins/GearModificationActionMixin
+     **/
     public static void apply(VaultArtisanStationContainer container, ServerPlayer player, Slot correspondingSlot, GearModification modification, Random rand)
     {
         if (canApply(container, player, correspondingSlot, modification, rand))
@@ -60,9 +64,21 @@ public class VaultArtisanStationHelper
 
                     // Coin Pouch remove
                     bronzeRemaining -= bronzeToTake;
+
                     if (bronzeRemaining > 0)
                     {
-                        NonNullList<ItemStack> pouchStacks = NonNullList.create();
+                        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+                        {
+                            ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
+                            bronzeToTake = Math.min(bronzeRemaining, CoinPouchItem.getCoinCount(pouchStack));
+                            CoinPouchItem.extractCoins(pouchStack, bronzeToTake);
+                            bronzeRemaining -= bronzeToTake;
+                        }
+                    }
+
+                    NonNullList<ItemStack> pouchStacks = NonNullList.create();
+                    if (bronzeRemaining > 0)
+                    {
                         Iterator it = player.getInventory().items.iterator();
                         while (it.hasNext())
                         {
@@ -84,8 +100,11 @@ public class VaultArtisanStationHelper
                                 pouchStacks.add(plStack);
                             }
                         }
+                    }
 
-                        it = pouchStacks.iterator();
+                    if (bronzeRemaining > 0 && !pouchStacks.isEmpty())
+                    {
+                        Iterator it = pouchStacks.iterator();
                         while (it.hasNext())
                         {
                             if (bronzeRemaining <= 0)
@@ -107,6 +126,9 @@ public class VaultArtisanStationHelper
         }
     }
 
+    /**
+     * Called in mixins/GearModificationActionMixin
+     **/
     public static boolean canApply(VaultArtisanStationContainer container, Player player, Slot correspondingSlot, GearModification modification, Random rand)
     {
         Slot inSlot = correspondingSlot;
@@ -146,6 +168,16 @@ public class VaultArtisanStationHelper
                         return modification.canApply(gear, in, player, rand);
                     }
 
+                    if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+                    {
+                        bronzeMissing -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack());
+                    }
+
+                    if (bronzeMissing <= 0)
+                    {
+                        return modification.canApply(gear, in, player, rand);
+                    }
+
                     Iterator it = player.getInventory().items.iterator();
                     while (it.hasNext())
                     {
@@ -175,7 +207,10 @@ public class VaultArtisanStationHelper
             }
         }
     }
-    
+
+    /**
+     * Called in mixins/ModificationButtonElementMixin
+     **/
     public static List<Component> tooltip(VaultArtisanStationContainer container, GearModification modification, Random rand)
     {
         GearModificationAction action = container.getModificationAction(modification);
@@ -243,6 +278,12 @@ public class VaultArtisanStationHelper
 
                         // Coin Pouch check
                         int bronzeAmount = bronze.getCount();
+
+                        if (CuriosApi.getCuriosHelper().findFirstCurio(container.getPlayer(), VCPRegistry.COIN_POUCH).isPresent())
+                        {
+                            bronzeAmount += CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(container.getPlayer(), VCPRegistry.COIN_POUCH).get().stack());
+                        }
+
                         Iterator it = container.getPlayer().getInventory().items.iterator();
                         while (it.hasNext())
                         {

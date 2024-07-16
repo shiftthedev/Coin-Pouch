@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.function.Supplier;
 
-@Mixin(value = VaultJewelCuttingStationScreen.class, remap = false, priority = 900)
+@Mixin(value = VaultJewelCuttingStationScreen.class, remap = false, priority = 1100)
 public abstract class VaultJewelCuttingStationScreenMixin extends AbstractElementContainerScreen<VaultJewelCuttingStationContainer>
 {
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Liskallia/vault/client/gui/framework/element/JewelCuttingButtonElement;setDisabled(Ljava/util/function/Supplier;)Liskallia/vault/client/gui/framework/element/ButtonElement;"))

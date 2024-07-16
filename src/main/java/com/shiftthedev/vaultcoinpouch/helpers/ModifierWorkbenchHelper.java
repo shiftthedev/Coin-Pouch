@@ -2,7 +2,6 @@ package com.shiftthedev.vaultcoinpouch.helpers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.shiftthedev.vaultcoinpouch.mixins.modifier.ModifierWorkbenchCraftMessageAccessor;
-import com.shiftthedev.vaultcoinpouch.utils.ShiftInventoryUtils;
 import iskallia.vault.block.entity.ModifierWorkbenchTileEntity;
 import iskallia.vault.client.gui.framework.render.TooltipDirection;
 import iskallia.vault.client.gui.framework.render.spi.ITooltipRenderer;

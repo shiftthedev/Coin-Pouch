@@ -25,7 +25,7 @@ public abstract class InventoryMixin implements InventorySnapshotData.InventoryA
         {
             if (!(this.player.containerMenu instanceof CoinPouchContainer))
             {
-                if(InventoryHelper.try_pickupCoinToPouch(this.player, itemStack, (Inventory) (Object) this))
+                if (InventoryHelper.try_pickupCoinToPouch(this.player, itemStack, (Inventory) (Object) this))
                 {
                     cir.setReturnValue(true);
                 }

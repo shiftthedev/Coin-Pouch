@@ -1,4 +1,4 @@
-package com.shiftthedev.vaultcoinpouch.utils;
+package com.shiftthedev.vaultcoinpouch.helpers;
 
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
@@ -9,6 +9,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
 
@@ -39,8 +40,14 @@ public class ShiftInventoryUtils
     public static boolean consumeInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory tileInv, boolean simulate, List<OverSizedItemStack> consumed)
     {
         boolean success = true;
-        Iterator var6 = recipeInputs.iterator();
 
+        NonNullList<ItemStack> pouchStacks = NonNullList.create();
+        if (CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).isPresent())
+        {
+            pouchStacks.add(CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).get().stack());
+        }
+
+        Iterator var6 = recipeInputs.iterator();
         while (var6.hasNext())
         {
             ItemStack input = (ItemStack) var6.next();
@@ -69,9 +76,7 @@ public class ShiftInventoryUtils
             }
 
             NonNullList<ItemStack> items = playerInventory.items;
-            NonNullList<ItemStack> pouchStacks = NonNullList.create();
             Iterator var16 = items.iterator();
-
             while (var16.hasNext())
             {
                 ItemStack plStack = (ItemStack) var16.next();
@@ -103,20 +108,23 @@ public class ShiftInventoryUtils
             }
 
             // Coin Pouch remove
-            var16 = pouchStacks.iterator();
-            while (var16.hasNext())
+            if (COINS_TYPE.contains(input.getItem()))
             {
-                ItemStack pouchStack = (ItemStack) var16.next();
-                int deductedAmount = Math.min(neededCount, CoinPouchItem.getCoinCount(pouchStack, input));
-                if (!simulate)
+                var16 = pouchStacks.iterator();
+                while (var16.hasNext())
                 {
-                    CoinPouchItem.extractCoins(pouchStack, input, deductedAmount);
-                    ItemStack deducted = input.copy();
-                    deducted.setCount(deductedAmount);
-                    consumed.add(OverSizedItemStack.of(deducted));
-                }
+                    ItemStack pouchStack = (ItemStack) var16.next();
+                    int deductedAmount = Math.min(neededCount, CoinPouchItem.getCoinCount(pouchStack, input));
+                    if (!simulate)
+                    {
+                        CoinPouchItem.extractCoins(pouchStack, input, deductedAmount);
+                        ItemStack deducted = input.copy();
+                        deducted.setCount(deductedAmount);
+                        consumed.add(OverSizedItemStack.of(deducted));
+                    }
 
-                neededCount -= deductedAmount;
+                    neededCount -= deductedAmount;
+                }
             }
             // End of Coin Pouch remove
 
@@ -144,8 +152,13 @@ public class ShiftInventoryUtils
     public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory containerInventory)
     {
         List<ItemStack> missing = new ArrayList();
-        Iterator var4 = recipeInputs.iterator();
+        ItemStack curiosPouchStack = ItemStack.EMPTY;
+        if (CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).isPresent())
+        {
+            curiosPouchStack = CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).get().stack();
+        }
 
+        Iterator var4 = recipeInputs.iterator();
         while (var4.hasNext())
         {
             ItemStack input = (ItemStack) var4.next();
@@ -159,6 +172,11 @@ public class ShiftInventoryUtils
                 {
                     neededCount -= overSized.amount();
                 }
+            }
+
+            if (COINS_TYPE.contains(input.getItem()) && !curiosPouchStack.isEmpty())
+            {
+                neededCount -= CoinPouchItem.getCoinCount(curiosPouchStack, input);
             }
 
             var7 = playerInventory.items.iterator();

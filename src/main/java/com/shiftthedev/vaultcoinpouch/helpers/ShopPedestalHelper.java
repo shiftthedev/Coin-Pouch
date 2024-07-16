@@ -17,6 +17,9 @@ public class ShopPedestalHelper
 {
     private static Map<Item, ShiftCoinDefinition> COIN_DEFINITIONS;
 
+    /**
+     * Called in mixins/ShopPedestalBlockMixin
+     **/
     public static boolean hasEnoughCurrency(List<InventoryUtil.ItemAccess> allItems, ItemStack currency)
     {
         return (Boolean) getCoinDefinition(currency.getItem()).map((priceCoinDefinition) -> hasEnoughCoin(priceCoinDefinition, currency, allItems)).orElse(false);
@@ -26,7 +29,6 @@ public class ShopPedestalHelper
     {
         int priceValue = priceCoinDefinition.coinValue() * currency.getCount();
         Iterator var4 = allItems.iterator();
-
         do
         {
             if (!var4.hasNext())
@@ -51,6 +53,9 @@ public class ShopPedestalHelper
         return true;
     }
 
+    /**
+     * Called in mixins/ShopPedestalBlockMixin
+     **/
     public static boolean extractCurrency(Player player, List<InventoryUtil.ItemAccess> allItems, ItemStack price)
     {
         getCoinDefinition(price.getItem()).ifPresent((priceCoinDefinition) -> extractCoin(priceCoinDefinition, price, allItems, player));

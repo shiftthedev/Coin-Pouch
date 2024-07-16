@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Supplier;
 
-@Mixin(value = TransmogButtonMessage.class, remap = false, priority = 900)
+@Mixin(value = TransmogButtonMessage.class, remap = false, priority = 1100)
 public class TransmogButtonMessageMixin
 {
     @Inject(method = "handle", at = @At("HEAD"), cancellable = true)
