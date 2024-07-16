@@ -1,4 +1,4 @@
-# 1.4.2
+# 1.4.3
 ## New
     * Added Curios slot
 
