@@ -287,6 +287,13 @@ public class SpiritExtractorHelper
             return true;
         }
 
+        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        {
+            ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
+            toRemove = Math.min(totalCost, CoinPouchItem.getCoinCount(pouchStack, costStack));
+            totalCost -= toRemove;
+        }
+
         Iterator it = player.getInventory().items.iterator();
         while (it.hasNext())
         {
