@@ -1,6 +1,3 @@
-# 1.4.3
-## New
-    * Added Curios slot
-
+# 1.4.4
 ## Changes
-    * Refactor mixins for better integration
+    * Implemented some changes to fix client-server communication

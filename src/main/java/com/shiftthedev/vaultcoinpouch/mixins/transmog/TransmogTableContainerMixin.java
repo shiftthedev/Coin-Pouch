@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.transmog;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.TransmogTableHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.TransmogTableServerHelper;
 import iskallia.vault.container.TransmogTableContainer;
 import iskallia.vault.container.oversized.OverSizedSlotContainer;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +20,7 @@ public abstract class TransmogTableContainerMixin extends OverSizedSlotContainer
     {
         if (VCPConfig.GENERAL.transmogTableEnabled())
         {
-            cir.setReturnValue(TransmogTableHelper.PriceFulfilled(this.copperCost(), this.getSlot(this.internalInventoryIndexRange.getContainerIndex(1)), this.player));
+            cir.setReturnValue(TransmogTableServerHelper.PriceFulfilled(this.copperCost(), this.getSlot(this.internalInventoryIndexRange.getContainerIndex(1)), this.player));
             cir.cancel();
             return;
         }

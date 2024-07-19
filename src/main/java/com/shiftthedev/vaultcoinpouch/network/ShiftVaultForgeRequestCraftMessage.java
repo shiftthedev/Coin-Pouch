@@ -1,6 +1,6 @@
 package com.shiftthedev.vaultcoinpouch.network;
 
-import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.block.entity.base.ForgeRecipeTileEntity;
 import iskallia.vault.config.recipe.ForgeRecipeType;
 import iskallia.vault.container.oversized.OverSizedInventory;

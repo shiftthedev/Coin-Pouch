@@ -1,8 +1,8 @@
 package com.shiftthedev.vaultcoinpouch.mixins.alchemy;
 
+import com.shiftthedev.client_helpers.AlchemyTableClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.AlchemyTableHelper;
-import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.AlchemyCraftSelectorElement;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
@@ -31,12 +31,12 @@ public abstract class AlchemyTableScreenMixin extends AbstractElementContainerSc
     {
         if (VCPConfig.GENERAL.alchemyTableEnabled())
         {
-            craftButton.tooltip((tooltipRenderer, poseStack, mouseX, mouseY, tooltipFlag) -> AlchemyTableHelper.tooltip(this.selectedOption, this.playerInventory, this.getMenu(), tooltipRenderer, poseStack, mouseX, mouseY));
-            craftButton.setDisabled(() -> AlchemyTableHelper.setDisabled_coinpouch(this.getMenu(), this.selectedOption, this.playerInventory));
+            craftButton.tooltip((tooltipRenderer, poseStack, mouseX, mouseY, tooltipFlag) -> AlchemyTableClientHelper.tooltip_coinpouch(this.selectedOption, this.playerInventory, this.getMenu(), tooltipRenderer, poseStack, mouseX, mouseY));
+            craftButton.setDisabled(() -> AlchemyTableClientHelper.setDisabled_coinpouch(this.getMenu(), this.selectedOption, this.playerInventory));
         }
         else
         {
-            craftButton.setDisabled(() -> AlchemyTableHelper.setDisabled_vh(this.getMenu(), this.selectedOption, this.playerInventory));
+            craftButton.setDisabled(() -> AlchemyTableClientHelper.setDisabled_vh(this.getMenu(), this.selectedOption, this.playerInventory));
         }
 
         return craftButton;

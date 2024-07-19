@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.shop;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.ShopPedestalHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ShopPedestalHelper;
 import iskallia.vault.block.ShopPedestalBlock;
 import iskallia.vault.util.InventoryUtil;
 import net.minecraft.world.entity.player.Player;

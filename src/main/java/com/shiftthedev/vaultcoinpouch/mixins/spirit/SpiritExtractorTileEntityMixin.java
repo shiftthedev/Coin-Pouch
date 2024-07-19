@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.spirit;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.SpiritExtractorHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.SpiritExtractorServerHelper;
 import iskallia.vault.block.entity.SpiritExtractorTileEntity;
 import iskallia.vault.container.oversized.OverSizedInventory;
 import net.minecraft.core.BlockPos;
@@ -25,7 +25,7 @@ public abstract class SpiritExtractorTileEntityMixin extends BlockEntity
     {
         if (VCPConfig.GENERAL.spiritExtractorEnabled())
         {
-            return SpiritExtractorHelper.coinsCoverTotalCost(this.paymentInventory, this.getRecoveryCost().getTotalCost(), player);
+            return SpiritExtractorServerHelper.coinsCoverTotalCost(this.paymentInventory, this.getRecoveryCost().getTotalCost(), player);
         }
 
         return this.coinsCoverTotalCost();
@@ -36,7 +36,7 @@ public abstract class SpiritExtractorTileEntityMixin extends BlockEntity
     {
         if (VCPConfig.GENERAL.spiritExtractorEnabled())
         {
-            SpiritExtractorHelper.withdraw(this.recoveryCost, this.paymentInventory, player);
+            SpiritExtractorServerHelper.withdraw(this.recoveryCost, this.paymentInventory, player);
         }
     }
 

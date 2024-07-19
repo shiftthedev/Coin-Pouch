@@ -1,4 +1,4 @@
-package com.shiftthedev.vaultcoinpouch.helpers;
+package com.shiftthedev.client_helpers;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
@@ -20,12 +20,10 @@ import iskallia.vault.skill.expertise.type.JewelExpertise;
 import iskallia.vault.util.MiscUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -37,156 +35,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-public class JewelCuttingStationHelper
+public class JewelCuttingStationClientHelper
 {
-    /**
-     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
-     **/
-    public static void withdraw(VaultJewelCuttingStationContainer container, ServerPlayer player, VaultJewelCuttingConfig.JewelCuttingInput recipeInput)
-    {
-        int bronzeCount = container.getBronzeSlot().getItem().getCount();
-        ItemStack secondInput = recipeInput.getSecondInput();
-        int recipeCount = secondInput.getCount();
-        int remaining = recipeCount - bronzeCount;
-
-        if (remaining <= 0)
-        {
-            return;
-        }
-
-        NonNullList<ItemStack> pouchStacks = NonNullList.create();
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
-        {
-            pouchStacks.add(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack());
-        }
-
-        Iterator it = player.getInventory().items.iterator();
-        int toRemove = 0;
-        while (it.hasNext())
-        {
-            if (remaining <= 0)
-            {
-                break;
-            }
-
-            ItemStack plStack = (ItemStack) it.next();
-            if (VaultJewelCuttingStationTileEntity.canMerge(plStack, secondInput))
-            {
-                toRemove = Math.min(remaining, plStack.getCount());
-                plStack.shrink(toRemove);
-                remaining -= toRemove;
-            }
-
-            if (plStack.is(VCPRegistry.COIN_POUCH))
-            {
-                pouchStacks.add(plStack);
-            }
-        }
-
-        if (remaining <= 0)
-        {
-            return;
-        }
-
-        it = pouchStacks.iterator();
-        while (it.hasNext())
-        {
-            if (remaining <= 0)
-            {
-                break;
-            }
-
-            ItemStack pouchStack = (ItemStack) it.next();
-            toRemove = Math.min(remaining, CoinPouchItem.getCoinCount(pouchStack, secondInput));
-            CoinPouchItem.extractCoins(pouchStack, secondInput, toRemove);
-            remaining -= toRemove;
-        }
-    }
-
-    /**
-     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
-     **/
-    public static boolean canCraft(VaultJewelCuttingStationTileEntity tileEntity, Player player)
-    {
-        VaultJewelCuttingConfig.JewelCuttingOutput output = tileEntity.getRecipeOutput();
-        VaultJewelCuttingConfig.JewelCuttingInput input = tileEntity.getRecipeInput();
-        OverSizedInventory inventory = tileEntity.getInventory();
-
-        if (input == null || output == null)
-        {
-            return false;
-        }
-
-        if (!VaultJewelCuttingStationTileEntity.canMerge(inventory.getItem(0), input.getMainInput()))
-        {
-            return false;
-        }
-        if (inventory.getItem(0).getCount() < input.getMainInput().getCount())
-        {
-            return false;
-        }
-
-        if (!hasGold(input.getSecondInput(), inventory.getItem(1), player))
-        {
-            return false;
-        }
-
-        if (!MiscUtils.canFullyMergeIntoSlot(inventory, 2, output.getMainOutputMatching()))
-        {
-            return false;
-        }
-        if (!MiscUtils.canFullyMergeIntoSlot(inventory, 3, output.getExtraOutput1Matching()))
-        {
-            return false;
-        }
-
-        return MiscUtils.canFullyMergeIntoSlot(inventory, 4, output.getExtraOutput2Matching());
-    }
-
-    /**
-     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
-     **/
-    public static boolean setDisabled_coinpouch(VaultJewelCuttingStationContainer menu, Player player)
-    {
-        if (menu.getTileEntity() != null && !JewelCuttingStationHelper.canCraft(menu.getTileEntity(), player))
-        {
-            return true;
-        }
-        else if (menu.getJewelInputSlot().getItem().getItem() instanceof JewelItem)
-        {
-            VaultGearData data = VaultGearData.read(menu.getJewelInputSlot().getItem());
-            return (Integer) data.getFirstValue(ModGearAttributes.JEWEL_SIZE).orElse(0) <= 10;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    /**
-     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
-     **/
-    public static Object setDisabled_vh(VaultJewelCuttingStationContainer menu)
-    {
-        if (menu.getTileEntity() != null && !menu.getTileEntity().canCraft())
-        {
-            return true;
-        }
-        else if (menu.getJewelInputSlot().getItem().getItem() instanceof JewelItem)
-        {
-            VaultGearData data = VaultGearData.read(menu.getJewelInputSlot().getItem());
-            return (Integer) data.getFirstValue(ModGearAttributes.JEWEL_SIZE).orElse(0) <= 10;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
     /**
      * Called in mixins/JewelCuttingButtonElementMixin
      **/
-    public static List<Component> tooltip(VaultJewelCuttingStationContainer container)
+    public static List<Component> tooltip_coinpouch(VaultJewelCuttingStationContainer container)
     {
         Player player = Minecraft.getInstance().player;
         if (player == null)
@@ -257,7 +111,7 @@ public class JewelCuttingStationHelper
                     tooltip.add(new TextComponent("retaining its current grade."));
                     int usedFreeCuts = !inputItem.getOrCreateTag().contains("freeCuts") ? 0 : inputItem.getOrCreateTag().getInt("freeCuts");
                     int remaining = numberOfFreeCuts - usedFreeCuts;
-                    tooltip.add((new TextComponent("Expertise Cuts: ")).append(addTooltipDots(usedFreeCuts, ChatFormatting.YELLOW)).append(addTooltipDots(remaining, ChatFormatting.GRAY)));
+                    tooltip.add((new TextComponent("Expertise Cuts: ")).append(addTooltipDots_coinpouch(usedFreeCuts, ChatFormatting.YELLOW)).append(addTooltipDots_coinpouch(remaining, ChatFormatting.GRAY)));
                 }
 
                 tooltip.add(TextComponent.EMPTY);
@@ -323,6 +177,89 @@ public class JewelCuttingStationHelper
         }
     }
 
+    /**
+     * Called in mixins/VaultJewelCuttingStationScreenMixin
+     **/
+    public static boolean setDisabled_coinpouch(VaultJewelCuttingStationContainer menu, Player player)
+    {
+        if (menu.getTileEntity() != null && !canCraft_coinpouch(menu.getTileEntity(), player))
+        {
+            return true;
+        }
+        else if (menu.getJewelInputSlot().getItem().getItem() instanceof JewelItem)
+        {
+            VaultGearData data = VaultGearData.read(menu.getJewelInputSlot().getItem());
+            return (Integer) data.getFirstValue(ModGearAttributes.JEWEL_SIZE).orElse(0) <= 10;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Called in mixins/VaultJewelCuttingStationScreenMixin
+     **/
+    public static Object setDisabled_vh(VaultJewelCuttingStationContainer menu)
+    {
+        if (menu.getTileEntity() != null && !menu.getTileEntity().canCraft())
+        {
+            return true;
+        }
+        else if (menu.getJewelInputSlot().getItem().getItem() instanceof JewelItem)
+        {
+            VaultGearData data = VaultGearData.read(menu.getJewelInputSlot().getItem());
+            return (Integer) data.getFirstValue(ModGearAttributes.JEWEL_SIZE).orElse(0) <= 10;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+
+    private static Component addTooltipDots_coinpouch(int amount, ChatFormatting formatting)
+    {
+        return (new TextComponent("⬢ ".repeat(Math.max(0, amount)))).withStyle(formatting);
+    }
+
+    public static boolean canCraft_coinpouch(VaultJewelCuttingStationTileEntity tileEntity, Player player)
+    {
+        VaultJewelCuttingConfig.JewelCuttingOutput output = tileEntity.getRecipeOutput();
+        VaultJewelCuttingConfig.JewelCuttingInput input = tileEntity.getRecipeInput();
+        OverSizedInventory inventory = tileEntity.getInventory();
+
+        if (input == null || output == null)
+        {
+            return false;
+        }
+
+        if (!VaultJewelCuttingStationTileEntity.canMerge(inventory.getItem(0), input.getMainInput()))
+        {
+            return false;
+        }
+        if (inventory.getItem(0).getCount() < input.getMainInput().getCount())
+        {
+            return false;
+        }
+
+        if (!hasGold(input.getSecondInput(), inventory.getItem(1), player))
+        {
+            return false;
+        }
+
+        if (!MiscUtils.canFullyMergeIntoSlot(inventory, 2, output.getMainOutputMatching()))
+        {
+            return false;
+        }
+        if (!MiscUtils.canFullyMergeIntoSlot(inventory, 3, output.getExtraOutput1Matching()))
+        {
+            return false;
+        }
+
+        return MiscUtils.canFullyMergeIntoSlot(inventory, 4, output.getExtraOutput2Matching());
+    }
+
     private static boolean hasGold(ItemStack goldInput, ItemStack goldInventory, Player player)
     {
         int goldMissing = goldInput.getCount();
@@ -364,10 +301,5 @@ public class JewelCuttingStationHelper
         }
 
         return goldMissing <= 0;
-    }
-
-    private static Component addTooltipDots(int amount, ChatFormatting formatting)
-    {
-        return (new TextComponent("⬢ ".repeat(Math.max(0, amount)))).withStyle(formatting);
     }
 }

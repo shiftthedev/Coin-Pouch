@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.alchemy;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.AlchemyTableHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.AlchemyTableServerHelper;
 import iskallia.vault.network.message.AlchemyTableEffectCraftMessage;
 import net.minecraftforge.network.NetworkEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +20,7 @@ public abstract class AlchemyTableEffectCraftMessageMixin
         if (VCPConfig.GENERAL.alchemyTableEnabled())
         {
             NetworkEvent.Context context = (NetworkEvent.Context) contextSupplier.get();
-            context.enqueueWork(() -> AlchemyTableHelper.enqueueWork(context, message));
+            context.enqueueWork(() -> AlchemyTableServerHelper.enqueueWork(context, message));
             context.setPacketHandled(true);
 
             ci.cancel();

@@ -1,8 +1,8 @@
 package com.shiftthedev.vaultcoinpouch.mixins.modifier;
 
+import com.shiftthedev.client_helpers.ModifierWorkbenchClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.ModifierWorkbenchHelper;
-import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
 import iskallia.vault.client.gui.framework.render.spi.ITooltipRendererFactory;
@@ -30,12 +30,12 @@ public abstract class ModifierWorkbenchScreenMixin extends AbstractElementContai
     {
         if (VCPConfig.GENERAL.modifierWorkbenchEnabled())
         {
-            craftButton.tooltip((tooltipRenderer, poseStack, mouseX, mouseY, tooltipFlag) -> ModifierWorkbenchHelper.tooltip(this.getMenu(), this.selectedOption, this.playerInventory, tooltipRenderer, poseStack, mouseX, mouseY));
-            craftButton.setDisabled(() -> ModifierWorkbenchHelper.setDisabled_coinpouch(this.getMenu(), this.selectedOption, this.playerInventory));
+            craftButton.tooltip((tooltipRenderer, poseStack, mouseX, mouseY, tooltipFlag) -> ModifierWorkbenchClientHelper.tooltip(this.getMenu(), this.selectedOption, this.playerInventory, tooltipRenderer, poseStack, mouseX, mouseY));
+            craftButton.setDisabled(() -> ModifierWorkbenchClientHelper.setDisabled_coinpouch(this.getMenu(), this.selectedOption, this.playerInventory));
         }
         else
         {
-            craftButton.setDisabled(() -> ModifierWorkbenchHelper.setDisabled_vh(this.getMenu(), this.selectedOption, this.playerInventory));
+            craftButton.setDisabled(() -> ModifierWorkbenchClientHelper.setDisabled_vh(this.getMenu(), this.selectedOption, this.playerInventory));
         }
 
         return craftButton;

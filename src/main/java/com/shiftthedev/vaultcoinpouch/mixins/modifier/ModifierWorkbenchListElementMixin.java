@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.modifier;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.WorkbenchCraftSelectorElement;
 import iskallia.vault.util.InventoryUtil;
 import net.minecraft.world.entity.player.Inventory;

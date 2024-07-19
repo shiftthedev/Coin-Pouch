@@ -1,4 +1,4 @@
-package com.shiftthedev.vaultcoinpouch.helpers;
+package com.shiftthedev.vaultcoinpouch.server_helpers;
 
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
@@ -23,7 +23,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 import java.util.Iterator;
 import java.util.Set;
 
-public class TransmogTableHelper
+public class TransmogTableServerHelper
 {
     /**
      * Called in mixins/TransmogButtonMessageMixin

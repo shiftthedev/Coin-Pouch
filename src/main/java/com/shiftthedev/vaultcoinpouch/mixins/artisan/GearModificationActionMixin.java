@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.artisan;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.VaultArtisanStationHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.VaultArtisanStationHelper;
 import iskallia.vault.container.VaultArtisanStationContainer;
 import iskallia.vault.gear.modification.GearModification;
 import iskallia.vault.gear.modification.GearModificationAction;

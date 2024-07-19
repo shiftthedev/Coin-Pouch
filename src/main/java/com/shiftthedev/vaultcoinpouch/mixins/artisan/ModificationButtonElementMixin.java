@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.artisan;
 
+import com.shiftthedev.client_helpers.VaultArtisanStationClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.VaultArtisanStationHelper;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.element.ModificationButtonElement;
 import iskallia.vault.client.gui.framework.render.Tooltips;
@@ -25,7 +25,7 @@ public abstract class ModificationButtonElementMixin extends ButtonElement
     {
         if (VCPConfig.GENERAL.vaultArtisanStationEnabled())
         {
-            this.tooltip(Tooltips.multi(() -> VaultArtisanStationHelper.tooltip(container, modification, rand)));
+            this.tooltip(Tooltips.multi(() -> VaultArtisanStationClientHelper.tooltip(container, modification, rand)));
         }
     }
 

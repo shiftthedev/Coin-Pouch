@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.forge;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.ShiftInventoryUtils;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
 import iskallia.vault.block.entity.InscriptionTableTileEntity;
 import iskallia.vault.block.entity.ToolStationTileEntity;

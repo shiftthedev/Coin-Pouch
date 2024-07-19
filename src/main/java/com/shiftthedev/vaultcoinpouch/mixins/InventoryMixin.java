@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins;
 
 import com.shiftthedev.vaultcoinpouch.container.CoinPouchContainer;
-import com.shiftthedev.vaultcoinpouch.helpers.InventoryHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.InventoryHelper;
 import iskallia.vault.block.CoinPileDecorBlock;
 import iskallia.vault.world.data.InventorySnapshotData;
 import net.minecraft.world.entity.player.Inventory;

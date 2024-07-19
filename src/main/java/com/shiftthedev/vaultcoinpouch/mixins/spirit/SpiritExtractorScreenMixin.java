@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.spirit;
 
+import com.shiftthedev.client_helpers.SpiritExtractorClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.SpiritExtractorHelper;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
 import iskallia.vault.client.gui.framework.render.spi.ITooltipRendererFactory;
@@ -27,11 +27,11 @@ public abstract class SpiritExtractorScreenMixin extends AbstractElementContaine
     {
         if (VCPConfig.GENERAL.spiritExtractorEnabled())
         {
-            purchaseButton.setDisabled(() -> SpiritExtractorHelper.setDisabled_coinpouch(this.getMenu(), inventory));
+            purchaseButton.setDisabled(() -> SpiritExtractorClientHelper.setDisabled_coinpouch(this.getMenu(), inventory));
         }
         else
         {
-            purchaseButton.setDisabled(() -> SpiritExtractorHelper.setDisabled_vh(this.getMenu()));
+            purchaseButton.setDisabled(() -> SpiritExtractorClientHelper.setDisabled_vh(this.getMenu()));
         }
 
         return purchaseButton;
@@ -42,7 +42,7 @@ public abstract class SpiritExtractorScreenMixin extends AbstractElementContaine
     {
         if (VCPConfig.GENERAL.spiritExtractorEnabled())
         {
-            cir.setReturnValue(SpiritExtractorHelper.getPurchaseButtonTooltipLines(this.getMenu()));
+            cir.setReturnValue(SpiritExtractorClientHelper.getPurchaseButtonTooltipLines(this.getMenu()));
             return;
         }
     }

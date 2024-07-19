@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.transmog;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.TransmogTableHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.TransmogTableServerHelper;
 import iskallia.vault.network.message.transmog.TransmogButtonMessage;
 import net.minecraftforge.network.NetworkEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +20,7 @@ public class TransmogButtonMessageMixin
         if (VCPConfig.GENERAL.transmogTableEnabled())
         {
             NetworkEvent.Context context = (NetworkEvent.Context) contextSupplier.get();
-            context.enqueueWork(() -> TransmogTableHelper.enqueueWork(context, message));
+            context.enqueueWork(() -> TransmogTableServerHelper.enqueueWork(context, message));
             context.setPacketHandled(true);
 
             ci.cancel();

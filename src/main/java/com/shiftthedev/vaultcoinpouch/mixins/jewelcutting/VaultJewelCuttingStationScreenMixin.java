@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.jewelcutting;
 
+import com.shiftthedev.client_helpers.JewelCuttingStationClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.JewelCuttingStationHelper;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.element.JewelCuttingButtonElement;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
@@ -27,11 +27,11 @@ public abstract class VaultJewelCuttingStationScreenMixin extends AbstractElemen
     {
         if (VCPConfig.GENERAL.jewelCuttingStationEnabled())
         {
-            cutButton.setDisabled(() -> JewelCuttingStationHelper.setDisabled_coinpouch(this.getMenu(), playerInventory.player));
+            cutButton.setDisabled(() -> JewelCuttingStationClientHelper.setDisabled_coinpouch(this.getMenu(), playerInventory.player));
         }
         else
         {
-            cutButton.setDisabled(() -> JewelCuttingStationHelper.setDisabled_vh(this.getMenu()));
+            cutButton.setDisabled(() -> JewelCuttingStationClientHelper.setDisabled_vh(this.getMenu()));
         }
 
         return cutButton;

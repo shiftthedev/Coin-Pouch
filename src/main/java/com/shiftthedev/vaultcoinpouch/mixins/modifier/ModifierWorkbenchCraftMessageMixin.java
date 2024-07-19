@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.modifier;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.helpers.ModifierWorkbenchHelper;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ModifierWorkbenchServerHelper;
 import iskallia.vault.network.message.ModifierWorkbenchCraftMessage;
 import net.minecraftforge.network.NetworkEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +20,7 @@ public abstract class ModifierWorkbenchCraftMessageMixin
         if (VCPConfig.GENERAL.modifierWorkbenchEnabled())
         {
             NetworkEvent.Context context = (NetworkEvent.Context) contextSupplier.get();
-            context.enqueueWork(() -> ModifierWorkbenchHelper.enqueueWork(context, message));
+            context.enqueueWork(() -> ModifierWorkbenchServerHelper.enqueueWork(context, message));
             context.setPacketHandled(true);
 
             ci.cancel();
