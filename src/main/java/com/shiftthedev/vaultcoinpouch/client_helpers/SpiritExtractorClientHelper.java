@@ -1,4 +1,4 @@
-package com.shiftthedev.client_helpers;
+package com.shiftthedev.vaultcoinpouch.client_helpers;
 
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;

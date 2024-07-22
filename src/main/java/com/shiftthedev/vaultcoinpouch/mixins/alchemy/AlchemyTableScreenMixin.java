@@ -1,6 +1,6 @@
 package com.shiftthedev.vaultcoinpouch.mixins.alchemy;
 
-import com.shiftthedev.client_helpers.AlchemyTableClientHelper;
+import com.shiftthedev.vaultcoinpouch.client_helpers.AlchemyTableClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.AlchemyCraftSelectorElement;

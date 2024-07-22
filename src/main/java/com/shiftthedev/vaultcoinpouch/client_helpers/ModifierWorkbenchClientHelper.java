@@ -1,4 +1,4 @@
-package com.shiftthedev.client_helpers;
+package com.shiftthedev.vaultcoinpouch.client_helpers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;

@@ -1,6 +1,6 @@
 package com.shiftthedev.vaultcoinpouch.mixins.modifier;
 
-import com.shiftthedev.client_helpers.ModifierWorkbenchClientHelper;
+import com.shiftthedev.vaultcoinpouch.client_helpers.ModifierWorkbenchClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.client.gui.framework.element.ButtonElement;

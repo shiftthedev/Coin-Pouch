@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins.jewelcutting;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.shiftthedev.client_helpers.JewelCuttingStationClientHelper;
+import com.shiftthedev.vaultcoinpouch.client_helpers.JewelCuttingStationClientHelper;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;

@@ -1,6 +1,6 @@
 package com.shiftthedev.vaultcoinpouch.mixins.jewelcutting;
 
-import com.shiftthedev.client_helpers.JewelCuttingStationClientHelper;
+import com.shiftthedev.vaultcoinpouch.client_helpers.JewelCuttingStationClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.element.JewelCuttingButtonElement;
