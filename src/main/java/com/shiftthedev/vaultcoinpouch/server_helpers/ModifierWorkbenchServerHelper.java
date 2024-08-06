@@ -123,7 +123,7 @@ public class ModifierWorkbenchServerHelper
                     }
                     else
                     {
-                        createdModifier.setCategory(VaultGearModifier.AffixCategory.CRAFTED);
+                        createdModifier.addCategory(VaultGearModifier.AffixCategory.CRAFTED);
                         createdModifier.setGameTimeAdded(player.getLevel().getGameTime());
                         iskallia.vault.gear.crafting.ModifierWorkbenchHelper.removeCraftedModifiers(input);
                         VaultGearData datax = VaultGearData.read(input);

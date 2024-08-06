@@ -59,10 +59,14 @@ public class VaultArtisanStationClientHelper
             }
             else
             {
-                if (hasInput && !inputItem.isEmpty() && !action.modification().canApply(gearStack, inputItem, container.getPlayer(), rand))
+                if (hasInput && !inputItem.isEmpty())
                 {
-                    tooltip.add(action.modification().getInvalidDescription(inputItem));
-                    failedModification = true;
+                    GearModification.Result result = action.modification().canApply(gearStack, inputItem, container.getPlayer(), rand);
+                    if(!result.success())
+                    {
+                        tooltip.add(result.getError(action.modification()));
+                        failedModification = true;
+                    }
                 }
 
                 if (!failedModification && hasInput)

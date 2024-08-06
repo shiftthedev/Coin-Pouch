@@ -131,7 +131,7 @@ public class VaultArtisanStationHelper
         {
             ItemStack gear = container.getGearInputSlot().getItem();
             ItemStack in = inSlot.getItem();
-            if (!in.isEmpty() && !gear.isEmpty())
+            if (!in.isEmpty() && !gear.isEmpty() && modification.getStackFilter().test(in))
             {
                 VaultGearData data = VaultGearData.read(gear);
                 Optional<Integer> potential = data.getFirstValue(ModGearAttributes.CRAFTING_POTENTIAL);
@@ -156,7 +156,7 @@ public class VaultArtisanStationHelper
                     bronzeMissing -= bronze.getCount();
                     if (bronzeMissing <= 0)
                     {
-                        return modification.canApply(gear, in, player, rand);
+                        return modification.canApply(gear, in, player, rand).success();
                     }
 
                     if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
@@ -166,7 +166,7 @@ public class VaultArtisanStationHelper
 
                     if (bronzeMissing <= 0)
                     {
-                        return modification.canApply(gear, in, player, rand);
+                        return modification.canApply(gear, in, player, rand).success();
                     }
 
                     Iterator it = player.getInventory().items.iterator();
@@ -188,7 +188,7 @@ public class VaultArtisanStationHelper
                         }
                     }
 
-                    return bronzeMissing <= 0 && modification.canApply(gear, in, player, rand);
+                    return bronzeMissing <= 0 && modification.canApply(gear, in, player, rand).success();
                     // End of Coin Pouch check
                 }
             }
