@@ -23,6 +23,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -79,12 +80,11 @@ public class ShiftVaultForgeRequestCraftMessage
                 }
 
                 VaultForgeRecipe recipe = null;
-                ForgeRecipeType[] var6 = tile.getSupportedRecipeTypes();
-                int var7 = var6.length;
-
-                for (int var8 = 0; var8 < var7; ++var8)
+                Iterator var6 = tile.getSupportedRecipeTypes().iterator();
+                
+                while(var6.hasNext())
                 {
-                    ForgeRecipeType type = var6[var8];
+                    ForgeRecipeType type = (ForgeRecipeType) var6.next();
                     VaultForgeRecipe found = type.getRecipe(message.recipe);
                     if (found != null && found.canCraft(requester))
                     {
