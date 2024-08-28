@@ -1,8 +1,9 @@
 package com.shiftthedev.vaultcoinpouch.mixins.forge;
 
+import com.shiftthedev.vaultcoinpouch.client.elements.CoinPouchElement;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
+import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.block.entity.InscriptionTableTileEntity;
 import iskallia.vault.block.entity.ToolStationTileEntity;
 import iskallia.vault.block.entity.VaultForgeTileEntity;
@@ -10,6 +11,7 @@ import iskallia.vault.block.entity.base.ForgeRecipeTileEntity;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
 import iskallia.vault.client.gui.framework.render.spi.ITooltipRendererFactory;
 import iskallia.vault.client.gui.framework.screen.AbstractElementContainerScreen;
+import iskallia.vault.client.gui.framework.spatial.Spatials;
 import iskallia.vault.client.gui.screen.block.base.ForgeRecipeContainerScreen;
 import iskallia.vault.container.spi.ForgeRecipeContainer;
 import iskallia.vault.gear.crafting.recipe.VaultForgeRecipe;
@@ -37,6 +39,23 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
 
     @Shadow
     protected abstract int getCraftedLevel();
+
+    @Inject(method = "<init>(Liskallia/vault/container/spi/ForgeRecipeContainer;Lnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/network/chat/Component;II)V", at = @At("TAIL"))
+    private void init_coinpouch(ForgeRecipeContainer container, Inventory inventory, Component title, int height, int width, CallbackInfo ci)
+    {
+        if (((ForgeRecipeContainer) this.menu).getTile() instanceof VaultForgeTileEntity)
+        {
+            this.addElement((CoinPouchElement) (new CoinPouchElement(Spatials.positionXYZ(-15, 104, 20), () -> {
+                return Spatials.positionXY(-8, this.topPos + 14);
+            }, inventory.player)));
+        }
+        else
+        {
+            this.addElement((CoinPouchElement) (new CoinPouchElement(Spatials.positionXYZ(-30, 71, 20), () -> {
+                return Spatials.positionXY(-8, this.topPos + 14);
+            }, inventory.player)));
+        }
+    }
 
     @Inject(method = "getMissingRecipeInputs", at = @At("HEAD"), cancellable = true)
     private void getMissingRecipeInputs_coinpouch(List<ItemStack> inputs, CallbackInfoReturnable<List<ItemStack>> cir)

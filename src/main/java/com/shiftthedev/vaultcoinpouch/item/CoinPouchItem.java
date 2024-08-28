@@ -8,6 +8,8 @@ import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModGearAttributes;
 import iskallia.vault.init.ModItems;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -55,17 +57,27 @@ public class CoinPouchItem extends Item
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level p_41422_, List<Component> tooltip, TooltipFlag p_41424_)
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag p_41424_)
     {
-        super.appendHoverText(stack, p_41422_, tooltip, p_41424_);
+        super.appendHoverText(stack, level, tooltip, p_41424_);
         tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".info").withStyle(ChatFormatting.GRAY));
 
         ItemStack[] contained = getContainedStacks(stack);
 
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".bronze", contained[0].getCount()).withStyle(Style.EMPTY.withColor(14712607)));
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".silver", contained[1].getCount()).withStyle(Style.EMPTY.withColor(12632256)));
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".gold", contained[2].getCount()).withStyle(ChatFormatting.GOLD));
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".platinum", contained[3].getCount()).withStyle(Style.EMPTY.withColor(16119285)));
+        if(Screen.hasShiftDown())
+        {
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".bronze", contained[0].getCount()).withStyle(Style.EMPTY.withColor(14712607)));
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".silver", contained[1].getCount()).withStyle(Style.EMPTY.withColor(12632256)));
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".gold", contained[2].getCount()).withStyle(ChatFormatting.GOLD));
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".platinum", contained[3].getCount()).withStyle(Style.EMPTY.withColor(16119285)));
+        }
+        else
+        {
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".bronze", getCount(contained[0].getCount())).withStyle(Style.EMPTY.withColor(14712607)));
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".silver", getCount(contained[1].getCount())).withStyle(Style.EMPTY.withColor(12632256)));
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".gold", getCount(contained[2].getCount())).withStyle(ChatFormatting.GOLD));
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".platinum", getCount(contained[3].getCount())).withStyle(Style.EMPTY.withColor(16119285)));
+        }
 
         if (!VCPConfig.GENERAL.soulboundEnabled())
         {
@@ -79,6 +91,27 @@ public class CoinPouchItem extends Item
         {
             tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".soulbound").withStyle(ChatFormatting.GRAY));
         }
+    }
+    
+    @OnlyIn(Dist.CLIENT)
+    private String getCount(int count)
+    {
+        if(count > 1000000000)
+        {
+            return Math.floorDiv(count, 1000000000) + "B";
+        }
+
+        if(count > 1000000)
+        {
+            return Math.floorDiv(count, 1000000) + "M";
+        }
+
+        if(count > 1000)
+        {
+            return Math.floorDiv(count, 1000) + "K";
+        }
+        
+        return String.valueOf(count);
     }
 
     public static int getCoinCount(ItemStack pouch)
@@ -406,9 +439,9 @@ public class CoinPouchItem extends Item
         {
             return switch (slot)
             {
-                case 0 -> 2147483582;
-                case 1 -> 238609286;
-                case 2 -> 26512142;
+                case 0 -> 2147483097;
+                case 1 -> 238609233;
+                case 2 -> 26512137;
                 case 3 -> 2945793;
                 default -> 0;
             };
