@@ -1,6 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins;
 
 import com.shiftthedev.vaultcoinpouch.network.ConfigSyncMessage;
+import com.shiftthedev.vaultcoinpouch.network.KeyPressMessage;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
 import iskallia.vault.init.ModNetwork;
 import net.minecraftforge.network.NetworkDirection;
@@ -27,5 +28,7 @@ public abstract class ModNetworkMixin
         CHANNEL.registerMessage(ModNetwork.nextId(), ShiftVaultForgeRequestCraftMessage.class, ShiftVaultForgeRequestCraftMessage::encode, ShiftVaultForgeRequestCraftMessage::decode, ShiftVaultForgeRequestCraftMessage::handle);
 
         CHANNEL.registerMessage(ModNetwork.nextId(), ConfigSyncMessage.class, ConfigSyncMessage::encode, ConfigSyncMessage::decode, ConfigSyncMessage::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    
+        CHANNEL.registerMessage(ModNetwork.nextId(), KeyPressMessage.class, KeyPressMessage::encode, KeyPressMessage::decode, KeyPressMessage::handle);
     }
 }

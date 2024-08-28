@@ -34,7 +34,9 @@ public class VaultCoinPouch
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::imc);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::registerCommand);
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::registerClientCommand));
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::registerClientCommand);
+        });
     }
 
     private void setup(final FMLCommonSetupEvent event)
