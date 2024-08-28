@@ -1,11 +1,13 @@
 package com.shiftthedev.vaultcoinpouch.mixins.spirit;
 
+import com.shiftthedev.vaultcoinpouch.client.elements.CoinPouchElement;
 import com.shiftthedev.vaultcoinpouch.client_helpers.SpiritExtractorClientHelper;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import iskallia.vault.client.gui.framework.element.ButtonElement;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
 import iskallia.vault.client.gui.framework.render.spi.ITooltipRendererFactory;
 import iskallia.vault.client.gui.framework.screen.AbstractElementContainerScreen;
+import iskallia.vault.client.gui.framework.spatial.Spatials;
 import iskallia.vault.client.gui.screen.block.SpiritExtractorScreen;
 import iskallia.vault.container.SpiritExtractorContainer;
 import net.minecraft.network.chat.Component;
@@ -14,6 +16,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
@@ -22,6 +25,14 @@ import java.util.function.Supplier;
 @Mixin(value = SpiritExtractorScreen.class, remap = false, priority = 1100)
 public abstract class SpiritExtractorScreenMixin extends AbstractElementContainerScreen<SpiritExtractorContainer>
 {
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void init_coinpouch(SpiritExtractorContainer container, Inventory inventory, Component title, CallbackInfo ci)
+    {
+        this.addElement((CoinPouchElement) (new CoinPouchElement(Spatials.positionXYZ(-30, 80, 20), () -> {
+            return Spatials.positionXY(-8, this.topPos + 14);
+        }, inventory.player)));
+    }
+    
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Liskallia/vault/client/gui/framework/element/ButtonElement;setDisabled(Ljava/util/function/Supplier;)Liskallia/vault/client/gui/framework/element/ButtonElement;", ordinal = 1))
     private ButtonElement purchaseButton_coinpouch(ButtonElement purchaseButton, Supplier<Boolean> disabled, SpiritExtractorContainer container, Inventory inventory, Component title)
     {
