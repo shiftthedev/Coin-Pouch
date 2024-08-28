@@ -11,10 +11,12 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import top.theillusivec4.curios.api.CuriosApi;
 
 public class CoinPouchContainer extends OverSizedSlotContainer
 {
     private final int pouchSlot;
+    private final boolean fromCurios;
     private final Inventory inventory;
 
     public CoinPouchContainer(int id, Inventory playerInventory, int pouchSlot)
@@ -22,13 +24,31 @@ public class CoinPouchContainer extends OverSizedSlotContainer
         super(VCPRegistry.COIN_POUCH_CONTAINER, id, playerInventory.player);
         this.inventory = playerInventory;
         this.pouchSlot = pouchSlot;
-        if (this.hasPouch())
+        this.fromCurios = pouchSlot == -1;
+        
+        if (this.hasPouch(playerInventory.player))
         {
             playerInventory.player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(playerHandler -> {
-                ItemStack pouch = this.inventory.getItem(this.pouchSlot);
+
+                ItemStack pouch = ItemStack.EMPTY;
+                if (this.fromCurios)
+                {
+                    pouch = CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).get().stack();
+                }
+                else
+                {
+                    pouch = this.inventory.getItem(this.pouchSlot);
+                }
+
+                if (pouch.isEmpty())
+                {
+                    return;
+                }
+
                 pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(pouchHandler -> {
                     this.initSlots(playerHandler, pouchHandler);
                 });
+
             });
         }
     }
@@ -63,18 +83,23 @@ public class CoinPouchContainer extends OverSizedSlotContainer
     }
 
     @Override
-    public boolean stillValid(Player p_38874_)
+    public boolean stillValid(Player player)
     {
-        return this.hasPouch();
+        return this.hasPouch(player);
     }
 
     public boolean canAccess(int slot, ItemStack slotStack)
     {
-        return this.hasPouch() && !(slotStack.getItem() instanceof CoinPouchItem);
+        return !(slotStack.getItem() instanceof CoinPouchItem);
     }
 
-    public boolean hasPouch()
+    public boolean hasPouch(Player player)
     {
+        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        {
+            return true;
+        }
+            
         ItemStack pouchStack = this.inventory.getItem(this.pouchSlot);
         return !pouchStack.isEmpty() && pouchStack.getItem() instanceof CoinPouchItem;
     }
