@@ -183,7 +183,7 @@ public class ShopPedestalHelper
         return priceValue;
     }
 
-    private static Optional<ShiftCoinDefinition> getCoinDefinition(Item coin)
+    public static Optional<ShiftCoinDefinition> getCoinDefinition(Item coin)
     {
         if (COIN_DEFINITIONS == null)
         {
