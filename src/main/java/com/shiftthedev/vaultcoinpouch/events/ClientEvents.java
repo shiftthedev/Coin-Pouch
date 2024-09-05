@@ -22,6 +22,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.function.BiFunction;
 
@@ -82,6 +83,11 @@ public class ClientEvents
                 }
 
                 int slot = getPouchSlot(player.getInventory());
+                if (slot == -1 && !CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+                {
+                    return;
+                }
+
                 ModNetwork.CHANNEL.sendToServer(new KeyPressMessage(slot));
             }
         }

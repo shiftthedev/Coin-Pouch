@@ -254,6 +254,27 @@ public class VCPConfigScreen extends Screen
                             getTooltipY(p_93756_));
                 })
         );
+
+        // LINE 6
+        y += widgetHeight + padding;
+
+        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs.vaultcoinpouch.paradoxDoorInteraction.name", VCPConfig.GENERAL.paradoxDoorsEnabled() ? "ON" : "OFF"),
+                button -> {
+                    VCPConfig.GENERAL.cycleParadoxDoors();
+                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.paradoxDoorInteraction.name", VCPConfig.GENERAL.paradoxDoorsEnabled() ? "ON" : "OFF"));
+                },
+                (button, poseStack, p_93755_, p_93756_) ->
+                {
+                    VCPConfigScreen.this.renderTooltip(
+                            poseStack,
+                            VCPConfigScreen.this.minecraft.font.split(
+                                    new TranslatableComponent("configs.vaultcoinpouch.paradoxDoorInteraction.tooltip"),
+                                    Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
+                            getTooltipX(p_93755_),
+                            getTooltipY(p_93756_));
+                })
+        );
     }
 
     private void init_footer()

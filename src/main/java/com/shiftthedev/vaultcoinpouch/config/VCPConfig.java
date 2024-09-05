@@ -109,6 +109,7 @@ public class VCPConfig
         private ForgeConfigSpec.ConfigValue<Boolean> vaultArtisanStationInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> jewelCuttingStationInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> spiritExtractorInteraction;
+        private ForgeConfigSpec.ConfigValue<Boolean> paradoxDoorInteraction;
 
         public General(ForgeConfigSpec.Builder builder)
         {
@@ -157,6 +158,10 @@ public class VCPConfig
             this.spiritExtractorInteraction = builder
                     .comment("Enable / Disable interaction with Spirit Extractor without taking coins out of the pouch.")
                     .define("spiritExtractorInteraction", true);
+            
+            this.paradoxDoorInteraction = builder
+                    .comment("Enable / Disable interaction with Paradox Doors without taking coins out of the pouch.")
+                    .define("paradoxDoorInteraction", true);
 
             builder.pop();
         }
@@ -185,6 +190,8 @@ public class VCPConfig
         public boolean jewelCuttingStationEnabled() {return this.jewelCuttingStationInteraction.get();}
 
         public boolean spiritExtractorEnabled() {return this.spiritExtractorInteraction.get();}
+        
+        public boolean paradoxDoorsEnabled() {return this.paradoxDoorInteraction.get();}
 
         public void cycleSoulbound()
         {
@@ -239,6 +246,11 @@ public class VCPConfig
         public void cycleSpiritExtractor()
         {
             this.spiritExtractorInteraction.set(!this.spiritExtractorInteraction.get());
+        }
+        
+        public void cycleParadoxDoors()
+        {
+            this.paradoxDoorInteraction.set(!this.paradoxDoorInteraction.get());
         }
     }
 }

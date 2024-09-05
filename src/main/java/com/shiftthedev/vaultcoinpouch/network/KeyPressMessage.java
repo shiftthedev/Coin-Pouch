@@ -33,7 +33,6 @@ public class KeyPressMessage
     
     public static void handle(KeyPressMessage packet, Supplier<NetworkEvent.Context> contextSupplier)
     {
-        ServerPlayer player = contextSupplier.get().getSender();
         contextSupplier.get().enqueueWork(() -> enqueueWork(packet, contextSupplier));
         contextSupplier.get().setPacketHandled(true);
     }

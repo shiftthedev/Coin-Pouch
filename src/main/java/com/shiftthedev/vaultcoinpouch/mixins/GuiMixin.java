@@ -17,6 +17,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -59,8 +61,8 @@ public abstract class GuiMixin
             {
                 if (this.minecraft.hitResult.getType() == HitResult.Type.BLOCK)
                 {
-                    BlockPos blockPos = new BlockPos(this.minecraft.hitResult.getLocation().x, this.minecraft.hitResult.getLocation().y, this.minecraft.hitResult.getLocation().z);
-                    if (this.minecraft.level.getBlockState(blockPos).is(ModBlocks.SHOP_PEDESTAL) && this.minecraft.level.getBlockState(blockPos).getValue(ShopPedestalBlock.ACTIVE))
+                    BlockPos blockPos = ((BlockHitResult) this.minecraft.hitResult).getBlockPos();
+                    if (isValidTarget(blockPos))
                     {
                         int count = getCoinsCount(GoldStack);
 
@@ -89,14 +91,17 @@ public abstract class GuiMixin
         }
     }
 
+    private boolean isValidTarget(BlockPos blockPos) 
+    {
+        BlockState blockState = this.minecraft.level.getBlockState(blockPos);
+        return (blockState.is(ModBlocks.SHOP_PEDESTAL) && this.minecraft.level.getBlockState(blockPos).getValue(ShopPedestalBlock.ACTIVE)) 
+                || blockState.is(ModBlocks.GATE_LOCK);
+    }
+
     private int getCoinsCount(ItemStack coinType)
     {
         Player player = this.minecraft.player;
         int count = 0;
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
-        {
-            count += CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), coinType);
-        }
 
         Iterator it = InventoryUtil.findAllItems(player).iterator();
         while(it.hasNext())

@@ -25,32 +25,34 @@ public class CoinPouchContainer extends OverSizedSlotContainer
         this.inventory = playerInventory;
         this.pouchSlot = pouchSlot;
         this.fromCurios = pouchSlot == -1;
-        
-        if (this.hasPouch(playerInventory.player))
+
+        if (!this.hasPouch(playerInventory.player))
         {
-            playerInventory.player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(playerHandler -> {
-
-                ItemStack pouch = ItemStack.EMPTY;
-                if (this.fromCurios)
-                {
-                    pouch = CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).get().stack();
-                }
-                else
-                {
-                    pouch = this.inventory.getItem(this.pouchSlot);
-                }
-
-                if (pouch.isEmpty())
-                {
-                    return;
-                }
-
-                pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(pouchHandler -> {
-                    this.initSlots(playerHandler, pouchHandler);
-                });
-
-            });
+            return;
         }
+
+        playerInventory.player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(playerHandler -> {
+
+            ItemStack pouch = ItemStack.EMPTY;
+            if (this.fromCurios)
+            {
+                pouch = CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).get().stack();
+            }
+            else
+            {
+                pouch = this.inventory.getItem(this.pouchSlot);
+            }
+
+            if (pouch.isEmpty())
+            {
+                return;
+            }
+
+            pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(pouchHandler -> {
+                this.initSlots(playerHandler, pouchHandler);
+            });
+
+        });
     }
 
     private void initSlots(IItemHandler playerHandler, final IItemHandler pouchHandler)
@@ -99,7 +101,12 @@ public class CoinPouchContainer extends OverSizedSlotContainer
         {
             return true;
         }
-            
+
+        if (this.pouchSlot == -1)
+        {
+            return false;
+        }
+
         ItemStack pouchStack = this.inventory.getItem(this.pouchSlot);
         return !pouchStack.isEmpty() && pouchStack.getItem() instanceof CoinPouchItem;
     }

@@ -4,6 +4,7 @@ import com.shiftthedev.vaultcoinpouch.client.elements.CoinPouchElement;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
+import iskallia.vault.block.entity.CatalystInfusionTableTileEntity;
 import iskallia.vault.block.entity.InscriptionTableTileEntity;
 import iskallia.vault.block.entity.ToolStationTileEntity;
 import iskallia.vault.block.entity.VaultForgeTileEntity;
@@ -49,7 +50,7 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
                 return Spatials.positionXY(-8, this.topPos + 14);
             }, inventory.player)));
         }
-        else
+        else if (!(((ForgeRecipeContainer) this.menu).getTile() instanceof CatalystInfusionTableTileEntity))
         {
             this.addElement((CoinPouchElement) (new CoinPouchElement(Spatials.positionXYZ(-30, 71, 20), () -> {
                 return Spatials.positionXY(-8, this.topPos + 14);
