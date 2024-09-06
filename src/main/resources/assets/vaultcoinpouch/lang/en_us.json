@@ -53,6 +53,6 @@
   "configs.vaultcoinpouch.spiritExtractorInteraction.name": "Spirit Extractor: %s",
   "configs.vaultcoinpouch.spiritExtractorInteraction.tooltip": "Enable / Disable interaction with §6Spirit§r §6Extractor§r §rwithout taking coins out of the pouch.",
 
-  "configs.vaultcoinpouch.paradoxDoorInteraction.name": "Spirit Extractor: %s",
+  "configs.vaultcoinpouch.paradoxDoorInteraction.name": "Paradox Doors: %s",
   "configs.vaultcoinpouch.paradoxDoorInteraction.tooltip": "Enable / Disable interaction with §6Paradox§r §6Doors§r §rwithout taking coins out of the pouch."
 }

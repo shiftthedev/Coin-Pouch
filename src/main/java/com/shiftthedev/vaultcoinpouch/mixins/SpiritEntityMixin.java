@@ -15,11 +15,14 @@ public class SpiritEntityMixin
     @Inject(method = "shouldAddItem", at = @At("HEAD"), cancellable = true)
     private static void shouldAddItem_coinpouch(ItemStack stack, CallbackInfoReturnable<Boolean> cir)
     {
-        if (stack.is(VCPRegistry.COIN_POUCH) && !VCPConfig.GENERAL.soulboundEnabled())
+        if(!VCPConfig.GENERAL.soulboundEnabled())
         {
-            cir.setReturnValue(false);
-            cir.cancel();
-            return;
+            if (stack.is(VCPRegistry.COIN_POUCH))
+            {
+                cir.setReturnValue(true);
+                cir.cancel();
+                return;
+            }
         }
     }
 }
