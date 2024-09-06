@@ -2,7 +2,6 @@ package com.shiftthedev.vaultcoinpouch.server_helpers;
 
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
-import iskallia.vault.block.entity.SpiritExtractorTileEntity;
 import iskallia.vault.container.oversized.OverSizedInventory;
 import iskallia.vault.init.ModBlocks;
 import net.minecraft.core.NonNullList;
@@ -17,19 +16,19 @@ public class SpiritExtractorServerHelper
     /**
      * Called in mixins/SpiritExtractorTileEntityMixin
      **/
-    public static void withdraw(SpiritExtractorTileEntity.RecoveryCost recoveryCost, OverSizedInventory paymentInventory, Player player)
+    public static void withdraw_coinpouch(ItemStack costStack, OverSizedInventory paymentInventory, int slotIndex, Player player)
     {
-        int coinsRemaining = recoveryCost.getTotalCost().getCount();
-        coinsRemaining -= paymentInventory.getItem(0).getCount();
+        int coinsInSlot = paymentInventory.getItem(slotIndex).getCount();
+        int coinsRemaining = costStack.getCount();
+        coinsRemaining -= coinsInSlot;
 
+        paymentInventory.setItem(slotIndex, ItemStack.EMPTY);
         if (coinsRemaining <= 0)
         {
             return;
         }
 
-        ItemStack costStack = recoveryCost.getTotalCost();
-        int deductedAmount;
-
+        int deductedAmount = 0;
         if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
         {
             ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
@@ -84,6 +83,13 @@ public class SpiritExtractorServerHelper
             CoinPouchItem.extractCoins(pouchStack, costStack, deductedAmount);
             coinsRemaining -= deductedAmount;
         }
+    }
+    /**
+     * Called in mixins/SpiritExtractorTileEntityMixin
+     **/
+    public static void withdraw_vh(OverSizedInventory paymentInventory, int slotIndex)
+    {
+        paymentInventory.setItem(slotIndex, ItemStack.EMPTY);
     }
 
     /**
