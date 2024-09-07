@@ -4,7 +4,6 @@ import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.block.entity.VaultJewelCuttingStationTileEntity;
 import iskallia.vault.config.VaultJewelCuttingConfig;
-import iskallia.vault.container.VaultJewelCuttingStationContainer;
 import iskallia.vault.container.oversized.OverSizedInventory;
 import iskallia.vault.util.MiscUtils;
 import net.minecraft.core.NonNullList;
@@ -19,13 +18,10 @@ public class JewelCuttingStationServerHelper
     /**
      * Called in mixins/VaultJewelCuttingStationTileEntityMixin
      **/
-    public static void withdraw(VaultJewelCuttingStationContainer container, ServerPlayer player, VaultJewelCuttingConfig.JewelCuttingInput recipeInput)
+    public static void withdraw_coinpouch(ItemStack bronzeStack, int cost, ItemStack secondInput, ServerPlayer player)
     {
-        int bronzeCount = container.getBronzeSlot().getItem().getCount();
-        ItemStack secondInput = recipeInput.getSecondInput();
-        int recipeCount = secondInput.getCount();
-        int remaining = recipeCount - bronzeCount;
-
+        int remaining = cost - bronzeStack.getCount();
+        bronzeStack.shrink(cost);
         if (remaining <= 0)
         {
             return;
@@ -78,6 +74,14 @@ public class JewelCuttingStationServerHelper
             CoinPouchItem.extractCoins(pouchStack, secondInput, toRemove);
             remaining -= toRemove;
         }
+    }
+
+    /**
+     * Called in mixins/VaultJewelCuttingStationTileEntityMixin
+     **/
+    public static void withdraw_vh(ItemStack bronzeStack, int cost)
+    {
+        bronzeStack.shrink(cost);
     }
 
     /**
