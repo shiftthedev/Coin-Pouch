@@ -17,10 +17,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(value = VaultJewelCuttingStationTileEntity.class, remap = false, priority = 1100)
+@Mixin(value = VaultJewelCuttingStationTileEntity.class, priority = 1100)
 public abstract class VaultJewelCuttingStationTileEntityMixin extends BlockEntity implements MenuProvider
 {
-    @Redirect(method = "cutJewel", at = @At(value = "INVOKE", target = "Liskallia/vault/block/entity/VaultJewelCuttingStationTileEntity;canCraft()Z"))
+    @Redirect(method = "cutJewel", at = @At(value = "INVOKE", target = "Liskallia/vault/block/entity/VaultJewelCuttingStationTileEntity;canCraft()Z"), remap = false)
     private boolean cutJewel_canCraft_coinpouch(VaultJewelCuttingStationTileEntity tile, VaultJewelCuttingStationContainer container, ServerPlayer player)
     {
         if (VCPConfig.GENERAL.jewelCuttingStationEnabled())
@@ -31,7 +31,7 @@ public abstract class VaultJewelCuttingStationTileEntityMixin extends BlockEntit
         return this.canCraft();
     }
 
-    @Redirect(method = "cutJewel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V", ordinal = 1))
+    @Redirect(method = "cutJewel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V", ordinal = 1), remap = true)
     private void cutJewel_shrink_coinpouch(ItemStack instance, int cost, VaultJewelCuttingStationContainer container, ServerPlayer player)
     {
         if (VCPConfig.GENERAL.jewelCuttingStationEnabled())
