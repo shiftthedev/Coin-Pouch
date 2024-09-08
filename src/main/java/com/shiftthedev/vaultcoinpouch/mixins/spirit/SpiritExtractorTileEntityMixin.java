@@ -16,10 +16,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(value = SpiritExtractorTileEntity.class, remap = false, priority = 1100)
+@Mixin(value = SpiritExtractorTileEntity.class, priority = 1100)
 public abstract class SpiritExtractorTileEntityMixin extends BlockEntity
 {
-    @Redirect(method = "spewItems", at = @At(value = "INVOKE", target = "Liskallia/vault/block/entity/SpiritExtractorTileEntity;coinsCoverTotalCost()Z"))
+    @Redirect(method = "spewItems", at = @At(value = "INVOKE", target = "Liskallia/vault/block/entity/SpiritExtractorTileEntity;coinsCoverTotalCost()Z"), remap = false)
     private boolean spewItems_coinsCoverTotalCost_coinpouch(SpiritExtractorTileEntity tile, Player player)
     {
         if (VCPConfig.GENERAL.spiritExtractorEnabled())
@@ -30,7 +30,7 @@ public abstract class SpiritExtractorTileEntityMixin extends BlockEntity
         return this.coinsCoverTotalCost();
     }
 
-    @Redirect(method = "spewItems", at = @At(value = "INVOKE", target = "Liskallia/vault/container/oversized/OverSizedInventory;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
+    @Redirect(method = "spewItems", at = @At(value = "INVOKE", target = "Liskallia/vault/container/oversized/OverSizedInventory;setItem(ILnet/minecraft/world/item/ItemStack;)V"), remap = true)
     private void spewItems_setItem_coinpouch(OverSizedInventory instance, int pIndex, ItemStack pStack, Player player)
     {
         if (VCPConfig.GENERAL.spiritExtractorEnabled())
