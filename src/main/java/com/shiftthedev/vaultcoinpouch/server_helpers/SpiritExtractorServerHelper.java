@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SpiritExtractorServerHelper
 {
@@ -29,11 +30,13 @@ public class SpiritExtractorServerHelper
         }
 
         int deductedAmount = 0;
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if(!curiosStack.get().isEmpty())
         {
-            ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
-            deductedAmount = Math.min(coinsRemaining, CoinPouchItem.getCoinCount(pouchStack, costStack));
-            CoinPouchItem.extractCoins(pouchStack, costStack, deductedAmount);
+            deductedAmount = Math.min(coinsRemaining, CoinPouchItem.getCoinCount(curiosStack.get(), costStack));
+            CoinPouchItem.extractCoins(curiosStack.get(), costStack, deductedAmount);
             coinsRemaining -= deductedAmount;
         }
 
@@ -120,10 +123,11 @@ public class SpiritExtractorServerHelper
             return true;
         }
 
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if(!curiosStack.get().isEmpty())
         {
-            ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
-            toRemove = Math.min(totalCost, CoinPouchItem.getCoinCount(pouchStack, costStack));
+            toRemove = Math.min(totalCost, CoinPouchItem.getCoinCount(curiosStack.get(), costStack));
             totalCost -= toRemove;
         }
 

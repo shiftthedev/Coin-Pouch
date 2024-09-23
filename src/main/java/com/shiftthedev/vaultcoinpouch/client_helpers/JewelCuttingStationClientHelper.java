@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class JewelCuttingStationClientHelper
 {
@@ -62,7 +63,7 @@ public class JewelCuttingStationClientHelper
             List<Component> tooltip = new ArrayList();
             VaultJewelCuttingConfig.JewelCuttingInput input = container.getTileEntity().getRecipeInput();
             VaultJewelCuttingConfig.JewelCuttingRange range = container.getTileEntity().getJewelCuttingRange();
-            float chance = container.getTileEntity().getJewelCuttingModifierRemovalChance();
+            //float chance = container.getTileEntity().getJewelCuttingModifierRemovalChance();
             int numberOfFreeCuts = 0;
             Iterator var14 = ClientExpertiseData.getLearnedTalentNodes().iterator();
 
@@ -124,9 +125,12 @@ public class JewelCuttingStationClientHelper
 
                 // Coin Pouch check
                 int goldMAmount = bronze.getCount();
-                if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+
+                AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+                CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+                if (!curiosStack.get().isEmpty())
                 {
-                    goldMAmount += CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), input.getSecondInput());
+                    goldMAmount += CoinPouchItem.getCoinCount(curiosStack.get(), input.getSecondInput());
                 }
 
                 Iterator it = container.getPlayer().getInventory().items.iterator();
@@ -295,9 +299,11 @@ public class JewelCuttingStationClientHelper
             }
         }
 
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if (!curiosStack.get().isEmpty())
         {
-            goldMissing -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), goldInput);
+            goldMissing -= CoinPouchItem.getCoinCount(curiosStack.get(), goldInput);
         }
 
         return goldMissing <= 0;

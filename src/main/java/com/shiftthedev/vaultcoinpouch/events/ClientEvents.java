@@ -6,7 +6,7 @@ import com.shiftthedev.vaultcoinpouch.client.KeyBindings;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfigScreen;
 import com.shiftthedev.vaultcoinpouch.container.CoinPouchScreen;
 import com.shiftthedev.vaultcoinpouch.network.KeyPressMessage;
-import iskallia.vault.init.ModNetwork;
+import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
@@ -88,7 +88,7 @@ public class ClientEvents
                     return;
                 }
 
-                ModNetwork.CHANNEL.sendToServer(new KeyPressMessage(slot));
+                NetworkManager.CHANNEL.sendToServer(new KeyPressMessage(slot));
             }
         }
 

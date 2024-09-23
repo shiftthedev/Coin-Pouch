@@ -2,6 +2,7 @@ package com.shiftthedev.vaultcoinpouch.events;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
+import iskallia.vault.gear.attribute.type.VaultGearAttributeTypeMerger;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.init.ModGearAttributes;
 import iskallia.vault.init.ModItems;
@@ -23,16 +24,20 @@ public class AnvilEvents
         {
             if (event.getLeft().getItem() instanceof CoinPouchItem)
             {
-                if (event.getRight().getItem() == ModItems.ECHO_POG)
+                ItemStack right = event.getRight();
+                if (right.getItem() == ModItems.JEWEL)
                 {
-                    ItemStack result = event.getLeft().copy();
-                    AttributeGearData data = AttributeGearData.empty();
-                    data.updateAttribute(ModGearAttributes.SOULBOUND, true);
-                    data.write(result);
+                    if(AttributeGearData.hasData(right) && AttributeGearData.read(right).get(ModGearAttributes.SOULBOUND, VaultGearAttributeTypeMerger.anyTrue()))
+                    {
+                        ItemStack result = event.getLeft().copy();
+                        AttributeGearData data = AttributeGearData.empty();
+                        data.updateAttribute(ModGearAttributes.SOULBOUND, true);
+                        data.write(result);
 
-                    event.setOutput(result);
-                    event.setCost(10);
-                    event.setMaterialCost(1);
+                        event.setOutput(result);
+                        event.setCost(10);
+                        event.setMaterialCost(1);
+                    }
                 }
             }
         }

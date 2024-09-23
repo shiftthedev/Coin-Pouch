@@ -2,6 +2,7 @@ package com.shiftthedev.vaultcoinpouch.mixins.forge;
 
 import com.shiftthedev.vaultcoinpouch.client.elements.CoinPouchElement;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
+import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
 import iskallia.vault.block.entity.CatalystInfusionTableTileEntity;
@@ -16,7 +17,6 @@ import iskallia.vault.client.gui.framework.spatial.Spatials;
 import iskallia.vault.client.gui.screen.block.base.ForgeRecipeContainerScreen;
 import iskallia.vault.container.spi.ForgeRecipeContainer;
 import iskallia.vault.gear.crafting.recipe.VaultForgeRecipe;
-import iskallia.vault.init.ModNetwork;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -99,19 +99,19 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
             {
                 if (tile instanceof VaultForgeTileEntity && VCPConfig.GENERAL.vaultForgeEnabled())
                 {
-                    ModNetwork.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
+                    NetworkManager.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
                     ci.cancel();
                     return;
                 }
                 else if (tile instanceof ToolStationTileEntity && VCPConfig.GENERAL.toolStationEnabled())
                 {
-                    ModNetwork.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
+                    NetworkManager.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
                     ci.cancel();
                     return;
                 }
                 else if (tile instanceof InscriptionTableTileEntity && VCPConfig.GENERAL.inscriptionTableEnabled())
                 {
-                    ModNetwork.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
+                    NetworkManager.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
                     ci.cancel();
                     return;
                 }
