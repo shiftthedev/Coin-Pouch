@@ -10,6 +10,7 @@ import net.minecraftforge.items.IItemHandler;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class InventoryHelper
 {
@@ -17,9 +18,11 @@ public class InventoryHelper
     {
         ItemStack pouchStack = ItemStack.EMPTY;
 
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if(!curiosStack.get().isEmpty())
         {
-            pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
+            pouchStack = curiosStack.get();
         }
         else
         {

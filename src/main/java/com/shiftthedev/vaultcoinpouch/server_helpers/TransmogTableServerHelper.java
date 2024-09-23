@@ -22,6 +22,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TransmogTableServerHelper
 {
@@ -61,11 +62,12 @@ public class TransmogTableServerHelper
                 copperCost -= deductedAmount;
                 if (copperCost > 0)
                 {
-                    if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+                    AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+                    CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+                    if(!curiosStack.get().isEmpty())
                     {
-                        ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
-                        deductedAmount = Math.min(copperCost, CoinPouchItem.getCoinCount(pouchStack));
-                        CoinPouchItem.extractCoins(pouchStack, deductedAmount);
+                        deductedAmount = Math.min(copperCost, CoinPouchItem.getCoinCount(curiosStack.get()));
+                        CoinPouchItem.extractCoins(curiosStack.get(), deductedAmount);
                         copperCost -= deductedAmount;
                     }
                 }
@@ -138,9 +140,11 @@ public class TransmogTableServerHelper
             return true;
         }
 
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if(!curiosStack.get().isEmpty())
         {
-            remaining -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack());
+            remaining -= CoinPouchItem.getCoinCount(curiosStack.get());
         }
 
         if (remaining <= 0)

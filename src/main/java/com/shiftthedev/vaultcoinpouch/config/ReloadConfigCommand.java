@@ -3,7 +3,7 @@ package com.shiftthedev.vaultcoinpouch.config;
 import com.mojang.brigadier.CommandDispatcher;
 import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
 import com.shiftthedev.vaultcoinpouch.network.ConfigSyncMessage;
-import iskallia.vault.init.ModNetwork;
+import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;
@@ -31,7 +31,7 @@ public class ReloadConfigCommand
         {
             VCPConfig.reloadConfig();
             VaultCoinPouch.LOGGER.info("Syncing reloaded configs to all players");
-            ModNetwork.CHANNEL.send(PacketDistributor.ALL.noArg(), new ConfigSyncMessage(VCPConfig.GENERAL));
+            NetworkManager.CHANNEL.send(PacketDistributor.ALL.noArg(), new ConfigSyncMessage(VCPConfig.GENERAL));
         }
         else
         {

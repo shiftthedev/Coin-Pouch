@@ -81,8 +81,8 @@ public class ShiftVaultForgeRequestCraftMessage
 
                 VaultForgeRecipe recipe = null;
                 Iterator var6 = tile.getSupportedRecipeTypes().iterator();
-                
-                while(var6.hasNext())
+
+                while (var6.hasNext())
                 {
                     ForgeRecipeType type = (ForgeRecipeType) var6.next();
                     VaultForgeRecipe found = type.getRecipe(message.recipe);

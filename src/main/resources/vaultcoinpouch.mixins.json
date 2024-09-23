@@ -6,7 +6,6 @@
   "refmap" : "vaultcoinpouch.refmap.json",
   "mixins" : [
     "InventoryMixin",
-    "ModNetworkMixin",
     "SpiritEntityMixin",
     "alchemy.AlchemyTableEffectCraftMessageAccessor",
     "alchemy.AlchemyTableEffectCraftMessageMixin",

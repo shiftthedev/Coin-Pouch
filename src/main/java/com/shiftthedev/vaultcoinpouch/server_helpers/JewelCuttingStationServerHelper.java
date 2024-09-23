@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class JewelCuttingStationServerHelper
 {
@@ -28,10 +29,9 @@ public class JewelCuttingStationServerHelper
         }
 
         NonNullList<ItemStack> pouchStacks = NonNullList.create();
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
-        {
-            pouchStacks.add(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack());
-        }
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(
+                slotResult -> pouchStacks.add(slotResult.stack())
+        );
 
         Iterator it = player.getInventory().items.iterator();
         int toRemove = 0;
@@ -159,10 +159,13 @@ public class JewelCuttingStationServerHelper
             }
         }
 
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if(!curiosStack.get().isEmpty())
         {
-            goldMissing -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), goldInput);
+            goldMissing -= CoinPouchItem.getCoinCount(curiosStack.get(), goldInput);
         }
+        
 
         return goldMissing <= 0;
     }

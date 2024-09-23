@@ -19,6 +19,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SpiritExtractorClientHelper
 {
@@ -102,9 +103,11 @@ public class SpiritExtractorClientHelper
         ItemStack totalCost = recoveryCost.getTotalCost();
         int paymentStackCount = menu.getSlot(36).getItem().getCount();
 
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if(!curiosStack.get().isEmpty())
         {
-            paymentStackCount += CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), totalCost);
+            paymentStackCount += CoinPouchItem.getCoinCount(curiosStack.get(), totalCost);
         }
 
         Iterator it = player.getInventory().items.iterator();
@@ -149,10 +152,11 @@ public class SpiritExtractorClientHelper
             return true;
         }
 
-        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
+        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
+        if(!curiosStack.get().isEmpty())
         {
-            ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
-            toRemove = Math.min(totalCost, CoinPouchItem.getCoinCount(pouchStack, costStack));
+            toRemove = Math.min(totalCost, CoinPouchItem.getCoinCount(curiosStack.get(), costStack));
             totalCost -= toRemove;
         }
 

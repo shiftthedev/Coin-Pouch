@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.shiftthedev.vaultcoinpouch.config.ReloadConfigCommand;
 import com.shiftthedev.vaultcoinpouch.config.ShowConfigCommand;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
+import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -42,6 +43,7 @@ public class VaultCoinPouch
     private void setup(final FMLCommonSetupEvent event)
     {
         VCPConfig.initConfig();
+        NetworkManager.initializeNetwork();
     }
 
     private void imc(final InterModEnqueueEvent event)

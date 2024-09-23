@@ -26,6 +26,7 @@ public class ConfigSyncMessage
         configs.put("General.vaultArtisanStationInteraction", server.vaultArtisanStationEnabled());
         configs.put("General.jewelCuttingStationInteraction", server.jewelCuttingStationEnabled());
         configs.put("General.spiritExtractorInteraction", server.spiritExtractorEnabled());
+        configs.put("General.paradoxDoorInteraction", server.paradoxDoorsEnabled());
     }
 
     public ConfigSyncMessage(Map<String, Boolean> configs)
