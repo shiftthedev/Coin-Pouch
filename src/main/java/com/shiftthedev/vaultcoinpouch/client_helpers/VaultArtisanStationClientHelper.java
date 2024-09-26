@@ -25,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class VaultArtisanStationClientHelper
 {
@@ -104,12 +103,9 @@ public class VaultArtisanStationClientHelper
                         // Coin Pouch check
                         int bronzeAmount = bronze.getCount();
 
-                      
-                        AtomicReference<ItemStack> curiosStack = new AtomicReference<ItemStack>();
-                        CuriosApi.getCuriosHelper().findFirstCurio(container.getPlayer(), VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
-                        if(!curiosStack.get().isEmpty())
+                        if (CuriosApi.getCuriosHelper().findFirstCurio(container.getPlayer(), VCPRegistry.COIN_POUCH).isPresent())
                         {
-                            bronzeAmount += CoinPouchItem.getCoinCount(curiosStack.get());
+                            bronzeAmount += CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(container.getPlayer(), VCPRegistry.COIN_POUCH).get().stack());
                         }
 
                         Iterator it = container.getPlayer().getInventory().items.iterator();

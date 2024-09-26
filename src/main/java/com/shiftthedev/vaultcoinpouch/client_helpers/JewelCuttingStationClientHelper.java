@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class JewelCuttingStationClientHelper
 {
@@ -126,11 +125,10 @@ public class JewelCuttingStationClientHelper
                 // Coin Pouch check
                 int goldMAmount = bronze.getCount();
 
-                AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
-                CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
-                if (!curiosStack.get().isEmpty())
+                //AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
+                if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
                 {
-                    goldMAmount += CoinPouchItem.getCoinCount(curiosStack.get(), input.getSecondInput());
+                    goldMAmount += CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), input.getSecondInput());
                 }
 
                 Iterator it = container.getPlayer().getInventory().items.iterator();
@@ -299,11 +297,9 @@ public class JewelCuttingStationClientHelper
             }
         }
 
-        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
-        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
-        if (!curiosStack.get().isEmpty())
+        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
         {
-            goldMissing -= CoinPouchItem.getCoinCount(curiosStack.get(), goldInput);
+            goldMissing -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack(), goldInput);
         }
 
         return goldMissing <= 0;

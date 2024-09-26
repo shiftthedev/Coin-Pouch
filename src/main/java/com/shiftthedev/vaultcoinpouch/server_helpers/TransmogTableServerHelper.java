@@ -22,7 +22,6 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TransmogTableServerHelper
 {
@@ -62,12 +61,11 @@ public class TransmogTableServerHelper
                 copperCost -= deductedAmount;
                 if (copperCost > 0)
                 {
-                    AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
-                    CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
-                    if(!curiosStack.get().isEmpty())
+                    if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
                     {
-                        deductedAmount = Math.min(copperCost, CoinPouchItem.getCoinCount(curiosStack.get()));
-                        CoinPouchItem.extractCoins(curiosStack.get(), deductedAmount);
+                        ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
+                        deductedAmount = Math.min(copperCost, CoinPouchItem.getCoinCount(pouchStack));
+                        CoinPouchItem.extractCoins(pouchStack, deductedAmount);
                         copperCost -= deductedAmount;
                     }
                 }
@@ -140,11 +138,9 @@ public class TransmogTableServerHelper
             return true;
         }
 
-        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
-        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
-        if(!curiosStack.get().isEmpty())
+        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
         {
-            remaining -= CoinPouchItem.getCoinCount(curiosStack.get());
+            remaining -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack());
         }
 
         if (remaining <= 0)

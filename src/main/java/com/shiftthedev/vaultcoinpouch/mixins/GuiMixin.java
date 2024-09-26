@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
-import com.shiftthedev.vaultcoinpouch.mixins.shop.ShopPedestalBlockMixin;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShopPedestalHelper;
 import iskallia.vault.block.ShopPedestalBlock;
 import iskallia.vault.init.ModBlocks;
@@ -26,7 +25,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.Iterator;
 
@@ -50,11 +48,12 @@ public abstract class GuiMixin
     @Shadow
     protected int screenHeight;
 
-    private final static ItemStack GoldStack = new ItemStack(ModBlocks.GOLD_COIN_PILE, 1);
+    private static ItemStack GoldStack = ItemStack.EMPTY;
 
     @Inject(method = "renderCrosshair", at = @At("TAIL"))
     private void renderCrosshair_coinpouch(PoseStack p, CallbackInfo ci)
     {
+        p.pushPose();
         if (this.minecraft.options.getCameraType().isFirstPerson())
         {
             if (this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || this.canRenderCrosshairForSpectator(this.minecraft.hitResult))
@@ -64,8 +63,6 @@ public abstract class GuiMixin
                     BlockPos blockPos = ((BlockHitResult) this.minecraft.hitResult).getBlockPos();
                     if (isValidTarget(blockPos))
                     {
-                        int count = getCoinsCount(GoldStack);
-
                         RenderSystem.disableDepthTest();
                         PoseStack posestack = RenderSystem.getModelViewStack();
                         posestack.pushPose();
@@ -78,6 +75,13 @@ public abstract class GuiMixin
 
                         int x = (this.screenWidth / 2);
                         int y = (this.screenHeight / 2);
+
+                        if (GoldStack.isEmpty())
+                        {
+                            GoldStack = new ItemStack(ModBlocks.GOLD_COIN_PILE, 1);
+                        }
+
+                        int count = getCoinsCount(GoldStack);
                         this.itemRenderer.renderAndDecorateItem(this.minecraft.player, GoldStack, x, y, x + y);
                         this.itemRenderer.renderGuiItemDecorations(this.minecraft.font, GoldStack, x, y, getFormattedCount(count));
                         this.itemRenderer.blitOffset = 0F;
@@ -89,12 +93,13 @@ public abstract class GuiMixin
                 }
             }
         }
+        p.popPose();
     }
 
-    private boolean isValidTarget(BlockPos blockPos) 
+    private boolean isValidTarget(BlockPos blockPos)
     {
         BlockState blockState = this.minecraft.level.getBlockState(blockPos);
-        return (blockState.is(ModBlocks.SHOP_PEDESTAL) && this.minecraft.level.getBlockState(blockPos).getValue(ShopPedestalBlock.ACTIVE)) 
+        return (blockState.is(ModBlocks.SHOP_PEDESTAL) && this.minecraft.level.getBlockState(blockPos).getValue(ShopPedestalBlock.ACTIVE))
                 || blockState.is(ModBlocks.GATE_LOCK);
     }
 
@@ -104,7 +109,7 @@ public abstract class GuiMixin
         int count = 0;
 
         Iterator it = InventoryUtil.findAllItems(player).iterator();
-        while(it.hasNext())
+        while (it.hasNext())
         {
             ItemStack stack = ((InventoryUtil.ItemAccess) it.next()).getStack();
             if (!stack.isEmpty())
@@ -113,7 +118,7 @@ public abstract class GuiMixin
                 {
                     count += CoinPouchItem.getCoinCount(stack, coinType);
                 }
-                else if(stack.is(ModBlocks.GOLD_COIN_PILE.asItem()))
+                else if (stack.is(ModBlocks.GOLD_COIN_PILE.asItem()))
                 {
                     count += stack.getCount();
                 }
