@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ShiftInventoryUtils
 {
@@ -162,10 +161,11 @@ public class ShiftInventoryUtils
     public static List<ItemStack> getMissingInputs(List<ItemStack> recipeInputs, Inventory playerInventory, OverSizedInventory containerInventory)
     {
         List<ItemStack> missing = new ArrayList();
-        AtomicReference<ItemStack> curiosPouchStack = new AtomicReference<>(ItemStack.EMPTY);
-        CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).ifPresent(
-                slotResult -> curiosPouchStack.set(slotResult.stack())
-        );
+        ItemStack curiosPouchStack = ItemStack.EMPTY;
+        if (CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).isPresent())
+        {
+            curiosPouchStack = CuriosApi.getCuriosHelper().findFirstCurio(playerInventory.player, VCPRegistry.COIN_POUCH).get().stack();
+        }
 
         Iterator var4 = recipeInputs.iterator();
         while (var4.hasNext())
@@ -183,9 +183,9 @@ public class ShiftInventoryUtils
                 }
             }
 
-            if (COINS_TYPE.contains(input.getItem()) && !curiosPouchStack.get().isEmpty())
+            if (COINS_TYPE.contains(input.getItem()) && !curiosPouchStack.isEmpty())
             {
-                neededCount -= CoinPouchItem.getCoinCount(curiosPouchStack.get(), input);
+                neededCount -= CoinPouchItem.getCoinCount(curiosPouchStack, input);
             }
 
             var7 = playerInventory.items.iterator();

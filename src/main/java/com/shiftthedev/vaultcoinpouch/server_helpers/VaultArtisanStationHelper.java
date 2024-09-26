@@ -19,7 +19,6 @@ import top.theillusivec4.curios.api.CuriosApi;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class VaultArtisanStationHelper
 {
@@ -59,12 +58,11 @@ public class VaultArtisanStationHelper
 
                     if (bronzeRemaining > 0)
                     {
-                        AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
-                        CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
-                        if(!curiosStack.get().isEmpty())
+                        if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
                         {
-                            bronzeToTake = Math.min(bronzeRemaining, CoinPouchItem.getCoinCount(curiosStack.get()));
-                            CoinPouchItem.extractCoins(curiosStack.get(), bronzeToTake);
+                            ItemStack pouchStack = CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack();
+                            bronzeToTake = Math.min(bronzeRemaining, CoinPouchItem.getCoinCount(pouchStack));
+                            CoinPouchItem.extractCoins(pouchStack, bronzeToTake);
                             bronzeRemaining -= bronzeToTake;
                         }
                     }
@@ -161,11 +159,9 @@ public class VaultArtisanStationHelper
                         return modification.canApply(gear, in, player, rand).success();
                     }
 
-                    AtomicReference<ItemStack> curiosStack = new AtomicReference<>(ItemStack.EMPTY);
-                    CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).ifPresent(slotResult -> curiosStack.set(slotResult.stack()));
-                    if(!curiosStack.get().isEmpty())
+                    if (CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).isPresent())
                     {
-                        bronzeMissing -= CoinPouchItem.getCoinCount(curiosStack.get());
+                        bronzeMissing -= CoinPouchItem.getCoinCount(CuriosApi.getCuriosHelper().findFirstCurio(player, VCPRegistry.COIN_POUCH).get().stack());
                     }
 
                     if (bronzeMissing <= 0)
