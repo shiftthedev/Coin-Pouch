@@ -10,13 +10,27 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.shiftthedev.vaultcoinpouch.VaultCoinPouch.MOD_ID;
+
 public class VCPConfigScreen extends Screen
 {
+    private static List<TranslatableComponent> PAGES_TITLES = List.of(
+            new TranslatableComponent("configs." + MOD_ID + ".page.interactions"),
+            new TranslatableComponent("configs." + MOD_ID + ".page.soulbound"),
+            new TranslatableComponent("configs." + MOD_ID + ".page.hud"));
+
     private Screen parent;
+    private int pageIndex = 0;
+
+    private HashMap<Integer, List<Button>> buttons = new HashMap<>();
 
     public VCPConfigScreen()
     {
-        super(new TranslatableComponent("configs.vaultcoinpouch.title"));
+        super(new TranslatableComponent("configs." + MOD_ID + ".title"));
     }
 
     public void setup(Minecraft minecraft, Screen parent)
@@ -30,251 +44,394 @@ public class VCPConfigScreen extends Screen
     {
         super.init();
         this.init_footer();
-        this.init_options();
+        this.inti_header();
+        this.init_interactions();
+        this.init_soulbound();
+        this.init_hud();
+
+        buttons.get(pageIndex).forEach(button1 -> button1.visible = true);
     }
 
-    private void init_options()
+    private void inti_header()
+    {
+        int padding = 30;
+        int widgetWidth = 170;
+        int widgetHeight = 20;
+        int y = 35;
+        int xLeft = (this.width / 2) - widgetWidth - padding;
+        int xRight = (this.width / 2) + padding;
+
+        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".page.prev"),
+                button -> {
+                    buttons.get(pageIndex).forEach(button1 -> button1.visible = false);
+
+                    if (pageIndex - 1 < 0)
+                    {
+                        pageIndex = PAGES_TITLES.size() - 1;
+                    }
+                    else
+                    {
+                        pageIndex -= 1;
+                    }
+
+                    buttons.get(pageIndex).forEach(button1 -> button1.visible = true);
+                })
+        );
+
+        this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".page.next"),
+                button -> {
+                    buttons.get(pageIndex).forEach(button1 -> button1.visible = false);
+
+                    if (pageIndex + 1 >= PAGES_TITLES.size())
+                    {
+                        pageIndex = 0;
+                    }
+                    else
+                    {
+                        pageIndex += 1;
+                    }
+
+                    buttons.get(pageIndex).forEach(button1 -> button1.visible = true);
+                })
+        );
+    }
+
+    private void init_interactions()
     {
         int padding = 4;
         int widgetWidth = 170;
         int widgetHeight = 20;
-        int y = 50;
+        int y = 74;
         int xLeft = (this.width / 2) - widgetWidth - (padding / 2);
         int xRight = (this.width / 2) + (padding / 2);
 
-        this.addRenderableWidget(new Button((this.width / 2) - 75, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.soulbound.name", VCPConfig.GENERAL.soulboundEnabled() ? "ON" : "OFF"),
-                button -> {
-                    VCPConfig.GENERAL.cycleSoulbound();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.soulbound.name", VCPConfig.GENERAL.soulboundEnabled() ? "ON" : "OFF"));
-                },
-                (button, poseStack, p_93755_, p_93756_) ->
-                {
-                    VCPConfigScreen.this.renderTooltip(
-                            poseStack,
-                            VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.soulbound.tooltip"),
-                                    Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
-                            getTooltipX(p_93755_),
-                            getTooltipY(p_93756_));
-                })
-        );
+        List<Button> buttonList = new ArrayList<>();
 
         // LINE 1
-        y += widgetHeight + padding;
-
-        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.shopPedestalInteraction.name", VCPConfig.GENERAL.shopPedestalEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".shopPedestalInteraction.name", VCPConfig.GENERAL.shopPedestalEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleShopPedestal();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.shopPedestalInteraction.name", VCPConfig.GENERAL.shopPedestalEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".shopPedestalInteraction.name", VCPConfig.GENERAL.shopPedestalEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.shopPedestalInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".shopPedestalInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
-        this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.vaultForgeInteraction.name", VCPConfig.GENERAL.vaultForgeEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".vaultForgeInteraction.name", VCPConfig.GENERAL.vaultForgeEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleVaultForge();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.vaultForgeInteraction.name", VCPConfig.GENERAL.vaultForgeEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".vaultForgeInteraction.name", VCPConfig.GENERAL.vaultForgeEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.vaultForgeInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".vaultForgeInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
         // LINE 2
         y += widgetHeight + padding;
 
-        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.toolStationInteraction.name", VCPConfig.GENERAL.toolStationEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".toolStationInteraction.name", VCPConfig.GENERAL.toolStationEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleToolStation();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.toolStationInteraction.name", VCPConfig.GENERAL.toolStationEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".toolStationInteraction.name", VCPConfig.GENERAL.toolStationEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.toolStationInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".toolStationInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
-        this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.inscriptionTableInteraction.name", VCPConfig.GENERAL.inscriptionTableEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".inscriptionTableInteraction.name", VCPConfig.GENERAL.inscriptionTableEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleInscriptionTable();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.inscriptionTableInteraction.name", VCPConfig.GENERAL.inscriptionTableEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".inscriptionTableInteraction.name", VCPConfig.GENERAL.inscriptionTableEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.inscriptionTableInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".inscriptionTableInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
         // LINE 3
         y += widgetHeight + padding;
 
-        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.modifierWorkbenchInteraction.name", VCPConfig.GENERAL.modifierWorkbenchEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".modifierWorkbenchInteraction.name", VCPConfig.GENERAL.modifierWorkbenchEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleModifierWorkbench();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.modifierWorkbenchInteraction.name", VCPConfig.GENERAL.modifierWorkbenchEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".modifierWorkbenchInteraction.name", VCPConfig.GENERAL.modifierWorkbenchEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.modifierWorkbenchInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".modifierWorkbenchInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
-        this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.alchemyTableInteraction.name", VCPConfig.GENERAL.alchemyTableEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".alchemyTableInteraction.name", VCPConfig.GENERAL.alchemyTableEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleAlchemyTable();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.alchemyTableInteraction.name", VCPConfig.GENERAL.alchemyTableEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".alchemyTableInteraction.name", VCPConfig.GENERAL.alchemyTableEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.alchemyTableInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".alchemyTableInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
         // LINE 4
         y += widgetHeight + padding;
 
-        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.transmogTableInteraction.name", VCPConfig.GENERAL.transmogTableEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".transmogTableInteraction.name", VCPConfig.GENERAL.transmogTableEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleTransmogTable();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.transmogTableInteraction.name", VCPConfig.GENERAL.transmogTableEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".transmogTableInteraction.name", VCPConfig.GENERAL.transmogTableEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.transmogTableInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".transmogTableInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
-        this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.vaultArtisanStationInteraction.name", VCPConfig.GENERAL.vaultArtisanStationEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".vaultArtisanStationInteraction.name", VCPConfig.GENERAL.vaultArtisanStationEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleVaultArtisanStation();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.vaultArtisanStationInteraction.name", VCPConfig.GENERAL.vaultArtisanStationEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".vaultArtisanStationInteraction.name", VCPConfig.GENERAL.vaultArtisanStationEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.vaultArtisanStationInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".vaultArtisanStationInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
         // LINE 5
         y += widgetHeight + padding;
 
-        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCuttingStationEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCuttingStationEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleJewelCuttingStation();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCuttingStationEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCuttingStationEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.jewelCuttingStationInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".jewelCuttingStationInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
-        this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.spiritExtractorInteraction.name", VCPConfig.GENERAL.spiritExtractorEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".spiritExtractorInteraction.name", VCPConfig.GENERAL.spiritExtractorEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleSpiritExtractor();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.spiritExtractorInteraction.name", VCPConfig.GENERAL.spiritExtractorEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".spiritExtractorInteraction.name", VCPConfig.GENERAL.spiritExtractorEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.spiritExtractorInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".spiritExtractorInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
 
         // LINE 6
         y += widgetHeight + padding;
 
-        this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs.vaultcoinpouch.paradoxDoorInteraction.name", VCPConfig.GENERAL.paradoxDoorsEnabled() ? "ON" : "OFF"),
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".paradoxDoorInteraction.name", VCPConfig.GENERAL.paradoxDoorsEnabled() ? "ON" : "OFF"),
                 button -> {
                     VCPConfig.GENERAL.cycleParadoxDoors();
-                    button.setMessage(new TranslatableComponent("configs.vaultcoinpouch.paradoxDoorInteraction.name", VCPConfig.GENERAL.paradoxDoorsEnabled() ? "ON" : "OFF"));
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".paradoxDoorInteraction.name", VCPConfig.GENERAL.paradoxDoorsEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {
                     VCPConfigScreen.this.renderTooltip(
                             poseStack,
                             VCPConfigScreen.this.minecraft.font.split(
-                                    new TranslatableComponent("configs.vaultcoinpouch.paradoxDoorInteraction.tooltip"),
+                                    new TranslatableComponent("configs." + MOD_ID + ".paradoxDoorInteraction.tooltip"),
                                     Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
                             getTooltipX(p_93755_),
                             getTooltipY(p_93756_));
                 })
-        );
+        ));
+
+        buttonList.forEach(button -> button.visible = false);
+        buttons.put(0, buttonList);
+    }
+
+    private void init_soulbound()
+    {
+        int padding = 4;
+        int widgetWidth = 170;
+        int widgetHeight = 20;
+        int y = 74;
+        int xLeft = (this.width / 2) - widgetWidth - (padding / 2);
+        int xRight = (this.width / 2) + (padding / 2);
+
+        List<Button> buttonList = new ArrayList<>();
+
+        // LINE 1
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".soulbound.name", VCPConfig.GENERAL.soulboundEnabled() ? "ON" : "OFF"),
+                button -> {
+                    VCPConfig.GENERAL.cycleSoulbound();
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".soulbound.name", VCPConfig.GENERAL.soulboundEnabled() ? "ON" : "OFF"));
+                },
+                (button, poseStack, p_93755_, p_93756_) ->
+                {
+                    VCPConfigScreen.this.renderTooltip(
+                            poseStack,
+                            VCPConfigScreen.this.minecraft.font.split(
+                                    new TranslatableComponent("configs." + MOD_ID + ".soulbound.tooltip"),
+                                    Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
+                            getTooltipX(p_93755_),
+                            getTooltipY(p_93756_));
+                })
+        ));
+
+        buttonList.forEach(button -> button.visible = false);
+        buttons.put(1, buttonList);
+    }
+
+    private void init_hud()
+    {
+        int padding = 4;
+        int widgetWidth = 170;
+        int widgetHeight = 20;
+        int y = 74;
+        int xLeft = (this.width / 2) - widgetWidth - (padding / 2);
+        int xRight = (this.width / 2) + (padding / 2);
+
+        List<Button> buttonList = new ArrayList<>();
+
+        // LINE 1
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".showCoinCountInInventoryHud.name", VCPConfig.GENERAL.invCoinsEnabled() ? "ON" : "OFF"),
+                button -> {
+                    VCPConfig.GENERAL.cycleInvCoins();
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".showCoinCountInInventoryHud.name", VCPConfig.GENERAL.invCoinsEnabled() ? "ON" : "OFF"));
+                },
+                (button, poseStack, p_93755_, p_93756_) ->
+                {
+                    VCPConfigScreen.this.renderTooltip(
+                            poseStack,
+                            VCPConfigScreen.this.minecraft.font.split(
+                                    new TranslatableComponent("configs." + MOD_ID + ".showCoinCountInInventoryHud.tooltip"),
+                                    Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
+                            getTooltipX(p_93755_),
+                            getTooltipY(p_93756_));
+                })
+        ));
+
+        buttonList.add(this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".useShortCoinCountInInventoryHud.name", VCPConfig.GENERAL.invShortEnabled() ? "ON" : "OFF"),
+                button -> {
+                    VCPConfig.GENERAL.cycleInvShort();
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".useShortCoinCountInInventoryHud.name", VCPConfig.GENERAL.invShortEnabled() ? "ON" : "OFF"));
+                },
+                (button, poseStack, p_93755_, p_93756_) ->
+                {
+                    VCPConfigScreen.this.renderTooltip(
+                            poseStack,
+                            VCPConfigScreen.this.minecraft.font.split(
+                                    new TranslatableComponent("configs." + MOD_ID + ".useShortCoinCountInInventoryHud.tooltip"),
+                                    Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
+                            getTooltipX(p_93755_),
+                            getTooltipY(p_93756_));
+                })
+        ));
+
+        // LINE 2
+        y += widgetHeight + padding;
+
+        buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".horizontalAlignInInventoryHud.name", VCPConfig.GENERAL.invHorizontalEnabled() ? "HORIZONTAL" : "VERTICAL"),
+                button -> {
+                    VCPConfig.GENERAL.cycleHorizontal();
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".horizontalAlignInInventoryHud.name", VCPConfig.GENERAL.invHorizontalEnabled() ? "HORIZONTAL" : "VERTICAL"));
+                },
+                (button, poseStack, p_93755_, p_93756_) ->
+                {
+                    VCPConfigScreen.this.renderTooltip(
+                            poseStack,
+                            VCPConfigScreen.this.minecraft.font.split(
+                                    new TranslatableComponent("configs." + MOD_ID + ".horizontalAlignInInventoryHud.tooltip"),
+                                    Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
+                            getTooltipX(p_93755_),
+                            getTooltipY(p_93756_));
+                })
+        ));
+
+        buttonList.forEach(button -> button.visible = false);
+        buttons.put(2, buttonList);
     }
 
     private void init_footer()
@@ -330,7 +487,8 @@ public class VCPConfigScreen extends Screen
     public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         this.renderBackground(poseStack);
-        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 20, 16777215);
+        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 10, 16777215);
+        drawCenteredString(poseStack, this.font, PAGES_TITLES.get(pageIndex), this.width / 2, 20, 16777215);
         super.render(poseStack, mouseX, mouseY, partialTick);
     }
 

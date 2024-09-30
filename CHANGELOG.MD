@@ -1,5 +1,7 @@
-# 1.5.3
-## Fixes
-    Reverted some changes related to curios slot handling that caused new crashes
-    Changed the creation of the Currency checker gold coin stack in gui mixin
-        - This was causing vault gold to not show and messing alot of things (in some cases)
+# 1.5.4
+## New
+    Added coin display to Inventory HUD overlay if the pouch is in the curios slot
+
+## Changes
+    Reworked config screen
+    Changed config opening command from "/coinpouch open" to "/coinpouch config"

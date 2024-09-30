@@ -6,7 +6,7 @@
   "key.vaultcoinpouch.showpouch": "Open Coin Pouch",
 
   "tooltip.vaultcoinpouch.info": "Stores unlimited amounts of coins.\nCoins picked up will go directly into the pouch.\nAlso converts coins up and down like a compacting drawer.\n",
-  "tooltip.vaultcoinpouch.soulbound": "\nCombine with Echo Pog in an Anvil to add Soulbound.",
+  "tooltip.vaultcoinpouch.soulbound": "\nCombine with Soulbound Jewel in an Anvil to add Soulbound.",
   
   "tooltip.vaultcoinpouch.bronze": "%s Bronze Coin(s)",
   "tooltip.vaultcoinpouch.silver": "%s Silver Coin(s)",
@@ -15,6 +15,12 @@
   "tooltip.vaultcoinpouch.empty": "Empty",
   
   "configs.vaultcoinpouch.title": "Coin Pouch Configs",
+  "configs.vaultcoinpouch.page.prev": "Previous",
+  "configs.vaultcoinpouch.page.next": "Next",
+  "configs.vaultcoinpouch.page.interactions": "Interactions",
+  "configs.vaultcoinpouch.page.soulbound": "Soulbound",
+  "configs.vaultcoinpouch.page.hud": "Inventory HUD",
+  
   "configs.vaultcoinpouch.save": "Save Configs",
   "configs.vaultcoinpouch.save.tooltip": "Save all changed configs.",
   "configs.vaultcoinpouch.cancel": "Cancel",
@@ -54,5 +60,14 @@
   "configs.vaultcoinpouch.spiritExtractorInteraction.tooltip": "Enable / Disable interaction with §6Spirit§r §6Extractor§r §rwithout taking coins out of the pouch.",
 
   "configs.vaultcoinpouch.paradoxDoorInteraction.name": "Paradox Doors: %s",
-  "configs.vaultcoinpouch.paradoxDoorInteraction.tooltip": "Enable / Disable interaction with §6Paradox§r §6Doors§r §rwithout taking coins out of the pouch."
+  "configs.vaultcoinpouch.paradoxDoorInteraction.tooltip": "Enable / Disable interaction with §6Paradox§r §6Doors§r §rwithout taking coins out of the pouch.",
+
+  "configs.vaultcoinpouch.showCoinCountInInventoryHud.name": "HUD Coin Display: %s",
+  "configs.vaultcoinpouch.showCoinCountInInventoryHud.tooltip": "Enable / Disable coin display in the Inventory HUD overlay.",
+
+  "configs.vaultcoinpouch.useShortCoinCountInInventoryHud.name": "Short Display: %s",
+  "configs.vaultcoinpouch.useShortCoinCountInInventoryHud.tooltip": "Display 1k instead of 1000.",
+
+  "configs.vaultcoinpouch.horizontalAlignInInventoryHud.name": "Alignment: %s",
+  "configs.vaultcoinpouch.horizontalAlignInInventoryHud.tooltip": "How should coin display be align."
 }

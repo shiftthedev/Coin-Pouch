@@ -1,0 +1,17 @@
+{
+  "required" : true,
+  "minVersion" : "0.8",
+  "package" : "com.shiftthedev.vaultcoinpouch.mixins",
+  "compatibilityLevel" : "JAVA_8",
+  "refmap" : "vaultcoinpouch.refmap.json",
+  "plugin": "com.shiftthedev.vaultcoinpouch.mixins.invhud.InvHudPlugin",
+  "mixins" : [
+  ],
+  "injectors" : {
+    "defaultRequire" : 1
+  },
+  "client" : [
+    "invhud.ArmorRendererAccessor",
+    "invhud.CuriosRendererMixin"
+  ]
+}
