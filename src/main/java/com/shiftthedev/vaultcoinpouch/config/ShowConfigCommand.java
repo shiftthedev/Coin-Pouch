@@ -14,7 +14,7 @@ public class ShowConfigCommand
     {
         dispatcher.register(Commands.literal("coinpouch")
                 .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
-                .then(Commands.literal("open")
+                .then(Commands.literal("config")
                         .executes(commandContext -> {
                             Minecraft.getInstance().tell(() -> {
                                 try

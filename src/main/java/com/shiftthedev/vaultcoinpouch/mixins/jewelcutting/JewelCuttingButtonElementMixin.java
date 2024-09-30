@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class JewelCuttingButtonElementMixin extends ButtonElement
 {
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void inti_coinpouch(IPosition position, Runnable onClick, VaultJewelCuttingStationContainer container, CallbackInfo ci)
+    private void init_coinpouch(IPosition position, Runnable onClick, VaultJewelCuttingStationContainer container, CallbackInfo ci)
     {
         if (VCPConfig.GENERAL.jewelCuttingStationEnabled())
         {

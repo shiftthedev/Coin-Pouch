@@ -98,7 +98,10 @@ public class VCPConfig
 
     public static class General
     {
+        // SOULBOUND
         private ForgeConfigSpec.ConfigValue<Boolean> enableSoulbound;
+
+        // INTERACTIONS
         private ForgeConfigSpec.ConfigValue<Boolean> shopPedestalInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> vaultForgeInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> toolStationInteraction;
@@ -110,6 +113,11 @@ public class VCPConfig
         private ForgeConfigSpec.ConfigValue<Boolean> jewelCuttingStationInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> spiritExtractorInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> paradoxDoorInteraction;
+
+        // HUD OVERLAY
+        private ForgeConfigSpec.ConfigValue<Boolean> showCoinCountInInventoryHud;
+        private ForgeConfigSpec.ConfigValue<Boolean> useShortCoinCountInInventoryHud;
+        private ForgeConfigSpec.ConfigValue<Boolean> horizontalAlignInInventoryHud;
 
         public General(ForgeConfigSpec.Builder builder)
         {
@@ -158,19 +166,38 @@ public class VCPConfig
             this.spiritExtractorInteraction = builder
                     .comment("Enable / Disable interaction with Spirit Extractor without taking coins out of the pouch.")
                     .define("spiritExtractorInteraction", true);
-            
+
             this.paradoxDoorInteraction = builder
                     .comment("Enable / Disable interaction with Paradox Doors without taking coins out of the pouch.")
                     .define("paradoxDoorInteraction", true);
 
+            this.showCoinCountInInventoryHud = builder
+                    .comment("Enable / Disable coin display in the Inventory HUD overlay.")
+                    .define("showCoinCountInInventoryHud", true);
+
+            this.useShortCoinCountInInventoryHud = builder
+                    .comment("Display 1k instead of 1000.")
+                    .define("useShortCoinCountInInventoryHud", true);
+
+            this.horizontalAlignInInventoryHud = builder
+                    .comment("How should coin display be align.")
+                    .define("horizontalAlignInInventoryHud", false);
+
             builder.pop();
         }
 
+        // SOULBOUND
         public boolean soulboundEnabled()
         {
             return this.enableSoulbound.get();
         }
 
+        public void cycleSoulbound()
+        {
+            this.enableSoulbound.set(!this.enableSoulbound.get());
+        }
+
+        // INTERACTIONS
         public boolean vaultForgeEnabled() {return this.vaultForgeInteraction.get();}
 
         public boolean toolStationEnabled() {return this.toolStationInteraction.get();}
@@ -190,13 +217,8 @@ public class VCPConfig
         public boolean jewelCuttingStationEnabled() {return this.jewelCuttingStationInteraction.get();}
 
         public boolean spiritExtractorEnabled() {return this.spiritExtractorInteraction.get();}
-        
-        public boolean paradoxDoorsEnabled() {return this.paradoxDoorInteraction.get();}
 
-        public void cycleSoulbound()
-        {
-            this.enableSoulbound.set(!this.enableSoulbound.get());
-        }
+        public boolean paradoxDoorsEnabled() {return this.paradoxDoorInteraction.get();}
 
         public void cycleVaultForge()
         {
@@ -247,10 +269,33 @@ public class VCPConfig
         {
             this.spiritExtractorInteraction.set(!this.spiritExtractorInteraction.get());
         }
-        
+
         public void cycleParadoxDoors()
         {
             this.paradoxDoorInteraction.set(!this.paradoxDoorInteraction.get());
+        }
+
+
+        // HUD OVERLAY
+        public boolean invCoinsEnabled() {return this.showCoinCountInInventoryHud.get();}
+
+        public boolean invShortEnabled() {return this.useShortCoinCountInInventoryHud.get();}
+
+        public boolean invHorizontalEnabled() {return this.horizontalAlignInInventoryHud.get();}
+
+        public void cycleInvCoins()
+        {
+            this.showCoinCountInInventoryHud.set(!this.showCoinCountInInventoryHud.get());
+        }
+
+        public void cycleInvShort()
+        {
+            this.useShortCoinCountInInventoryHud.set(!this.useShortCoinCountInInventoryHud.get());
+        }
+
+        public void cycleHorizontal()
+        {
+            this.horizontalAlignInInventoryHud.set(!this.horizontalAlignInInventoryHud.get());
         }
     }
 }
