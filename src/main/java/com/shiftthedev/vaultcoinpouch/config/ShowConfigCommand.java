@@ -3,6 +3,8 @@ package com.shiftthedev.vaultcoinpouch.config;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.shiftthedev.vaultcoinpouch.events.ClientEvents;
+import com.simibubi.create.foundation.config.ui.ConfigHelper;
+import com.simibubi.create.foundation.config.ui.SubMenuConfigScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -38,9 +40,12 @@ public class ShowConfigCommand
             throw new CommandSyntaxException(null, new TextComponent("Not in single-player!"));
         }
 
-        Minecraft mc = Minecraft.getInstance();
-        mc.mouseHandler.releaseMouse();
-        ClientEvents.CONFIG_SCREEN.setup(mc, null);
-        mc.setScreen(ClientEvents.CONFIG_SCREEN);
+        //Minecraft mc = Minecraft.getInstance();
+        //mc.mouseHandler.releaseMouse();
+        //ClientEvents.CONFIG_SCREEN.setup(mc, null);
+        //mc.setScreen(ClientEvents.CONFIG_SCREEN);
+
+        SubMenuConfigScreen screen = SubMenuConfigScreen.find(ConfigHelper.ConfigPath.parse("qolhunters:client.Client-Only Extensions"));
+        Minecraft.getInstance().setScreen(screen);
     }
 }
