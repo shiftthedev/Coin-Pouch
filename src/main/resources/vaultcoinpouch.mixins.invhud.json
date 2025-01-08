@@ -4,7 +4,7 @@
   "package" : "com.shiftthedev.vaultcoinpouch.mixins",
   "compatibilityLevel" : "JAVA_8",
   "refmap" : "vaultcoinpouch.refmap.json",
-  "plugin": "com.shiftthedev.vaultcoinpouch.mixins.invhud.InvHudPlugin",
+  "plugin" : "com.shiftthedev.vaultcoinpouch.mixins.invhud.InvHudPlugin",
   "mixins" : [
   ],
   "injectors" : {

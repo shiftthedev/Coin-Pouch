@@ -112,6 +112,7 @@ dependencies {
     implementation fg.deobf("curse.maven:geckolib-388172:${geckolib_version}")
     implementation fg.deobf("curse.maven:citadel-331936:${citadel_version}")
     implementation fg.deobf("curse.maven:jei-238222:${jei_version}")
+    implementation fg.deobf("curse.maven:alexmobs-426558:${alexmobs_version}")
     
     // Compat
     implementation fg.deobf("curse.maven:inventory-hud-forge-357540:${invhud_version}")

@@ -6,6 +6,7 @@ import iskallia.vault.gear.attribute.type.VaultGearAttributeTypeMerger;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.init.ModGearAttributes;
 import iskallia.vault.init.ModItems;
+import iskallia.vault.item.ItemShardPouch;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,13 +38,17 @@ public class AnvilEvents
                         event.setOutput(result);
                         event.setCost(10);
                         event.setMaterialCost(1);
+                        
+                        return;
                     }
                 }
             }
         }
-        else if (VCPConfig.GENERAL.soulboundEnabled())
+        
+        if (VCPConfig.GENERAL.shardPouchSoulboundEnabled())
         {
-            if (event.getLeft().getItem() instanceof CoinPouchItem)
+            
+            if (event.getLeft().getItem() instanceof ItemShardPouch)
             {
                 ItemStack right = event.getRight();
                 if (right.getItem() == ModItems.JEWEL)
@@ -58,6 +63,8 @@ public class AnvilEvents
                         event.setOutput(result);
                         event.setCost(10);
                         event.setMaterialCost(1);
+                        
+                        return;
                     }
                 }
             }

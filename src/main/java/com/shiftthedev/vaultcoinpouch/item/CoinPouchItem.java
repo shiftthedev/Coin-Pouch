@@ -83,9 +83,11 @@ public class CoinPouchItem extends Item
         {
             return;
         }
+
+        tooltip.add(new TextComponent(" "));
         if (AttributeGearData.read(stack).hasAttribute(ModGearAttributes.SOULBOUND))
         {
-            tooltip.add(new TextComponent("\n" + ModGearAttributes.SOULBOUND.getReader().getModifierName()).withStyle(ModGearAttributes.SOULBOUND.getReader().getColoredTextStyle()));
+            tooltip.add(new TextComponent(ModGearAttributes.SOULBOUND.getReader().getModifierName()).withStyle(ModGearAttributes.SOULBOUND.getReader().getColoredTextStyle()));
         }
         else
         {

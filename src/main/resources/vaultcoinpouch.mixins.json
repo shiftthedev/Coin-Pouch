@@ -1,11 +1,12 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.shiftthedev.vaultcoinpouch.mixins",
-  "compatibilityLevel": "JAVA_8",
-  "refmap": "vaultcoinpouch.refmap.json",
-  "mixins": [
+  "required" : true,
+  "minVersion" : "0.8",
+  "package" : "com.shiftthedev.vaultcoinpouch.mixins",
+  "compatibilityLevel" : "JAVA_8",
+  "refmap" : "vaultcoinpouch.refmap.json",
+  "mixins" : [
     "InventoryMixin",
+    "ItemShardPouchMixin",
     "SpiritEntityMixin",
     "alchemy.AlchemyTableEffectCraftMessageAccessor",
     "alchemy.AlchemyTableEffectCraftMessageMixin",
@@ -21,10 +22,10 @@
     "transmog.TransmogButtonMessageMixin",
     "transmog.TransmogTableContainerMixin"
   ],
-  "injectors": {
-    "defaultRequire": 1
+  "injectors" : {
+    "defaultRequire" : 1
   },
-  "client": [
+  "client" : [
     "AbstractContainerScreenMixin",
     "GuiMixin",
     "alchemy.AlchemyTableScreenMixin",

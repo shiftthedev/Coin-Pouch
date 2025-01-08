@@ -100,6 +100,7 @@ public class VCPConfig
     {
         // SOULBOUND
         private ForgeConfigSpec.ConfigValue<Boolean> enableSoulbound;
+        private ForgeConfigSpec.ConfigValue<Boolean> enableShardPouchSoulbound;
 
         // INTERACTIONS
         private ForgeConfigSpec.ConfigValue<Boolean> shopPedestalInteraction;
@@ -126,6 +127,10 @@ public class VCPConfig
             this.enableSoulbound = builder
                     .comment("Enable / Disable the possibility to add Soulbound to the Coin Pouch.")
                     .define("enableSoulbound", true);
+
+            this.enableShardPouchSoulbound = builder
+                    .comment("Enable / Disable the possibility to add Soulbound to Shard Pouch.")
+                    .define("enableShardPouchSoulbound", true);
 
             this.vaultForgeInteraction = builder
                     .comment("Enable / Disable interaction with Vault Forge without taking coins out of the pouch.")
@@ -192,11 +197,18 @@ public class VCPConfig
             return this.enableSoulbound.get();
         }
         
+        public boolean shardPouchSoulboundEnabled() { return this.enableShardPouchSoulbound.get(); }
+
         public void cycleSoulbound()
         {
             this.enableSoulbound.set(!this.enableSoulbound.get());
         }
 
+        public void cycleShardPouchSoulbound()
+        {
+            this.enableShardPouchSoulbound.set(!this.enableShardPouchSoulbound.get());
+        }
+        
         // INTERACTIONS
         public boolean vaultForgeEnabled() {return this.vaultForgeInteraction.get();}
 

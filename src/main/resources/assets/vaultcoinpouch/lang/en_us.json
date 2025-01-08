@@ -6,7 +6,7 @@
   "key.vaultcoinpouch.showpouch": "Open Coin Pouch",
 
   "tooltip.vaultcoinpouch.info": "Stores unlimited amounts of coins.\nCoins picked up will go directly into the pouch.\nAlso converts coins up and down like a compacting drawer.\n",
-  "tooltip.vaultcoinpouch.soulbound": "\nCombine with Soulbound Jewel in an Anvil to add Soulbound.",
+  "tooltip.vaultcoinpouch.soulbound": "Combine with Soulbound Jewel in an Anvil to add Soulbound.",
   
   "tooltip.vaultcoinpouch.bronze": "%s Bronze Coin(s)",
   "tooltip.vaultcoinpouch.silver": "%s Silver Coin(s)",
@@ -26,8 +26,11 @@
   "configs.vaultcoinpouch.cancel": "Cancel",
   "configs.vaultcoinpouch.cancel.tooltip": "Discard all changed configs.",
   
-  "configs.vaultcoinpouch.soulbound.name": "Soulbound: %s",
-  "configs.vaultcoinpouch.soulbound.tooltip": "Enable / Disable the possibility to add §9Soulbound§r §rto the pouch.",
+  "configs.vaultcoinpouch.soulbound.name": "Coin Pouch Soulbound: %s",
+  "configs.vaultcoinpouch.soulbound.tooltip": "Enable / Disable the possibility to add §9Soulbound§r §rto the Coin Pouch.",
+
+  "configs.vaultcoinpouch.shardPouchSoulbound.name": "Shard Pouch Soulbound: %s",
+  "configs.vaultcoinpouch.shardPouchSoulbound.tooltip": "Enable / Disable the possibility to add §9Soulbound§r §rto the Shard Pouch.",
 
   "configs.vaultcoinpouch.shopPedestalInteraction.name": "Shop Pedestal: %s",
   "configs.vaultcoinpouch.shopPedestalInteraction.tooltip": "Enable / Disable interaction with §6Shop§r §6Pedestal§r §rwithout taking coins out of the pouch.",

@@ -357,6 +357,24 @@ public class VCPConfigScreen extends Screen
                 })
         ));
 
+        buttonList.add(this.addRenderableWidget(new Button(xRight, y, widgetWidth, widgetHeight,
+                new TranslatableComponent("configs." + MOD_ID + ".shardPouchSoulbound.name", VCPConfig.GENERAL.shardPouchSoulboundEnabled() ? "ON" : "OFF"),
+                button -> {
+                    VCPConfig.GENERAL.cycleShardPouchSoulbound();
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".shardPouchSoulbound.name", VCPConfig.GENERAL.shardPouchSoulboundEnabled() ? "ON" : "OFF"));
+                },
+                (button, poseStack, p_93755_, p_93756_) ->
+                {
+                    VCPConfigScreen.this.renderTooltip(
+                            poseStack,
+                            VCPConfigScreen.this.minecraft.font.split(
+                                    new TranslatableComponent("configs." + MOD_ID + ".shardPouchSoulbound.tooltip"),
+                                    Math.max((VCPConfigScreen.this.width / 2) - 43, 200)),
+                            getTooltipX(p_93755_),
+                            getTooltipY(p_93756_));
+                })
+        ));
+
         buttonList.forEach(button -> button.visible = false);
         buttons.put(1, buttonList);
     }
