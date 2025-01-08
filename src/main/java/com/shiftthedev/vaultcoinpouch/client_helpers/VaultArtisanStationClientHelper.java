@@ -50,6 +50,7 @@ public class VaultArtisanStationClientHelper
             ItemStack gearStack = container.getGearInputSlot().getItem();
             AttributeGearData itemData = AttributeGearData.read(gearStack);
             int potential = (Integer) itemData.getFirstValue(ModGearAttributes.CRAFTING_POTENTIAL).orElse(Integer.MIN_VALUE);
+            int max_potential = (Integer) itemData.getFirstValue(ModGearAttributes.MAX_CRAFTING_POTENTIAL).orElse(Integer.MIN_VALUE);
             boolean hasInput = !gearStack.isEmpty() && potential != Integer.MIN_VALUE;
             boolean failedModification = false;
             List<Component> tooltip = new ArrayList(modification.getDescription(inputItem));
@@ -91,7 +92,7 @@ public class VaultArtisanStationClientHelper
                     {
                         VaultGearData data = VaultGearData.read(gearStack);
                         String rollType = (String) data.get(ModGearAttributes.GEAR_ROLL_TYPE, VaultGearAttributeTypeMerger.firstNonNull());
-                        GearModificationCost cost = GearModificationCost.getCost(data.getRarity(), rollType, data.getItemLevel(), potential, modification);
+                        GearModificationCost cost = GearModificationCost.getCost(potential, max_potential, modification);
                         ItemStack plating = container.getPlatingSlot().getItem();
                         ItemStack bronze = container.getBronzeSlot().getItem();
                         MutableComponent var10001 = (new TextComponent("- ")).append((new ItemStack(ModItems.VAULT_PLATING)).getHoverName());

@@ -24,7 +24,7 @@ public class ConfigSyncMessage
         configs.put("General.alchemyTableInteraction", server.alchemyTableEnabled());
         configs.put("General.transmogTableInteraction", server.transmogTableEnabled());
         configs.put("General.vaultArtisanStationInteraction", server.vaultArtisanStationEnabled());
-        configs.put("General.jewelCuttingStationInteraction", server.jewelCuttingStationEnabled());
+        configs.put("General.jewelCuttingStationInteraction", server.jewelCraftingTableEnabled());
         configs.put("General.spiritExtractorInteraction", server.spiritExtractorEnabled());
         configs.put("General.paradoxDoorInteraction", server.paradoxDoorsEnabled());
     }

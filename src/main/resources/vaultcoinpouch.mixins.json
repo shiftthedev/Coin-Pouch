@@ -11,7 +11,6 @@
     "alchemy.AlchemyTableEffectCraftMessageMixin",
     "alchemy.AlchemyWorkbenchListElementMixin",
     "artisan.GearModificationActionMixin",
-    "jewelcutting.VaultJewelCuttingStationTileEntityMixin",
     "modifier.ModifierWorkbenchCraftMessageAccessor",
     "modifier.ModifierWorkbenchCraftMessageMixin",
     "modifier.ModifierWorkbenchListElementMixin",
@@ -32,8 +31,6 @@
     "artisan.ModificationButtonElementMixin",
     "artisan.VaultArtisanStationScreenMixin",
     "forge.ForgeRecipeContainerScreenMixin",
-    "jewelcutting.JewelCuttingButtonElementMixin",
-    "jewelcutting.VaultJewelCuttingStationScreenMixin",
     "modifier.ModifierWorkbenchScreenMixin",
     "spirit.SpiritExtractorScreenMixin",
     "transmog.TransmogTableScreenMixin"

@@ -267,10 +267,10 @@ public class VCPConfigScreen extends Screen
         y += widgetHeight + padding;
 
         buttonList.add(this.addRenderableWidget(new Button(xLeft, y, widgetWidth, widgetHeight,
-                new TranslatableComponent("configs." + MOD_ID + ".jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCuttingStationEnabled() ? "ON" : "OFF"),
+                new TranslatableComponent("configs." + MOD_ID + ".jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCraftingTableEnabled() ? "ON" : "OFF"),
                 button -> {
-                    VCPConfig.GENERAL.cycleJewelCuttingStation();
-                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCuttingStationEnabled() ? "ON" : "OFF"));
+                    VCPConfig.GENERAL.cycleJewelCraftingStation();
+                    button.setMessage(new TranslatableComponent("configs." + MOD_ID + ".jewelCuttingStationInteraction.name", VCPConfig.GENERAL.jewelCraftingTableEnabled() ? "ON" : "OFF"));
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
                 {

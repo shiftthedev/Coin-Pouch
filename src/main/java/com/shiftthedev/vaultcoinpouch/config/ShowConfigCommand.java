@@ -40,12 +40,12 @@ public class ShowConfigCommand
             throw new CommandSyntaxException(null, new TextComponent("Not in single-player!"));
         }
 
-        //Minecraft mc = Minecraft.getInstance();
-        //mc.mouseHandler.releaseMouse();
-        //ClientEvents.CONFIG_SCREEN.setup(mc, null);
-        //mc.setScreen(ClientEvents.CONFIG_SCREEN);
+        Minecraft mc = Minecraft.getInstance();
+        mc.mouseHandler.releaseMouse();
+        ClientEvents.CONFIG_SCREEN.setup(mc, null);
+        mc.setScreen(ClientEvents.CONFIG_SCREEN);
 
-        SubMenuConfigScreen screen = SubMenuConfigScreen.find(ConfigHelper.ConfigPath.parse("qolhunters:client.Client-Only Extensions"));
-        Minecraft.getInstance().setScreen(screen);
+        //SubMenuConfigScreen screen = SubMenuConfigScreen.find(ConfigHelper.ConfigPath.parse("qolhunters:client.Client-Only Extensions"));
+        //Minecraft.getInstance().setScreen(screen);
     }
 }

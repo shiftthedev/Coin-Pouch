@@ -5,10 +5,7 @@ import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import com.shiftthedev.vaultcoinpouch.network.ShiftVaultForgeRequestCraftMessage;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShiftInventoryUtils;
-import iskallia.vault.block.entity.CatalystInfusionTableTileEntity;
-import iskallia.vault.block.entity.InscriptionTableTileEntity;
-import iskallia.vault.block.entity.ToolStationTileEntity;
-import iskallia.vault.block.entity.VaultForgeTileEntity;
+import iskallia.vault.block.entity.*;
 import iskallia.vault.block.entity.base.ForgeRecipeTileEntity;
 import iskallia.vault.client.gui.framework.render.spi.IElementRenderer;
 import iskallia.vault.client.gui.framework.render.spi.ITooltipRendererFactory;
@@ -87,6 +84,12 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
             cir.cancel();
             return;
         }
+        else if (tile instanceof JewelCraftingTableTileEntity && VCPConfig.GENERAL.jewelCraftingTableEnabled())
+        {
+            cir.setReturnValue(ShiftInventoryUtils.getMissingInputs(inputs, this.getPlayerInventory(), tile.getInventory()));
+            cir.cancel();
+            return;
+        }
     }
 
     @Inject(method = "onCraftClick", at = @At("HEAD"), cancellable = true)
@@ -110,6 +113,12 @@ public abstract class ForgeRecipeContainerScreenMixin<V extends ForgeRecipeTileE
                     return;
                 }
                 else if (tile instanceof InscriptionTableTileEntity && VCPConfig.GENERAL.inscriptionTableEnabled())
+                {
+                    NetworkManager.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
+                    ci.cancel();
+                    return;
+                }
+                else if (tile instanceof JewelCraftingTableTileEntity && VCPConfig.GENERAL.jewelCraftingTableEnabled())
                 {
                     NetworkManager.CHANNEL.sendToServer(new ShiftVaultForgeRequestCraftMessage(this.selectedRecipe.getId(), this.getCraftedLevel()));
                     ci.cancel();

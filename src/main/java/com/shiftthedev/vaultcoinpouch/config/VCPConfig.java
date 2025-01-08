@@ -110,7 +110,7 @@ public class VCPConfig
         private ForgeConfigSpec.ConfigValue<Boolean> alchemyTableInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> transmogTableInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> vaultArtisanStationInteraction;
-        private ForgeConfigSpec.ConfigValue<Boolean> jewelCuttingStationInteraction;
+        private ForgeConfigSpec.ConfigValue<Boolean> jewelCraftingTableInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> spiritExtractorInteraction;
         private ForgeConfigSpec.ConfigValue<Boolean> paradoxDoorInteraction;
 
@@ -124,7 +124,7 @@ public class VCPConfig
             builder.push("General");
 
             this.enableSoulbound = builder
-                    .comment("Enable / Disable the possibility to add Soulbound to the pouch.")
+                    .comment("Enable / Disable the possibility to add Soulbound to the Coin Pouch.")
                     .define("enableSoulbound", true);
 
             this.vaultForgeInteraction = builder
@@ -159,9 +159,9 @@ public class VCPConfig
                     .comment("Enable / Disable interaction with Vault Artisan Station without taking coins out of the pouch.")
                     .define("vaultArtisanStationInteraction", true);
 
-            this.jewelCuttingStationInteraction = builder
-                    .comment("Enable / Disable interaction with Jewel Cutting Station without taking coins out of the pouch.")
-                    .define("jewelCuttingStationInteraction", true);
+            this.jewelCraftingTableInteraction = builder
+                    .comment("Enable / Disable interaction with Jewel Crafting Station without taking coins out of the pouch.")
+                    .define("jewelCraftingTableInteraction", true);
 
             this.spiritExtractorInteraction = builder
                     .comment("Enable / Disable interaction with Spirit Extractor without taking coins out of the pouch.")
@@ -191,7 +191,7 @@ public class VCPConfig
         {
             return this.enableSoulbound.get();
         }
-
+        
         public void cycleSoulbound()
         {
             this.enableSoulbound.set(!this.enableSoulbound.get());
@@ -214,11 +214,12 @@ public class VCPConfig
 
         public boolean vaultArtisanStationEnabled() {return this.vaultArtisanStationInteraction.get();}
 
-        public boolean jewelCuttingStationEnabled() {return this.jewelCuttingStationInteraction.get();}
+        public boolean jewelCraftingTableEnabled() {return this.jewelCraftingTableInteraction.get();}
 
         public boolean spiritExtractorEnabled() {return this.spiritExtractorInteraction.get();}
 
         public boolean paradoxDoorsEnabled() {return this.paradoxDoorInteraction.get();}
+
 
         public void cycleVaultForge()
         {
@@ -260,9 +261,9 @@ public class VCPConfig
             this.vaultArtisanStationInteraction.set(!this.vaultArtisanStationInteraction.get());
         }
 
-        public void cycleJewelCuttingStation()
+        public void cycleJewelCraftingStation()
         {
-            this.jewelCuttingStationInteraction.set(!this.jewelCuttingStationInteraction.get());
+            this.jewelCraftingTableInteraction.set(!this.jewelCraftingTableInteraction.get());
         }
 
         public void cycleSpiritExtractor()
