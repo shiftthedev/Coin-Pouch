@@ -1,5 +1,6 @@
 package com.shiftthedev.vaultcoinpouch.mixins;
 
+import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.container.CoinPouchContainer;
 import com.shiftthedev.vaultcoinpouch.server_helpers.InventoryHelper;
 import iskallia.vault.block.CoinPileDecorBlock;
@@ -21,13 +22,16 @@ public abstract class InventoryMixin implements InventorySnapshotData.InventoryA
     @Inject(method = "add(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
     public void add_coinpouch(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir)
     {
-        if (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof CoinPileDecorBlock)
+        if (!VCPConfig.GENERAL.isBlacklisted(itemStack.getItem().getRegistryName().toString()))
         {
-            if (!(this.player.containerMenu instanceof CoinPouchContainer))
+            if (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof CoinPileDecorBlock)
             {
-                if (InventoryHelper.try_pickupCoinToPouch(this.player, itemStack, (Inventory) (Object) this))
+                if (!(this.player.containerMenu instanceof CoinPouchContainer))
                 {
-                    cir.setReturnValue(true);
+                    if (InventoryHelper.try_pickupCoinToPouch(this.player, itemStack, (Inventory) (Object) this))
+                    {
+                        cir.setReturnValue(true);
+                    }
                 }
             }
         }

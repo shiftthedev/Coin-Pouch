@@ -43,7 +43,7 @@ public class InventoryHelper
 
     private static void handleCoinPouch(ItemStack itemStack, IItemHandler iItemHandler)
     {
-        ItemStack remainder = ItemStack.EMPTY;
+        ItemStack remainder = itemStack.copy();
 
         if (itemStack.getItem().asItem() == ModBlocks.BRONZE_COIN_PILE.asItem())
         {

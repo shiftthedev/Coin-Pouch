@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class VCPConfig
@@ -98,6 +100,9 @@ public class VCPConfig
 
     public static class General
     {
+        // BLACKLIST (TEMP)
+        private ForgeConfigSpec.ConfigValue<List<String>> coinBlacklist;
+
         // SOULBOUND
         private ForgeConfigSpec.ConfigValue<Boolean> enableSoulbound;
         private ForgeConfigSpec.ConfigValue<Boolean> enableShardPouchSoulbound;
@@ -188,7 +193,21 @@ public class VCPConfig
                     .comment("How should coin display be align.")
                     .define("horizontalAlignInInventoryHud", false);
 
+            // BLACKLIST (TEMP)
+            ArrayList<String> a = new ArrayList<>();
+            a.add("woldsvaults:vault_iridium");
+            a.add("woldsvaults:vault_palladium");
+            this.coinBlacklist = builder
+                    .comment("List of coins to be ignore by Coin Pouch.")
+                    .define("coinBlacklist", a);
+
             builder.pop();
+        }
+
+        // BLACKLIST (TEMP)
+        public boolean isBlacklisted(String itemID)
+        {
+            return this.coinBlacklist.get().contains(itemID);
         }
 
         // SOULBOUND
@@ -196,8 +215,8 @@ public class VCPConfig
         {
             return this.enableSoulbound.get();
         }
-        
-        public boolean shardPouchSoulboundEnabled() { return this.enableShardPouchSoulbound.get(); }
+
+        public boolean shardPouchSoulboundEnabled() {return this.enableShardPouchSoulbound.get();}
 
         public void cycleSoulbound()
         {
@@ -208,7 +227,7 @@ public class VCPConfig
         {
             this.enableShardPouchSoulbound.set(!this.enableShardPouchSoulbound.get());
         }
-        
+
         // INTERACTIONS
         public boolean vaultForgeEnabled() {return this.vaultForgeInteraction.get();}
 
