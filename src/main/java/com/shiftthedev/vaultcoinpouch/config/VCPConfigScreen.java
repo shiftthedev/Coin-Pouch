@@ -457,7 +457,7 @@ public class VCPConfigScreen extends Screen
         this.addRenderableWidget(new Button((this.width / 2) - 140, this.height - 27, 100, 20, new TranslatableComponent("configs.vaultcoinpouch.save"),
                 button -> {
                     this.minecraft.mouseHandler.grabMouse();
-                    VCPConfig.saveConfig();
+                    VCPConfig.saveCommonConfigs();
                     onClose();
                 },
                 (button, poseStack, p_93755_, p_93756_) ->
@@ -475,7 +475,7 @@ public class VCPConfigScreen extends Screen
         this.addRenderableWidget(new Button((this.width / 2) + 50, this.height - 27, 100, 20, new TranslatableComponent("configs.vaultcoinpouch.cancel"),
                 button -> {
                     this.minecraft.mouseHandler.grabMouse();
-                    VCPConfig.reloadConfig();
+                    VCPConfig.reloadCommonConfig();
                     onClose();
                 },
                 (button, poseStack, p_93755_, p_93756_) ->

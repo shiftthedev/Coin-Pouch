@@ -58,7 +58,7 @@ public class VaultCoinPouch
 
     private void registerCommand(RegisterCommandsEvent event)
     {
-        ReloadConfigCommand.register(event.getDispatcher());
+        ReloadConfigCommand.registerCommand(event.getDispatcher());
     }
 
     @OnlyIn(Dist.CLIENT)

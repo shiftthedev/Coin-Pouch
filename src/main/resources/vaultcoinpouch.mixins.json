@@ -17,7 +17,7 @@
     "modifier.ModifierWorkbenchListElementMixin",
     "paradox.GateLockRendererMixin",
     "paradox.ParadoxObjectiveMixin",
-    "shop.ShopPedestalBlockMixin",
+    "shop.CoinDefinitionMixin",
     "spirit.SpiritExtractorTileEntityMixin",
     "transmog.TransmogButtonMessageMixin",
     "transmog.TransmogTableContainerMixin"

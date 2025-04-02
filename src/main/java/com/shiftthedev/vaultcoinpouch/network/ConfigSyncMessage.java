@@ -62,7 +62,7 @@ public class ConfigSyncMessage
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() ->
         {
-            VCPConfig.updateFromServer(message.configs);
+            VCPConfig.applyCommonServerConfigs(message.configs);
             VaultCoinPouch.LOGGER.info("Received config from server.");
         });
         context.setPacketHandled(true);
