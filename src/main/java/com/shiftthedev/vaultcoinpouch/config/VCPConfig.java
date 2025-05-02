@@ -22,8 +22,7 @@ import java.util.Map;
 
 import static com.shiftthedev.vaultcoinpouch.VaultCoinPouch.LOGGER;
 
-public class VCPConfig
-{
+public class VCPConfig {
     // <editor-fold desc="Common Configs Fields">
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final String COMMON_CONFIG_PATH = "config/shift_mods/coinpouch/coinpouch-common.shift";
@@ -42,12 +41,10 @@ public class VCPConfig
     private static Map<String, CoinData> coinDataMap = new HashMap<>();
     // </editor-fold>
 
-    public VCPConfig()
-    {
+    public VCPConfig() {
     }
 
-    public static void initConfig()
-    {
+    public static void initConfig() {
         // load coin data
         //loadCoinData();
 
@@ -56,46 +53,38 @@ public class VCPConfig
     }
 
     // <editor-fold desc="Coin Data Methods">
-    private static void loadCoinData()
-    {
-        if (!Files.exists(COIN_DATA_PATH))
-        {
+    private static void loadCoinData() {
+        if (!Files.exists(COIN_DATA_PATH)) {
             genDefaultCoinData();
         }
 
-        try (Reader reader = Files.newBufferedReader(COIN_DATA_PATH))
-        {
-            Type type = new TypeToken<List<CoinData>>() {}.getType();
+        try (Reader reader = Files.newBufferedReader(COIN_DATA_PATH)) {
+            Type type = new TypeToken<List<CoinData>>() {
+            }.getType();
             List<CoinData> coinDataList = GSON.fromJson(reader, type);
             coinDataList.forEach(coinData -> coinDataMap.put(coinData.coin_id, coinData));
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             LOGGER.warn("[CoinPouch] Failed to load coin data");
             ex.printStackTrace();
         }
     }
 
-    private static void genDefaultCoinData()
-    {
-        try (Writer writer = Files.newBufferedWriter(COIN_DATA_PATH))
-        {
+    private static void genDefaultCoinData() {
+        try (Writer writer = Files.newBufferedWriter(COIN_DATA_PATH)) {
             List<CoinData> coinDataList = List.of(
                     new CoinData("the_vault:vault_bronze", "the_vault:vault_silver", "", 0),
                     new CoinData("the_vault:vault_silver", "the_vault:vault_gold", "the_vault:vault_bronze", 9),
                     new CoinData("the_vault:vault_gold", "the_vault:vault_platinum", "the_vault:vault_silver", 9),
                     new CoinData("the_vault:vault_platinum", "", "the_vault:vault_gold", 9)
             );
-            
+
             GSON.toJson(coinDataList, writer);
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             LOGGER.warn("[CoinPouch] Failed to generate default coin data");
             ex.printStackTrace();
         }
     }
-    
+
     //public static void reloadCoins()
     //{
     //    loadCoinData();
@@ -103,13 +92,10 @@ public class VCPConfig
     // </editor-fold>
 
     // <editor-fold desc="Common Configs Methods">
-    private static void loadCommonConfigs()
-    {
+    private static void loadCommonConfigs() {
         Path path = Paths.get(COMMON_CONFIG_PATH);
-        if (!Files.exists(path))
-        {
-            try
-            {
+        if (!Files.exists(path)) {
+            try {
                 Files.createDirectories(path.getParent());
                 Files.createFile(path);
 
@@ -117,9 +103,7 @@ public class VCPConfig
                 defaults.set("version.versionvalue", 1);
                 defaults.save();
                 defaults.close();
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 throw new RuntimeException("Failed to create coin pouch config file", ex);
             }
         }
@@ -128,8 +112,7 @@ public class VCPConfig
         CONFIG_FILE.load();
 
         Path oldPath = Paths.get(OLD_COMMON_PATH);
-        if (Files.exists(oldPath))
-        {
+        if (Files.exists(oldPath)) {
             CommentedFileConfig old_config = CommentedFileConfig.builder(OLD_COMMON_PATH).writingMode(WritingMode.REPLACE).build();
             old_config.load();
 
@@ -137,12 +120,9 @@ public class VCPConfig
             saveCommonConfigs();
 
             old_config.close();
-            try
-            {
+            try {
                 Files.delete(oldPath);
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 throw new RuntimeException("Failed to delete old coin pouch config file", ex);
             }
         }
@@ -150,32 +130,27 @@ public class VCPConfig
         COMMON_CONFIG.setConfig(CONFIG_FILE);
     }
 
-    public static void reloadCommonConfig()
-    {
+    public static void reloadCommonConfig() {
         CONFIG_FILE.load();
         COMMON_CONFIG.setConfig(CONFIG_FILE);
     }
 
-    public static void applyCommonServerConfigs(Map<String, Boolean> serverConfigs)
-    {
+    public static void applyCommonServerConfigs(Map<String, Boolean> serverConfigs) {
         serverConfigs.forEach(CONFIG_FILE::set);
         COMMON_CONFIG.setConfig(CONFIG_FILE);
     }
 
-    public static void saveCommonConfigs()
-    {
+    public static void saveCommonConfigs() {
         CONFIG_FILE.save();
     }
 
-    static
-    {
+    static {
         GENERAL = new General(BUILDER);
         COMMON_CONFIG = BUILDER.build();
     }
     // </editor-fold>
 
-    public static class General
-    {
+    public static class General {
         // BLACKLIST (TEMP)
         private ForgeConfigSpec.ConfigValue<List<String>> coinBlacklist;
 
@@ -201,8 +176,7 @@ public class VCPConfig
         private ForgeConfigSpec.ConfigValue<Boolean> useShortCoinCountInInventoryHud;
         private ForgeConfigSpec.ConfigValue<Boolean> horizontalAlignInInventoryHud;
 
-        public General(ForgeConfigSpec.Builder builder)
-        {
+        public General(ForgeConfigSpec.Builder builder) {
             builder.push("General");
 
             this.enableSoulbound = builder
@@ -279,173 +253,140 @@ public class VCPConfig
         }
 
         // BLACKLIST (TEMP)
-        public boolean isBlacklisted(String itemID)
-        {
+        public boolean isBlacklisted(String itemID) {
             return this.coinBlacklist.get().contains(itemID);
         }
 
         // SOULBOUND
-        public boolean soulboundEnabled()
-        {
+        public boolean soulboundEnabled() {
             return this.enableSoulbound.get();
         }
 
-        public boolean shardPouchSoulboundEnabled()
-        {
+        public boolean shardPouchSoulboundEnabled() {
             return this.enableShardPouchSoulbound.get();
         }
 
-        public void cycleSoulbound()
-        {
+        public void cycleSoulbound() {
             this.enableSoulbound.set(!this.enableSoulbound.get());
         }
 
-        public void cycleShardPouchSoulbound()
-        {
+        public void cycleShardPouchSoulbound() {
             this.enableShardPouchSoulbound.set(!this.enableShardPouchSoulbound.get());
         }
 
         // INTERACTIONS
-        public boolean vaultForgeEnabled()
-        {
+        public boolean vaultForgeEnabled() {
             return this.vaultForgeInteraction.get();
         }
 
-        public boolean toolStationEnabled()
-        {
+        public boolean toolStationEnabled() {
             return this.toolStationInteraction.get();
         }
 
-        public boolean inscriptionTableEnabled()
-        {
+        public boolean inscriptionTableEnabled() {
             return this.inscriptionTableInteraction.get();
         }
 
-        public boolean modifierWorkbenchEnabled()
-        {
+        public boolean modifierWorkbenchEnabled() {
             return this.modifierWorkbenchInteraction.get();
         }
 
-        public boolean alchemyTableEnabled()
-        {
+        public boolean alchemyTableEnabled() {
             return this.alchemyTableInteraction.get();
         }
 
-        public boolean shopPedestalEnabled()
-        {
+        public boolean shopPedestalEnabled() {
             return this.shopPedestalInteraction.get();
         }
 
-        public boolean transmogTableEnabled()
-        {
+        public boolean transmogTableEnabled() {
             return this.transmogTableInteraction.get();
         }
 
-        public boolean vaultArtisanStationEnabled()
-        {
+        public boolean vaultArtisanStationEnabled() {
             return this.vaultArtisanStationInteraction.get();
         }
 
-        public boolean jewelCraftingTableEnabled()
-        {
+        public boolean jewelCraftingTableEnabled() {
             return this.jewelCraftingTableInteraction.get();
         }
 
-        public boolean spiritExtractorEnabled()
-        {
+        public boolean spiritExtractorEnabled() {
             return this.spiritExtractorInteraction.get();
         }
 
-        public boolean paradoxDoorsEnabled()
-        {
+        public boolean paradoxDoorsEnabled() {
             return this.paradoxDoorInteraction.get();
         }
 
 
-        public void cycleVaultForge()
-        {
+        public void cycleVaultForge() {
             this.vaultForgeInteraction.set(!this.vaultForgeInteraction.get());
         }
 
-        public void cycleToolStation()
-        {
+        public void cycleToolStation() {
             this.toolStationInteraction.set(!this.toolStationInteraction.get());
         }
 
-        public void cycleInscriptionTable()
-        {
+        public void cycleInscriptionTable() {
             this.inscriptionTableInteraction.set(!this.inscriptionTableInteraction.get());
         }
 
-        public void cycleModifierWorkbench()
-        {
+        public void cycleModifierWorkbench() {
             this.modifierWorkbenchInteraction.set(!this.modifierWorkbenchInteraction.get());
         }
 
-        public void cycleAlchemyTable()
-        {
+        public void cycleAlchemyTable() {
             this.alchemyTableInteraction.set(!this.alchemyTableInteraction.get());
         }
 
-        public void cycleShopPedestal()
-        {
+        public void cycleShopPedestal() {
             this.shopPedestalInteraction.set(!this.shopPedestalInteraction.get());
         }
 
-        public void cycleTransmogTable()
-        {
+        public void cycleTransmogTable() {
             this.transmogTableInteraction.set(!this.transmogTableInteraction.get());
         }
 
-        public void cycleVaultArtisanStation()
-        {
+        public void cycleVaultArtisanStation() {
             this.vaultArtisanStationInteraction.set(!this.vaultArtisanStationInteraction.get());
         }
 
-        public void cycleJewelCraftingStation()
-        {
+        public void cycleJewelCraftingStation() {
             this.jewelCraftingTableInteraction.set(!this.jewelCraftingTableInteraction.get());
         }
 
-        public void cycleSpiritExtractor()
-        {
+        public void cycleSpiritExtractor() {
             this.spiritExtractorInteraction.set(!this.spiritExtractorInteraction.get());
         }
 
-        public void cycleParadoxDoors()
-        {
+        public void cycleParadoxDoors() {
             this.paradoxDoorInteraction.set(!this.paradoxDoorInteraction.get());
         }
 
 
         // HUD OVERLAY
-        public boolean invCoinsEnabled()
-        {
+        public boolean invCoinsEnabled() {
             return this.showCoinCountInInventoryHud.get();
         }
 
-        public boolean invShortEnabled()
-        {
+        public boolean invShortEnabled() {
             return this.useShortCoinCountInInventoryHud.get();
         }
 
-        public boolean invHorizontalEnabled()
-        {
+        public boolean invHorizontalEnabled() {
             return this.horizontalAlignInInventoryHud.get();
         }
 
-        public void cycleInvCoins()
-        {
+        public void cycleInvCoins() {
             this.showCoinCountInInventoryHud.set(!this.showCoinCountInInventoryHud.get());
         }
 
-        public void cycleInvShort()
-        {
+        public void cycleInvShort() {
             this.useShortCoinCountInInventoryHud.set(!this.useShortCoinCountInInventoryHud.get());
         }
 
-        public void cycleHorizontal()
-        {
+        public void cycleHorizontal() {
             this.horizontalAlignInInventoryHud.set(!this.horizontalAlignInInventoryHud.get());
         }
     }

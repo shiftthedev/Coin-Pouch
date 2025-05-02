@@ -9,12 +9,10 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class ConfigSyncMessage
-{
+public class ConfigSyncMessage {
     private Map<String, Boolean> configs = Maps.newHashMap();
 
-    public ConfigSyncMessage(VCPConfig.General server)
-    {
+    public ConfigSyncMessage(VCPConfig.General server) {
         configs.put("General.enableSoulbound", server.soulboundEnabled());
         configs.put("General.shopPedestalInteraction", server.shopPedestalEnabled());
         configs.put("General.vaultForgeInteraction", server.vaultForgeEnabled());
@@ -29,13 +27,11 @@ public class ConfigSyncMessage
         configs.put("General.paradoxDoorInteraction", server.paradoxDoorsEnabled());
     }
 
-    public ConfigSyncMessage(Map<String, Boolean> configs)
-    {
+    public ConfigSyncMessage(Map<String, Boolean> configs) {
         this.configs = configs;
     }
 
-    public static void encode(ConfigSyncMessage message, FriendlyByteBuf buffer)
-    {
+    public static void encode(ConfigSyncMessage message, FriendlyByteBuf buffer) {
         buffer.writeInt(message.configs.size());
         message.configs.forEach((k, v) -> {
             buffer.writeUtf(k);
@@ -43,12 +39,10 @@ public class ConfigSyncMessage
         });
     }
 
-    public static ConfigSyncMessage decode(FriendlyByteBuf buffer)
-    {
+    public static ConfigSyncMessage decode(FriendlyByteBuf buffer) {
         int size = buffer.readInt();
         Map<String, Boolean> temp = Maps.newHashMap();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             String id = buffer.readUtf(128);
             boolean value = buffer.readBoolean();
             temp.put(id, value);
@@ -57,11 +51,9 @@ public class ConfigSyncMessage
         return new ConfigSyncMessage(temp);
     }
 
-    public static void handle(ConfigSyncMessage message, Supplier<NetworkEvent.Context> contextSupplier)
-    {
+    public static void handle(ConfigSyncMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
-        context.enqueueWork(() ->
-        {
+        context.enqueueWork(() -> {
             VCPConfig.applyCommonServerConfigs(message.configs);
             VaultCoinPouch.LOGGER.info("Received config from server.");
         });

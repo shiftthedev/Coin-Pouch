@@ -5,7 +5,14 @@ import com.shiftthedev.vaultcoinpouch.config.ReloadConfigCommand;
 import com.shiftthedev.vaultcoinpouch.config.ShowConfigCommand;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
+import iskallia.vault.gear.data.AttributeGearData;
+import iskallia.vault.init.ModGearAttributes;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,16 +28,16 @@ import org.slf4j.Logger;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 
+import java.util.List;
+
 @Mod(VaultCoinPouch.MOD_ID)
-public class VaultCoinPouch
-{
+public class VaultCoinPouch {
     public static final String MOD_ID = "vaultcoinpouch";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     private static final ResourceLocation EMPTY_COIN_POUCH_SLOT = new ResourceLocation(CuriosApi.MODID, "slot/empty_coin_pouch_slot");
 
-    public VaultCoinPouch()
-    {
+    public VaultCoinPouch() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::imc);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::registerCommand);
@@ -40,14 +47,12 @@ public class VaultCoinPouch
         });
     }
 
-    private void setup(final FMLCommonSetupEvent event)
-    {
+    private void setup(final FMLCommonSetupEvent event) {
         VCPConfig.initConfig();
         NetworkManager.initializeNetwork();
     }
 
-    private void imc(final InterModEnqueueEvent event)
-    {
+    private void imc(final InterModEnqueueEvent event) {
         InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE,
                 () -> new SlotTypeMessage.Builder("coin_pouch")
                         .size(1)
@@ -56,14 +61,32 @@ public class VaultCoinPouch
                         .build());
     }
 
-    private void registerCommand(RegisterCommandsEvent event)
-    {
+    private void registerCommand(RegisterCommandsEvent event) {
         ReloadConfigCommand.registerCommand(event.getDispatcher());
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void registerClientCommand(RegisterCommandsEvent event)
-    {
+    private void registerClientCommand(RegisterCommandsEvent event) {
         ShowConfigCommand.register(event.getDispatcher());
+    }
+
+    public static void addSoulboundTooltip(ItemStack stack, List<Component> tooltip) {
+        tooltip.add(new TextComponent(" "));
+        if (AttributeGearData.read(stack).hasAttribute(ModGearAttributes.SOULBOUND)) {
+            tooltip.add(new TextComponent(ModGearAttributes.SOULBOUND.getReader().getModifierName()).withStyle(ModGearAttributes.SOULBOUND.getReader().getColoredTextStyle()));
+        } else {
+            tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".soulbound").withStyle(ChatFormatting.GRAY));
+        }
+    }
+
+    public static String formatCount(int count) {
+        if (count > 1000000000) {
+            return Math.floorDiv(count, 1000000000) + "B";
+        } else if (count > 1000000) {
+            return Math.floorDiv(count, 1000000) + "M";
+        } else if (count > 1000) {
+            return Math.floorDiv(count, 1000) + "K";
+        }
+        return String.valueOf(count);
     }
 }

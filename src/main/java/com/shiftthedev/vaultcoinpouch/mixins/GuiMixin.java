@@ -3,6 +3,7 @@ package com.shiftthedev.vaultcoinpouch.mixins;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
+import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import com.shiftthedev.vaultcoinpouch.server_helpers.ShopPedestalHelper;
 import iskallia.vault.block.ShopPedestalBlock;
@@ -29,8 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Iterator;
 
 @Mixin(Gui.class)
-public abstract class GuiMixin
-{
+public abstract class GuiMixin {
     @Shadow
     @Final
     protected Minecraft minecraft;
@@ -51,18 +51,13 @@ public abstract class GuiMixin
     private static ItemStack GoldStack = ItemStack.EMPTY;
 
     @Inject(method = "renderCrosshair", at = @At("TAIL"))
-    private void renderCrosshair_coinpouch(PoseStack p, CallbackInfo ci)
-    {
+    private void renderCrosshair_coinpouch(PoseStack p, CallbackInfo ci) {
         p.pushPose();
-        if (this.minecraft.options.getCameraType().isFirstPerson())
-        {
-            if (this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || this.canRenderCrosshairForSpectator(this.minecraft.hitResult))
-            {
-                if (this.minecraft.hitResult.getType() == HitResult.Type.BLOCK)
-                {
+        if (this.minecraft.options.getCameraType().isFirstPerson()) {
+            if (this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || this.canRenderCrosshairForSpectator(this.minecraft.hitResult)) {
+                if (this.minecraft.hitResult.getType() == HitResult.Type.BLOCK) {
                     BlockPos blockPos = ((BlockHitResult) this.minecraft.hitResult).getBlockPos();
-                    if (isValidTarget(blockPos))
-                    {
+                    if (isValidTarget(blockPos)) {
                         RenderSystem.disableDepthTest();
                         PoseStack posestack = RenderSystem.getModelViewStack();
                         posestack.pushPose();
@@ -76,14 +71,13 @@ public abstract class GuiMixin
                         int x = (this.screenWidth / 2);
                         int y = (this.screenHeight / 2);
 
-                        if (GoldStack.isEmpty())
-                        {
+                        if (GoldStack.isEmpty()) {
                             GoldStack = new ItemStack(ModBlocks.GOLD_COIN_PILE, 1);
                         }
 
                         int count = getCoinsCount(GoldStack);
                         this.itemRenderer.renderAndDecorateItem(this.minecraft.player, GoldStack, x, y, x + y);
-                        this.itemRenderer.renderGuiItemDecorations(this.minecraft.font, GoldStack, x, y, getFormattedCount(count));
+                        this.itemRenderer.renderGuiItemDecorations(this.minecraft.font, GoldStack, x, y, VaultCoinPouch.formatCount(count));
                         this.itemRenderer.blitOffset = 0F;
 
                         posestack.popPose();
@@ -96,34 +90,25 @@ public abstract class GuiMixin
         p.popPose();
     }
 
-    private boolean isValidTarget(BlockPos blockPos)
-    {
+    private boolean isValidTarget(BlockPos blockPos) {
         BlockState blockState = this.minecraft.level.getBlockState(blockPos);
         return (blockState.is(ModBlocks.SHOP_PEDESTAL) && this.minecraft.level.getBlockState(blockPos).getValue(ShopPedestalBlock.ACTIVE))
                 || blockState.is(ModBlocks.GATE_LOCK);
     }
 
-    private int getCoinsCount(ItemStack coinType)
-    {
+    private int getCoinsCount(ItemStack coinType) {
         Player player = this.minecraft.player;
         int count = 0;
 
         Iterator it = InventoryUtil.findAllItems(player).iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             ItemStack stack = ((InventoryUtil.ItemAccess) it.next()).getStack();
-            if (!stack.isEmpty())
-            {
-                if (stack.is(VCPRegistry.COIN_POUCH))
-                {
+            if (!stack.isEmpty()) {
+                if (stack.is(VCPRegistry.COIN_POUCH)) {
                     count += CoinPouchItem.getCoinCount(stack, coinType);
-                }
-                else if (stack.is(ModBlocks.GOLD_COIN_PILE.asItem()))
-                {
+                } else if (stack.is(ModBlocks.GOLD_COIN_PILE.asItem())) {
                     count += stack.getCount();
-                }
-                else
-                {
+                } else {
                     count += (ShopPedestalHelper.getCoinDefinition(stack.getItem()).map(shiftCoinDefinition -> {
                         return shiftCoinDefinition.coinValue() * stack.getCount();
                     }).orElse(0)) / 81;
@@ -132,25 +117,5 @@ public abstract class GuiMixin
         }
 
         return count;
-    }
-
-    private String getFormattedCount(int count)
-    {
-        if (count > 1000000000)
-        {
-            return Math.floorDiv(count, 1000000000) + "B";
-        }
-
-        if (count > 1000000)
-        {
-            return Math.floorDiv(count, 1000000) + "M";
-        }
-
-        if (count > 1000)
-        {
-            return Math.floorDiv(count, 1000) + "K";
-        }
-
-        return String.valueOf(count);
     }
 }

@@ -3,6 +3,7 @@ package com.shiftthedev.vaultcoinpouch.mixins.invhud;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
+import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import dlovin.inventoryhud.gui.renderers.ArmorRenderer;
@@ -20,18 +21,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nullable;
 
 @Mixin(value = CuriosRenderer.class, remap = false)
-public abstract class CuriosRendererMixin extends ArmorRenderer
-{
-    public CuriosRendererMixin(Minecraft mc)
-    {
+public abstract class CuriosRendererMixin extends ArmorRenderer {
+    public CuriosRendererMixin(Minecraft mc) {
         super(mc);
     }
 
     @Inject(method = "pushAndRender", at = @At("HEAD"), cancellable = true)
-    private void pushAndRender_coinpouch(PoseStack mat, int x, int y, boolean right, ResourceLocation resourceLocation, ItemStack itemStack, String text, boolean over, float scale, CallbackInfo ci)
-    {
-        if (itemStack != null && itemStack.is(VCPRegistry.COIN_POUCH) && VCPConfig.GENERAL.invCoinsEnabled())
-        {
+    private void pushAndRender_coinpouch(PoseStack mat, int x, int y, boolean right, ResourceLocation resourceLocation, ItemStack itemStack, String text, boolean over, float scale, CallbackInfo ci) {
+        if (itemStack != null && itemStack.is(VCPRegistry.COIN_POUCH) && VCPConfig.GENERAL.invCoinsEnabled()) {
             Font fontRenderer = ((ArmorRendererAccessor) this).getFontRenderer();
 
             // Draw coins
@@ -39,25 +36,18 @@ public abstract class CuriosRendererMixin extends ArmorRenderer
             int coinX = 0;
             int coinY = 0;
 
-            for (int i = 0; i < coinsArray.length; i++)
-            {
+            for (int i = 0; i < coinsArray.length; i++) {
                 ItemStack coinStack = coinsArray[i];
                 mat.pushPose();
 
-                if (VCPConfig.GENERAL.invHorizontalEnabled())
-                {
+                if (VCPConfig.GENERAL.invHorizontalEnabled()) {
                     coinX = x + (i * 14);
-                    if (i % 2 != 0)
-                    {
+                    if (i % 2 != 0) {
                         coinY = y + 5;
-                    }
-                    else
-                    {
+                    } else {
                         coinY = y;
                     }
-                }
-                else
-                {
+                } else {
                     coinX = x;
                     coinY = y + (i * 10);
                 }
@@ -65,12 +55,9 @@ public abstract class CuriosRendererMixin extends ArmorRenderer
                 mat.translate(coinX, coinY, 0.0);
                 mat.scale(scale, scale, 1.0F);
 
-                if (VCPConfig.GENERAL.invShortEnabled())
-                {
-                    this.renderElement(mat, coinX, coinY, scale, right, resourceLocation, coinStack, "" + getCount(coinStack.getCount()), over, fontRenderer);
-                }
-                else
-                {
+                if (VCPConfig.GENERAL.invShortEnabled()) {
+                    this.renderElement(mat, coinX, coinY, scale, right, resourceLocation, coinStack, VaultCoinPouch.formatCount(coinStack.getCount()), over, fontRenderer);
+                } else {
                     this.renderElement(mat, coinX, coinY, scale, right, resourceLocation, coinStack, "" + coinStack.getCount(), over, fontRenderer);
                 }
 
@@ -82,17 +69,13 @@ public abstract class CuriosRendererMixin extends ArmorRenderer
         }
     }
 
-    private void renderElement(PoseStack mat, int x, int y, float scale, boolean right, @Nullable ResourceLocation res, @Nullable ItemStack item, @Nullable String text, boolean overlay, Font fontRenderer)
-    {
+    private void renderElement(PoseStack mat, int x, int y, float scale, boolean right, @Nullable ResourceLocation res, @Nullable ItemStack item, @Nullable String text, boolean overlay, Font fontRenderer) {
         ItemRenderer itemRenderer = ((ArmorRendererAccessor) this).getItemRenderer();
 
-        if (res != null)
-        {
+        if (res != null) {
             RenderSystem.setShaderTexture(0, res);
             blit(mat, 0, 0, 16.0F, 16.0F, 16, 16, 16, 16);
-        }
-        else
-        {
+        } else {
             PoseStack matr = RenderSystem.getModelViewStack();
             matr.pushPose();
             matr.translate((double) x, (double) y, -256.0);
@@ -100,8 +83,7 @@ public abstract class CuriosRendererMixin extends ArmorRenderer
             RenderSystem.applyModelViewMatrix();
             assert item != null;
             itemRenderer.renderAndDecorateItem(item, 0, 0);
-            if (overlay)
-            {
+            if (overlay) {
                 itemRenderer.renderGuiItemDecorations(fontRenderer, item, 0, 0, text);
             }
 
@@ -110,20 +92,16 @@ public abstract class CuriosRendererMixin extends ArmorRenderer
         }
     }
 
-    private String getCount(int count)
-    {
-        if (count > 1000000000)
-        {
+    private String getCount(int count) {
+        if (count > 1000000000) {
             return Math.floorDiv(count, 1000000000) + "B";
         }
 
-        if (count > 1000000)
-        {
+        if (count > 1000000) {
             return Math.floorDiv(count, 1000000) + "M";
         }
 
-        if (count > 1000)
-        {
+        if (count > 1000) {
             return Math.floorDiv(count, 1000) + "K";
         }
 

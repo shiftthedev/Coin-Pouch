@@ -10,22 +10,17 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;
 
-public class ShowConfigCommand
-{
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
-    {
+public class ShowConfigCommand {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("coinpouch")
                 .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
                 .then(Commands.literal("config")
                         .executes(commandContext -> {
                             Minecraft.getInstance().tell(() -> {
-                                try
-                                {
+                                try {
                                     openConfigScreen();
                                     commandContext.getSource().sendSuccess(new TextComponent("Opening Coin Pouch Configs"), true);
-                                }
-                                catch (Exception e2)
-                                {
+                                } catch (Exception e2) {
                                     commandContext.getSource().sendFailure(new TextComponent("Failed to run coin pouch command with error: " + e2.getMessage()));
                                 }
                             });
@@ -33,10 +28,8 @@ public class ShowConfigCommand
                         })));
     }
 
-    private static void openConfigScreen() throws CommandSyntaxException
-    {
-        if (Minecraft.getInstance().player == null)
-        {
+    private static void openConfigScreen() throws CommandSyntaxException {
+        if (Minecraft.getInstance().player == null) {
             throw new CommandSyntaxException(null, new TextComponent("Not in single-player!"));
         }
 
@@ -44,8 +37,5 @@ public class ShowConfigCommand
         mc.mouseHandler.releaseMouse();
         ClientEvents.CONFIG_SCREEN.setup(mc, null);
         mc.setScreen(ClientEvents.CONFIG_SCREEN);
-
-        //SubMenuConfigScreen screen = SubMenuConfigScreen.find(ConfigHelper.ConfigPath.parse("qolhunters:client.Client-Only Extensions"));
-        //Minecraft.getInstance().setScreen(screen);
     }
 }

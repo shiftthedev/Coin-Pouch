@@ -2,8 +2,8 @@ package com.shiftthedev.vaultcoinpouch.events;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
-import iskallia.vault.gear.attribute.type.VaultGearAttributeTypeMerger;
 import iskallia.vault.gear.data.AttributeGearData;
+import iskallia.vault.gear.data.GearDataCache;
 import iskallia.vault.init.ModGearAttributes;
 import iskallia.vault.init.ModItems;
 import iskallia.vault.item.ItemShardPouch;
@@ -15,59 +15,31 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(
         bus = Mod.EventBusSubscriber.Bus.FORGE
 )
-public class AnvilEvents
-{
+public class AnvilEvents {
 
     @SubscribeEvent
-    public static void applySoulbound(AnvilUpdateEvent event)
-    {
-        if (VCPConfig.GENERAL.soulboundEnabled())
-        {
-            if (event.getLeft().getItem() instanceof CoinPouchItem)
-            {
-                ItemStack right = event.getRight();
-                if (right.getItem() == ModItems.JEWEL)
-                {
-                    if(AttributeGearData.hasData(right) && AttributeGearData.read(right).get(ModGearAttributes.SOULBOUND, VaultGearAttributeTypeMerger.anyTrue()))
-                    {
-                        ItemStack result = event.getLeft().copy();
-                        AttributeGearData data = AttributeGearData.empty();
-                        data.createOrReplaceAttributeValue(ModGearAttributes.SOULBOUND, true);
-                        data.write(result);
-
-                        event.setOutput(result);
-                        event.setCost(10);
-                        event.setMaterialCost(1);
-                        
-                        return;
-                    }
-                }
-            }
+    public static void applySoulbound(AnvilUpdateEvent event) {
+        if (!VCPConfig.GENERAL.soulboundEnabled() && !VCPConfig.GENERAL.shardPouchSoulboundEnabled()) {
+            return;
         }
-        
-        if (VCPConfig.GENERAL.shardPouchSoulboundEnabled())
-        {
-            
-            if (event.getLeft().getItem() instanceof ItemShardPouch)
-            {
-                ItemStack right = event.getRight();
-                if (right.getItem() == ModItems.JEWEL)
-                {
-                    if(AttributeGearData.hasData(right) && AttributeGearData.read(right).get(ModGearAttributes.SOULBOUND, VaultGearAttributeTypeMerger.anyTrue()))
-                    {
-                        ItemStack result = event.getLeft().copy();
-                        AttributeGearData data = AttributeGearData.empty();
-                        data.createOrReplaceAttributeValue(ModGearAttributes.SOULBOUND, true);
-                        data.write(result);
 
-                        event.setOutput(result);
-                        event.setCost(10);
-                        event.setMaterialCost(1);
-                        
-                        return;
-                    }
-                }
-            }
+        ItemStack jewel = event.getRight();
+        if (jewel.getItem() != ModItems.JEWEL || !GearDataCache.of(jewel).hasAttribute(ModGearAttributes.SOULBOUND)) {
+            return;
+        }
+
+        ItemStack pouch = event.getLeft();
+        boolean coin = VCPConfig.GENERAL.soulboundEnabled() && pouch.getItem() instanceof CoinPouchItem;
+        boolean shard = VCPConfig.GENERAL.shardPouchSoulboundEnabled() && pouch.getItem() instanceof ItemShardPouch;
+        if (coin || shard) {
+            ItemStack result = event.getLeft().copy();
+            AttributeGearData data = AttributeGearData.empty();
+            data.createOrReplaceAttributeValue(ModGearAttributes.SOULBOUND, true);
+            data.write(result);
+
+            event.setOutput(result);
+            event.setCost(10);
+            event.setMaterialCost(1);
         }
     }
 }

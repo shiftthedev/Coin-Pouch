@@ -16,8 +16,7 @@ import java.util.List;
 
 import static com.shiftthedev.vaultcoinpouch.VaultCoinPouch.MOD_ID;
 
-public class VCPConfigScreen extends Screen
-{
+public class VCPConfigScreen extends Screen {
     private static List<TranslatableComponent> PAGES_TITLES = List.of(
             new TranslatableComponent("configs." + MOD_ID + ".page.interactions"),
             new TranslatableComponent("configs." + MOD_ID + ".page.soulbound"),
@@ -28,20 +27,17 @@ public class VCPConfigScreen extends Screen
 
     private HashMap<Integer, List<Button>> buttons = new HashMap<>();
 
-    public VCPConfigScreen()
-    {
+    public VCPConfigScreen() {
         super(new TranslatableComponent("configs." + MOD_ID + ".title"));
     }
 
-    public void setup(Minecraft minecraft, Screen parent)
-    {
+    public void setup(Minecraft minecraft, Screen parent) {
         this.minecraft = minecraft;
         this.parent = parent;
     }
 
     @Override
-    protected void init()
-    {
+    protected void init() {
         super.init();
         this.init_footer();
         this.inti_header();
@@ -52,8 +48,7 @@ public class VCPConfigScreen extends Screen
         buttons.get(pageIndex).forEach(button1 -> button1.visible = true);
     }
 
-    private void inti_header()
-    {
+    private void inti_header() {
         int padding = 30;
         int widgetWidth = 170;
         int widgetHeight = 20;
@@ -66,12 +61,9 @@ public class VCPConfigScreen extends Screen
                 button -> {
                     buttons.get(pageIndex).forEach(button1 -> button1.visible = false);
 
-                    if (pageIndex - 1 < 0)
-                    {
+                    if (pageIndex - 1 < 0) {
                         pageIndex = PAGES_TITLES.size() - 1;
-                    }
-                    else
-                    {
+                    } else {
                         pageIndex -= 1;
                     }
 
@@ -84,12 +76,9 @@ public class VCPConfigScreen extends Screen
                 button -> {
                     buttons.get(pageIndex).forEach(button1 -> button1.visible = false);
 
-                    if (pageIndex + 1 >= PAGES_TITLES.size())
-                    {
+                    if (pageIndex + 1 >= PAGES_TITLES.size()) {
                         pageIndex = 0;
-                    }
-                    else
-                    {
+                    } else {
                         pageIndex += 1;
                     }
 
@@ -98,8 +87,7 @@ public class VCPConfigScreen extends Screen
         );
     }
 
-    private void init_interactions()
-    {
+    private void init_interactions() {
         int padding = 4;
         int widgetWidth = 170;
         int widgetHeight = 20;
@@ -327,8 +315,7 @@ public class VCPConfigScreen extends Screen
         buttons.put(0, buttonList);
     }
 
-    private void init_soulbound()
-    {
+    private void init_soulbound() {
         int padding = 4;
         int widgetWidth = 170;
         int widgetHeight = 20;
@@ -379,8 +366,7 @@ public class VCPConfigScreen extends Screen
         buttons.put(1, buttonList);
     }
 
-    private void init_hud()
-    {
+    private void init_hud() {
         int padding = 4;
         int widgetWidth = 170;
         int widgetHeight = 20;
@@ -452,8 +438,7 @@ public class VCPConfigScreen extends Screen
         buttons.put(2, buttonList);
     }
 
-    private void init_footer()
-    {
+    private void init_footer() {
         this.addRenderableWidget(new Button((this.width / 2) - 140, this.height - 27, 100, 20, new TranslatableComponent("configs.vaultcoinpouch.save"),
                 button -> {
                     this.minecraft.mouseHandler.grabMouse();
@@ -491,19 +476,16 @@ public class VCPConfigScreen extends Screen
         );
     }
 
-    private int getTooltipX(int mouseX)
-    {
+    private int getTooltipX(int mouseX) {
         return mouseX < (this.width / 2) ? mouseX : mouseX + 10;
     }
 
-    private int getTooltipY(int mouseY)
-    {
+    private int getTooltipY(int mouseY) {
         return mouseY < (this.height / 2) ? mouseY + 20 : mouseY;
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick)
-    {
+    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(poseStack);
         drawCenteredString(poseStack, this.font, this.title, this.width / 2, 10, 16777215);
         drawCenteredString(poseStack, this.font, PAGES_TITLES.get(pageIndex), this.width / 2, 20, 16777215);
@@ -511,18 +493,15 @@ public class VCPConfigScreen extends Screen
     }
 
     @Override
-    public void onClose()
-    {
+    public void onClose() {
         super.onClose();
-        if (this.parent != null)
-        {
+        if (this.parent != null) {
             Minecraft.getInstance().setScreen(this.parent);
         }
     }
 
     @Override
-    public void renderDirtBackground(int pVOffset)
-    {
+    public void renderDirtBackground(int pVOffset) {
         super.renderDirtBackground(pVOffset);
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder bufferbuilder = tesselator.getBuilder();
