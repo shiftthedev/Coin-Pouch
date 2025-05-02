@@ -37,7 +37,7 @@ public class SpiritExtractorClientHelper
      **/
     public static boolean setDisabled_vh(SpiritExtractorContainer menu)
     {
-        return !menu.coinsCoverTotalCost() || menu.isSpewingItems();
+        return !menu.coinsCoverTotalCost(menu.getPlayer()) || menu.isSpewingItems();
     }
 
     /**

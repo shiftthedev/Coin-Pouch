@@ -9,6 +9,7 @@ import iskallia.vault.gear.modification.GearModification;
 import iskallia.vault.gear.modification.GearModificationCost;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModGearAttributes;
+import iskallia.vault.util.SidedHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -42,7 +43,7 @@ public class VaultArtisanStationHelper
                 input.shrink(1);
                 inSlot.set(input);
                 String rollType = (String) data.get(ModGearAttributes.GEAR_ROLL_TYPE, VaultGearAttributeTypeMerger.firstNonNull());
-                GearModificationCost cost = GearModificationCost.getCost(potential, max_potential, modification);
+                GearModificationCost cost = GearModificationCost.getCost(potential, max_potential, modification, SidedHelper.getVaultLevel(container.getPlayer()) - data.getItemLevel());
                 ItemStack plating = container.getPlatingSlot().getItem();
                 plating.shrink(cost.costPlating());
                 container.getPlatingSlot().set(plating);
@@ -137,7 +138,7 @@ public class VaultArtisanStationHelper
                 int max_potential = (Integer) data.getFirstValue(ModGearAttributes.MAX_CRAFTING_POTENTIAL).orElse(Integer.MIN_VALUE);
 
                 String rollType = (String) data.get(ModGearAttributes.GEAR_ROLL_TYPE, VaultGearAttributeTypeMerger.firstNonNull());
-                GearModificationCost cost = GearModificationCost.getCost(potential, max_potential, modification);
+                GearModificationCost cost = GearModificationCost.getCost(potential, max_potential, modification, SidedHelper.getVaultLevel(container.getPlayer()) - data.getItemLevel());
 
                 // Coin Pouch check
                 ItemStack plating = container.getPlatingSlot().getItem();

@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = SpiritExtractorTileEntity.class, priority = 1100)
 public abstract class SpiritExtractorTileEntityMixin extends BlockEntity
 {
-    @Redirect(method = "spewItems", at = @At(value = "INVOKE", target = "Liskallia/vault/block/entity/SpiritExtractorTileEntity;coinsCoverTotalCost()Z"), remap = false)
+    @Redirect(method = "spewItems", at = @At(value = "INVOKE", target = "Liskallia/vault/block/entity/SpiritExtractorTileEntity;coinsCoverTotalCost(Lnet/minecraft/world/entity/player/Player;)Z"), remap = false)
     private boolean spewItems_coinsCoverTotalCost_coinpouch(SpiritExtractorTileEntity tile, Player player)
     {
         if (VCPConfig.GENERAL.spiritExtractorEnabled())
@@ -27,7 +27,7 @@ public abstract class SpiritExtractorTileEntityMixin extends BlockEntity
             return SpiritExtractorServerHelper.coinsCoverTotalCost(this.paymentInventory, this.getRecoveryCost().getTotalCost(), player);
         }
 
-        return this.coinsCoverTotalCost();
+        return this.coinsCoverTotalCost(player);
     }
 
     @Redirect(method = "spewItems", at = @At(value = "INVOKE", target = "Liskallia/vault/container/oversized/OverSizedInventory;setItem(ILnet/minecraft/world/item/ItemStack;)V"), remap = true)
@@ -54,7 +54,7 @@ public abstract class SpiritExtractorTileEntityMixin extends BlockEntity
     public abstract SpiritExtractorTileEntity.RecoveryCost getRecoveryCost();
 
     @Shadow
-    public abstract boolean coinsCoverTotalCost();
+    public abstract boolean coinsCoverTotalCost(Player player);
 
     public SpiritExtractorTileEntityMixin(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_)
     {

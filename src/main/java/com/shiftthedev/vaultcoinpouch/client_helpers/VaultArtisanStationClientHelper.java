@@ -14,6 +14,7 @@ import iskallia.vault.gear.tooltip.VaultGearTooltipItem;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModGearAttributes;
 import iskallia.vault.init.ModItems;
+import iskallia.vault.util.SidedHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -92,7 +93,7 @@ public class VaultArtisanStationClientHelper
                     {
                         VaultGearData data = VaultGearData.read(gearStack);
                         String rollType = (String) data.get(ModGearAttributes.GEAR_ROLL_TYPE, VaultGearAttributeTypeMerger.firstNonNull());
-                        GearModificationCost cost = GearModificationCost.getCost(potential, max_potential, modification);
+                        GearModificationCost cost = GearModificationCost.getCost(potential, max_potential, modification, SidedHelper.getVaultLevel(container.getPlayer()) - data.getItemLevel());
                         ItemStack plating = container.getPlatingSlot().getItem();
                         ItemStack bronze = container.getBronzeSlot().getItem();
                         MutableComponent var10001 = (new TextComponent("- ")).append((new ItemStack(ModItems.VAULT_PLATING)).getHoverName());
