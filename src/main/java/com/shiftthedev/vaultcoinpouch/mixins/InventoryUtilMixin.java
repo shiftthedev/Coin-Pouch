@@ -13,7 +13,7 @@ import java.util.List;
 
 @Mixin(InventoryUtil.class)
 public class InventoryUtilMixin {
-    @Inject(method = "getCoinPouchItemAccess", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "getCoinPouchItemAccess", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, remap = false)
     private static void customCoinPouchAccess(InventoryUtil.ItemAccess access, CallbackInfoReturnable<List<InventoryUtil.ItemAccess>> cir, List<InventoryUtil.ItemAccess> accesses) {
         ItemStack itemStack = access.getStack();
         if (itemStack.getItem() instanceof CoinPouchItem) {

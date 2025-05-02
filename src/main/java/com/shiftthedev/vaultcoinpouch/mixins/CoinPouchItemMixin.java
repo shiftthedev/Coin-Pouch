@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Mixin(CoinPouchItem.class)
+@Mixin(value = CoinPouchItem.class, remap = false)
 public class CoinPouchItemMixin {
     @Inject(method = "getTotalBronzeValue(Lnet/minecraft/world/entity/player/Inventory;)I", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void addCustomCoinPouchBronze(Inventory playerInventory, CallbackInfoReturnable<Integer> cir, AtomicInteger totalBronzeValue, Player player, int slot, ItemStack stack) {

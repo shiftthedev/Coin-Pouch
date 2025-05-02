@@ -17,7 +17,6 @@ public class NetworkManager {
 
     public static void initializeNetwork() {
         VaultCoinPouch.LOGGER.info("Initializing network with version " + VERSION);
-        CHANNEL.registerMessage(nextId(), ShiftVaultForgeRequestCraftMessage.class, ShiftVaultForgeRequestCraftMessage::encode, ShiftVaultForgeRequestCraftMessage::decode, ShiftVaultForgeRequestCraftMessage::handle);
         CHANNEL.registerMessage(nextId(), ConfigSyncMessage.class, ConfigSyncMessage::encode, ConfigSyncMessage::decode, ConfigSyncMessage::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(nextId(), KeyPressMessage.class, KeyPressMessage::encode, KeyPressMessage::decode, KeyPressMessage::handle);
     }
