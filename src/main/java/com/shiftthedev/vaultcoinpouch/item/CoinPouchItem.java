@@ -69,6 +69,16 @@ public class CoinPouchItem extends Item {
         }
     }
 
+    public static int getCoinCount(Inventory inventory) {
+        int coins = 0;
+        for (ItemStack itemStack : inventory.items) {
+            if (itemStack.getItem() instanceof CoinPouchItem) {
+                coins += getCoinCount(itemStack);
+            }
+        }
+        return coins;
+    }
+
     public static int getCoinCount(ItemStack pouch) {
         CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
         return invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
