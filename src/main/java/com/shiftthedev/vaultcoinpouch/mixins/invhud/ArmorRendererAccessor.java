@@ -7,11 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(value = ArmorRenderer.class, remap = false)
-public interface ArmorRendererAccessor
-{
-    @Accessor("itemRenderer")
-    public ItemRenderer getItemRenderer();
-
-    @Accessor("fontRenderer")
-    public Font getFontRenderer();
+public interface ArmorRendererAccessor {
+    @Accessor("itemRenderer") ItemRenderer getItemRenderer();
+    @Accessor("fontRenderer") Font getFontRenderer();
 }

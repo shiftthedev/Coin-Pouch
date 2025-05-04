@@ -6,8 +6,7 @@ import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
-public class KeyBindings
-{
+public class KeyBindings {
     public static final KeyMapping OPEN_POUCH = new KeyMapping(
             "key.vaultcoinpouch.showpouch",
             KeyConflictContext.IN_GAME,
@@ -15,9 +14,8 @@ public class KeyBindings
             GLFW.GLFW_KEY_P,
             "key.categories.vaultcoinpouch"
     );
-    
-    public static void init()
-    {
+
+    public static void init() {
         ClientRegistry.registerKeyBinding(OPEN_POUCH);
     }
 }

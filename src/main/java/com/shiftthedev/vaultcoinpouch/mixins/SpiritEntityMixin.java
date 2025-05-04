@@ -10,19 +10,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = SpiritEntity.class, remap = false, priority = 1100)
-public class SpiritEntityMixin
-{
+public class SpiritEntityMixin {
     @Inject(method = "shouldAddItem", at = @At("HEAD"), cancellable = true)
-    private static void shouldAddItem_coinpouch(ItemStack stack, CallbackInfoReturnable<Boolean> cir)
-    {
-        if(!VCPConfig.GENERAL.soulboundEnabled())
-        {
-            if (stack.is(VCPRegistry.COIN_POUCH))
-            {
-                cir.setReturnValue(true);
-                cir.cancel();
-                return;
-            }
+    private static void shouldAddItem_coinpouch(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        if (!VCPConfig.GENERAL.soulboundEnabled() && stack.is(VCPRegistry.COIN_POUCH)) {
+            cir.setReturnValue(true);
+            cir.cancel();
         }
     }
 }

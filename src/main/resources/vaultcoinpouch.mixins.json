@@ -5,35 +5,17 @@
   "compatibilityLevel" : "JAVA_8",
   "refmap" : "vaultcoinpouch.refmap.json",
   "mixins" : [
+    "CoinPouchItemMixin",
     "InventoryMixin",
     "ItemShardPouchMixin",
-    "SpiritEntityMixin",
-    "alchemy.AlchemyTableEffectCraftMessageAccessor",
-    "alchemy.AlchemyTableEffectCraftMessageMixin",
-    "alchemy.AlchemyWorkbenchListElementMixin",
-    "artisan.GearModificationActionMixin",
-    "modifier.ModifierWorkbenchCraftMessageAccessor",
-    "modifier.ModifierWorkbenchCraftMessageMixin",
-    "modifier.ModifierWorkbenchListElementMixin",
-    "paradox.GateLockRendererMixin",
-    "paradox.ParadoxObjectiveMixin",
-    "shop.CoinDefinitionMixin",
-    "spirit.SpiritExtractorTileEntityMixin",
-    "transmog.TransmogButtonMessageMixin",
-    "transmog.TransmogTableContainerMixin"
+    "InventoryUtilMixin",
+    "SpiritEntityMixin"
   ],
   "injectors" : {
     "defaultRequire" : 1
   },
   "client" : [
     "AbstractContainerScreenMixin",
-    "GuiMixin",
-    "alchemy.AlchemyTableScreenMixin",
-    "artisan.ModificationButtonElementMixin",
-    "artisan.VaultArtisanStationScreenMixin",
-    "forge.ForgeRecipeContainerScreenMixin",
-    "modifier.ModifierWorkbenchScreenMixin",
-    "spirit.SpiritExtractorScreenMixin",
-    "transmog.TransmogTableScreenMixin"
+    "GuiMixin"
   ]
 }

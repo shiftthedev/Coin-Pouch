@@ -9,30 +9,19 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
 
-public class VCPRegistry
-{
+public class VCPRegistry {
     public static final CoinPouchItem COIN_POUCH = new CoinPouchItem("coin_pouch");
+    public static final MenuType<CoinPouchContainer> COIN_POUCH_CONTAINER = IForgeMenuType.create(VCPRegistry::createPouch);
 
-    public static MenuType<CoinPouchContainer> COIN_POUCH_CONTAINER;
-
-    public VCPRegistry()
-    {
-    }
-
-    public static void register(RegistryEvent.Register<Item> event)
-    {
+    public static void register(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(COIN_POUCH);
     }
 
-    public static void registerMenu(RegistryEvent.Register<MenuType<?>> event)
-    {
-        COIN_POUCH_CONTAINER = IForgeMenuType.create((windowId, inv, data) -> createPouch(windowId, inv, data));
-
-        event.getRegistry().registerAll(new MenuType[]{(MenuType) COIN_POUCH_CONTAINER.setRegistryName("coin_pouch_container")});
+    public static void registerMenu(RegistryEvent.Register<MenuType<?>> event) {
+        event.getRegistry().registerAll(COIN_POUCH_CONTAINER.setRegistryName("coin_pouch_container"));
     }
 
-    private static CoinPouchContainer createPouch(int windowId, Inventory inv, FriendlyByteBuf data)
-    {
+    private static CoinPouchContainer createPouch(int windowId, Inventory inv, FriendlyByteBuf data) {
         int pouchSlot = data.readInt();
         return new CoinPouchContainer(windowId, inv, pouchSlot);
     }

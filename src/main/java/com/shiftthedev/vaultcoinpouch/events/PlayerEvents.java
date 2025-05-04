@@ -13,11 +13,9 @@ import net.minecraftforge.network.NetworkDirection;
 @Mod.EventBusSubscriber(
         bus = Mod.EventBusSubscriber.Bus.FORGE
 )
-public class PlayerEvents
-{
+public class PlayerEvents {
     @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
-    {
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         VaultCoinPouch.LOGGER.info("Syncing config to {} ({})", event.getPlayer().getGameProfile().getName(), event.getPlayer().getGameProfile().getId());
         NetworkManager.CHANNEL.sendTo(new ConfigSyncMessage(VCPConfig.GENERAL), ((ServerPlayer) event.getPlayer()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
