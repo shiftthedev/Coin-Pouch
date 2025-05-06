@@ -1,18 +1,18 @@
 package com.shiftthedev.vaultcoinpouch.item;
 
 import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
+import com.shiftthedev.vaultcoinpouch.config.CoinData;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.container.CoinPouchContainer;
-import iskallia.vault.block.CoinPileDecorBlock;
-import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +21,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -41,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.shiftthedev.vaultcoinpouch.VaultCoinPouch.MOD_ID;
@@ -58,11 +58,25 @@ public class CoinPouchItem extends Item {
         super.appendHoverText(stack, level, tooltip, p_41424_);
         tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".info").withStyle(ChatFormatting.GRAY));
 
-        String[] counts = getCounts(stack);
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".bronze", counts[0]).withStyle(Style.EMPTY.withColor(14712607)));
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".silver", counts[1]).withStyle(Style.EMPTY.withColor(12632256)));
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".gold", counts[2]).withStyle(ChatFormatting.GOLD));
-        tooltip.add(new TranslatableComponent("tooltip." + MOD_ID + ".platinum", counts[3]).withStyle(Style.EMPTY.withColor(16119285)));
+        if (!VCPConfig.getCoinDataList().isEmpty()) {
+            String[] counts = getCounts(stack);
+            int size = Math.min(VCPConfig.getCoinDataCount(), counts.length);
+            for (int i = 0; i < size; i++)
+            {
+                CoinData data = VCPConfig.getCoinData(i);
+                if (data == null) {
+                    continue;
+                }
+                
+                String nameKey = "block." + data.coin_id.replace(":", ".");
+                if (!I18n.exists(nameKey)) {
+                    nameKey = "item." + data.coin_id.replace(":", ".");
+                }
+
+                tooltip.add(new TextComponent(counts[i]).append(" ").append(new TranslatableComponent(nameKey)).append(new TextComponent(" Coin(s)")).withStyle(Style.EMPTY.withColor(TextColor.parseColor(data.color))));
+                
+            }
+        }
 
         if (VCPConfig.GENERAL.soulboundEnabled()) {
             VaultCoinPouch.addSoulboundTooltip(stack, tooltip);
@@ -81,89 +95,106 @@ public class CoinPouchItem extends Item {
 
     public static int getCoinCount(ItemStack pouch) {
         CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
-        return invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
-    }
-
-    public static int getCoinCount(ItemStack pouch, ItemStack coin) {
-        if (!(coin.getItem() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof CoinPileDecorBlock)) {
+        CoinData data = VCPConfig.getCoinData(0);
+        if(data == null) {
             return 0;
         }
-
-        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
-        if (blockItem.getBlock() == ModBlocks.BRONZE_COIN_PILE) {
-            return invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
-        } else if (blockItem.getBlock() == ModBlocks.SILVER_COIN_PILE) {
-            return invTag.contains("SilverStackSize") ? invTag.getInt("SilverStackSize") : 0;
-        } else if (blockItem.getBlock() == ModBlocks.GOLD_COIN_PILE) {
-            return invTag.contains("GoldStackSize") ? invTag.getInt("GoldStackSize") : 0;
-        } else if (blockItem.getBlock() == ModBlocks.PLATINUM_COIN_PILE) {
-            return invTag.contains("PlatinumStackSize") ? invTag.getInt("PlatinumStackSize") : 0;
-        }
-        return 0;
+        
+        return invTag.contains(data.coin_id) ? invTag.getInt(data.coin_id) : 0;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static String[] getCounts(ItemStack pouch) {
         ItemStack[] stacks = getContainedStacks(pouch);
         String[] amounts = new String[stacks.length];
         for (int i = 0; i < stacks.length; i++) {
             int count = stacks[i].getCount();
-            amounts[i] = Screen.hasShiftDown() ? VaultCoinPouch.formatCount(count) : String.valueOf(count);
+            amounts[i] = Screen.hasShiftDown() ? String.valueOf(count) : VaultCoinPouch.formatCount(count);
         }
         return amounts;
     }
 
     public static ItemStack[] getContainedStacks(ItemStack pouch) {
         CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
-        int bronzeCount = invTag.contains("BronzeStackSize") ? invTag.getInt("BronzeStackSize") : 0;
-        int silverCount = invTag.contains("SilverStackSize") ? invTag.getInt("SilverStackSize") : 0;
-        int goldCount = invTag.contains("GoldStackSize") ? invTag.getInt("GoldStackSize") : 0;
-        int platinumCount = invTag.contains("PlatinumStackSize") ? invTag.getInt("PlatinumStackSize") : 0;
-        return new ItemStack[]{
-                new ItemStack(ModBlocks.BRONZE_COIN_PILE, bronzeCount),
-                new ItemStack(ModBlocks.SILVER_COIN_PILE, silverCount),
-                new ItemStack(ModBlocks.GOLD_COIN_PILE, goldCount),
-                new ItemStack(ModBlocks.PLATINUM_COIN_PILE, platinumCount)
-        };
+        int count = VCPConfig.getCoinDataCount();
+        if (count == 0) {
+            return new ItemStack[] {};
+        }
+
+        ItemStack[] stacks = new ItemStack[count];
+        for (int i = 0; i < count; i++)
+        {
+            CoinData data = VCPConfig.getCoinData(i);
+            if (data == null) {
+                continue;
+            }
+
+            stacks[i] = new ItemStack(Registry.ITEM.get(new ResourceLocation(data.coin_id)), invTag.contains(data.coin_id) ? invTag.getInt(data.coin_id) : 0);
+        }
+        
+        return stacks;
     }
 
     public static void setContainedStack(ItemStack pouch, int slot, int count) {
+        CoinData data = VCPConfig.getCoinData(slot);
+        if (data == null) {
+            return;
+        }
+        
         CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
-        switch (slot) {
-            case 0 -> {
-                invTag.putInt("BronzeStackSize", count);
-                invTag.putInt("SilverStackSize", Mth.intFloorDiv(count, 9));
-                invTag.putInt("GoldStackSize", Mth.intFloorDiv(count, 81));
-                invTag.putInt("PlatinumStackSize", Mth.intFloorDiv(count, 729));
-            }
-            case 1 -> {
-                int newCount = invTag.getInt("BronzeStackSize");
-                newCount -= Mth.intFloorDiv(newCount, 9) * 9;
-                newCount += count * 9;
-                setContainedStack(pouch, 0, newCount);
-            }
-            case 2 -> {
-                int newCount = invTag.getInt("BronzeStackSize");
-                newCount -= Mth.intFloorDiv(newCount, 81) * 81;
-                newCount += count * 81;
-                setContainedStack(pouch, 0, newCount);
-            }
-            case 3 -> {
-                int newCount = invTag.getInt("BronzeStackSize");
-                newCount -= Mth.intFloorDiv(newCount, 729) * 729;
-                newCount += count * 729;
-                setContainedStack(pouch, 0, newCount);
-            }
+        invTag.putInt(data.coin_id, count);
+        if (!data.next_coin_id.isEmpty()) {
+            compactUp(invTag, slot + 1, count);
+        }
+        
+        if (!data.previous_coin_id.isEmpty()) {
+            compactDown(data, invTag, slot - 1, count);
+        }
+    }
+    
+    private static void compactUp(CompoundTag invTag, int slot, int count) {
+        CoinData data = VCPConfig.getCoinData(slot);
+        if (data == null) {
+            return;
+        }
+        
+        int newCount = Mth.intFloorDiv(count, data.previous_coin_count_to_upgrade);
+        invTag.putInt(data.coin_id, newCount);
+        if (!data.next_coin_id.isEmpty()) {
+            compactUp(invTag, slot + 1, newCount);
+        }
+    }
+
+    private static void compactDown(CoinData prevData, CompoundTag invTag, int slot, int count) {
+        CoinData data = VCPConfig.getCoinData(slot);
+        if (data == null) {
+            return;
+        }
+
+        int newCount;
+        if (!invTag.contains(data.coin_id)) {
+            newCount = count * prevData.previous_coin_count_to_upgrade;
+        }
+        else {
+            newCount = invTag.getInt(data.coin_id);
+            newCount -= Mth.intFloorDiv(newCount, prevData.previous_coin_count_to_upgrade) * prevData.previous_coin_count_to_upgrade;
+            newCount += count * prevData.previous_coin_count_to_upgrade;
+        }
+        
+        invTag.putInt(data.coin_id, newCount);
+        if (!data.previous_coin_id.isEmpty()) {
+            compactDown(data, invTag, slot - 1, newCount);
         }
     }
 
     public static void setContainedStackFromGUI(ItemStack pouch, int slot, ItemStack stack) {
-        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
-        switch (slot) {
-            case 0 -> invTag.putInt("BronzeStackSize", stack.getCount());
-            case 1 -> invTag.putInt("SilverStackSize", stack.getCount());
-            case 2 -> invTag.putInt("GoldStackSize", stack.getCount());
-            case 3 -> invTag.putInt("PlatinumStackSize", stack.getCount());
+        CoinData data = VCPConfig.getCoinData(slot);
+        if (data == null) {
+            return;
         }
+        
+        CompoundTag invTag = pouch.getOrCreateTagElement("Inventory");
+        invTag.putInt(data.coin_id, stack.getCount());
     }
 
     @Override
@@ -267,13 +298,22 @@ public class CoinPouchItem extends Item {
 
         @Override
         public int getSlotLimit(int slot) {
-            return switch (slot) {
-                case 0 -> 2147483097;
-                case 1 -> 238609233;
-                case 2 -> 26512137;
-                case 3 -> 2945793;
-                default -> 0;
-            };
+            if(slot >= VCPConfig.getCoinDataCount()) {
+                return 0;
+            }
+            
+            int size = 2147483097;
+            for (int i = 0; i <= slot; i++)
+            {
+                CoinData data = VCPConfig.getCoinData(i);
+                if (data.previous_coin_count_to_upgrade == 0) {
+                    continue;
+                }
+                
+                size = Mth.intFloorDiv(size, data.previous_coin_count_to_upgrade);
+            }
+
+            return size;
         }
 
         @Override
@@ -283,10 +323,12 @@ public class CoinPouchItem extends Item {
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return (stack.getItem().asItem() == ModBlocks.BRONZE_COIN_PILE.asItem() && slot == 0) ||
-                    (stack.getItem().asItem() == ModBlocks.SILVER_COIN_PILE.asItem() && slot == 1) ||
-                    (stack.getItem().asItem() == ModBlocks.GOLD_COIN_PILE.asItem() && slot == 2) ||
-                    (stack.getItem().asItem() == ModBlocks.PLATINUM_COIN_PILE.asItem() && slot == 3);
+            CoinData data = VCPConfig.getCoinData(slot);
+            if (data == null) {
+                return false;
+            }
+
+            return data.coin_id.equals(Registry.ITEM.getKey(stack.getItem()).toString());
         }
     }
 }

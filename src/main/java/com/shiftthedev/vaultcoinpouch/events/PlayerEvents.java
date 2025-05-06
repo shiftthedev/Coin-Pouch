@@ -3,6 +3,7 @@ package com.shiftthedev.vaultcoinpouch.events;
 import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.network.ConfigSyncMessage;
+import com.shiftthedev.vaultcoinpouch.network.DataSyncMessage;
 import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -18,5 +19,6 @@ public class PlayerEvents {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         VaultCoinPouch.LOGGER.info("Syncing config to {} ({})", event.getPlayer().getGameProfile().getName(), event.getPlayer().getGameProfile().getId());
         NetworkManager.CHANNEL.sendTo(new ConfigSyncMessage(VCPConfig.GENERAL), ((ServerPlayer) event.getPlayer()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        NetworkManager.CHANNEL.sendTo(new DataSyncMessage(), ((ServerPlayer) event.getPlayer()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 }

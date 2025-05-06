@@ -1,10 +1,11 @@
 package com.shiftthedev.vaultcoinpouch.container;
 
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
+import com.shiftthedev.vaultcoinpouch.config.CoinData;
+import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.container.oversized.OverSizedSlotContainer;
 import iskallia.vault.container.slot.ConditionalReadSlot;
-import iskallia.vault.init.ModBlocks;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -14,10 +15,15 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CoinPouchContainer extends OverSizedSlotContainer {
     private final int pouchSlot;
     private final boolean fromCurios;
     private final Inventory inventory;
+    
+    private List<CompactingSlot> compactingSlots = new ArrayList<>();
 
     public CoinPouchContainer(int id, Inventory playerInventory, int pouchSlot) {
         super(VCPRegistry.COIN_POUCH_CONTAINER, id, playerInventory.player);
@@ -59,14 +65,20 @@ public class CoinPouchContainer extends OverSizedSlotContainer {
         }
 
         // Pouch Slots
-        Slot bronze = this.addSlot(new CompactingSlot(pouchHandler, 0, 50, 16, this, ModBlocks.BRONZE_COIN_PILE.asItem()));
-        Slot silver = this.addSlot(new CompactingSlot(pouchHandler, 1, 70, 24, this, ModBlocks.SILVER_COIN_PILE.asItem()));
-        Slot gold = this.addSlot(new CompactingSlot(pouchHandler, 2, 90, 16, this, ModBlocks.GOLD_COIN_PILE.asItem()));
-        Slot plat = this.addSlot(new CompactingSlot(pouchHandler, 3, 110, 24, this, ModBlocks.PLATINUM_COIN_PILE.asItem()));
-        ((CompactingSlot) bronze).setupSlots(null, silver);
-        ((CompactingSlot) silver).setupSlots(bronze, gold);
-        ((CompactingSlot) gold).setupSlots(silver, plat);
-        ((CompactingSlot) plat).setupSlots(gold, null);
+        List<CoinData> coinData = VCPConfig.getCoinDataList();
+
+        for (int i = 0; i < coinData.size(); i++) {
+            this.compactingSlots.add((CompactingSlot) this.addSlot(new CompactingSlot(pouchHandler, 9 + (i * 20), (i % 2 == 0 ? 17 : 25), this, coinData.get(i))));
+        }
+       
+        for (int i = 0; i < this.compactingSlots.size(); i++) {
+            this.compactingSlots.get(i).setupSlots(this.compactingSlots);
+        }
+    }
+    
+    public int coinSlotCount()
+    {
+        return this.compactingSlots.size();
     }
 
     @Override
@@ -99,7 +111,7 @@ public class CoinPouchContainer extends OverSizedSlotContainer {
 
         ItemStack slotStack = slot.getItem();
         itemStack = slotStack.copy();
-        if (index >= 0 && index < 36 && this.moveItemStackTo(slotStack, 36, 40, false)) {
+        if (index >= 0 && index < 36 && this.moveItemStackTo(slotStack, 36, 36 + this.compactingSlots.size(), false)) {
             return itemStack;
         }
 

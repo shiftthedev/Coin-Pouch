@@ -15,10 +15,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.shiftthedev.vaultcoinpouch.VaultCoinPouch.LOGGER;
 
@@ -38,7 +35,7 @@ public class VCPConfig {
     private static final Path COIN_DATA_PATH = Path.of("config/shift_mods/coinpouch/coins.shift");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    private static Map<String, CoinData> coinDataMap = new HashMap<>();
+    private static List<CoinData> coinDataList = new ArrayList<>();
     // </editor-fold>
 
     public VCPConfig() {
@@ -46,7 +43,7 @@ public class VCPConfig {
 
     public static void initConfig() {
         // load coin data
-        //loadCoinData();
+        loadCoinData();
 
         // load common config
         loadCommonConfigs();
@@ -62,7 +59,8 @@ public class VCPConfig {
             Type type = new TypeToken<List<CoinData>>() {
             }.getType();
             List<CoinData> coinDataList = GSON.fromJson(reader, type);
-            coinDataList.forEach(coinData -> coinDataMap.put(coinData.coin_id, coinData));
+            
+            validateCoinData(coinDataList);
         } catch (IOException ex) {
             LOGGER.warn("[CoinPouch] Failed to load coin data");
             ex.printStackTrace();
@@ -72,10 +70,10 @@ public class VCPConfig {
     private static void genDefaultCoinData() {
         try (Writer writer = Files.newBufferedWriter(COIN_DATA_PATH)) {
             List<CoinData> coinDataList = List.of(
-                    new CoinData("the_vault:vault_bronze", "the_vault:vault_silver", "", 0),
-                    new CoinData("the_vault:vault_silver", "the_vault:vault_gold", "the_vault:vault_bronze", 9),
-                    new CoinData("the_vault:vault_gold", "the_vault:vault_platinum", "the_vault:vault_silver", 9),
-                    new CoinData("the_vault:vault_platinum", "", "the_vault:vault_gold", 9)
+                    new CoinData(0, "#E07F1F", "the_vault:vault_bronze", "the_vault:vault_silver", "", 0),
+                    new CoinData(1, "#C0C0C0", "the_vault:vault_silver", "the_vault:vault_gold", "the_vault:vault_bronze", 9),
+                    new CoinData(2, "#FFAA00", "the_vault:vault_gold", "the_vault:vault_platinum", "the_vault:vault_silver", 9),
+                    new CoinData(3, "#F5F5F5", "the_vault:vault_platinum", "", "the_vault:vault_gold", 9)
             );
 
             GSON.toJson(coinDataList, writer);
@@ -84,11 +82,44 @@ public class VCPConfig {
             ex.printStackTrace();
         }
     }
+    
+    private static void validateCoinData(List<CoinData> temp) {
+        temp.sort((coinA, coinB) -> {
+            if (coinA.index < coinB.index)
+                return -1;
+            
+            if (coinA.index > coinB.index)
+                return 1;
+            
+            return 0;
+        });
 
-    //public static void reloadCoins()
-    //{
-    //    loadCoinData();
-    //}
+        coinDataList = temp;
+    }
+
+    public static void reloadCoins() {
+        loadCoinData();
+    }
+    
+    public static void applyServerCoinData(List<CoinData> serverCoinDataList) {
+        coinDataList = serverCoinDataList;
+    }
+    
+    public static List<CoinData> getCoinDataList() {
+        return coinDataList;
+    }
+    
+    public static int getCoinDataCount() {
+        return coinDataList.size();
+    }
+    
+    public static CoinData getCoinData(int index) {
+        if(index < getCoinDataCount() && index >= 0) {
+            return coinDataList.get(index);
+        }
+        
+        return null;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Common Configs Methods">

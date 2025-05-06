@@ -1,7 +1,10 @@
 package com.shiftthedev.vaultcoinpouch.utils;
 
 import com.shiftthedev.vaultcoinpouch.VCPRegistry;
+import com.shiftthedev.vaultcoinpouch.config.CoinData;
+import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
 import iskallia.vault.init.ModBlocks;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +12,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import top.theillusivec4.curios.api.CuriosApi;
 
+import java.util.List;
 import java.util.Optional;
 
 public class InventoryHelper {
@@ -29,14 +33,10 @@ public class InventoryHelper {
 
     private static void handleCoinPouch(ItemStack itemStack, IItemHandler iItemHandler) {
         ItemStack remainder = itemStack.copy();
-        if (itemStack.getItem().asItem() == ModBlocks.BRONZE_COIN_PILE.asItem()) {
-            remainder = iItemHandler.insertItem(0, itemStack, false);
-        } else if (itemStack.getItem().asItem() == ModBlocks.SILVER_COIN_PILE.asItem()) {
-            remainder = iItemHandler.insertItem(1, itemStack, false);
-        } else if (itemStack.getItem().asItem() == ModBlocks.GOLD_COIN_PILE.asItem()) {
-            remainder = iItemHandler.insertItem(2, itemStack, false);
-        } else if (itemStack.getItem().asItem() == ModBlocks.PLATINUM_COIN_PILE.asItem()) {
-            remainder = iItemHandler.insertItem(3, itemStack, false);
+        Optional<CoinData> itemData = VCPConfig.getCoinDataList().stream().filter(coinData -> coinData.coin_id.equals(Registry.ITEM.getKey(itemStack.getItem()).toString())).findFirst();
+        if(itemData.isPresent())
+        {
+            remainder = iItemHandler.insertItem(itemData.get().index, itemStack, false);
         }
         itemStack.setCount(remainder.getCount());
     }

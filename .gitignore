@@ -1,4 +1,6 @@
 # User-specific stuff
+/oaths.txt
+
 .idea/
 
 *.iml

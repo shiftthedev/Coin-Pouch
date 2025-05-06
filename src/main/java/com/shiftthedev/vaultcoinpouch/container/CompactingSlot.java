@@ -1,7 +1,10 @@
 package com.shiftthedev.vaultcoinpouch.container;
 
+import com.shiftthedev.vaultcoinpouch.config.CoinData;
 import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.container.slot.ConditionalReadSlot;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -10,23 +13,51 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
-public class CompactingSlot extends ConditionalReadSlot {
+public class CompactingSlot extends SlotItemHandler {
     private final ItemStack defaultStack;
-    private Slot prevSlot;
-    private Slot nextSlot;
+    private CompactingSlot prevSlot;
+    private CompactingSlot nextSlot;
+    
+    private CoinPouchContainer coinPouchContainer;
+    public CoinData coinData;
 
-    public CompactingSlot(IItemHandler inventory, int index, int xPosition, int yPosition, CoinPouchContainer container, Item defaultItem) {
-        super(inventory, index, xPosition, yPosition, (slot, stack) -> container.canAccess(slot, stack) && stack.getItem() == defaultItem);
-        this.defaultStack = new ItemStack(defaultItem);
+    public CompactingSlot(IItemHandler inventory, int xPosition, int yPosition, CoinPouchContainer container, CoinData coinData) {
+        super(inventory, coinData.index, xPosition, yPosition);
+        this.coinPouchContainer = container;
+        this.coinData = coinData;
+        this.defaultStack = new ItemStack(Registry.ITEM.get(new ResourceLocation(coinData.coin_id)).asItem());
     }
 
-    public void setupSlots(@Nullable Slot prevSlot, @Nullable Slot nextSlot) {
-        this.prevSlot = prevSlot;
-        this.nextSlot = nextSlot;
+    public void setupSlots(List<CompactingSlot> slots) {
+        slots.forEach(compactingSlot -> {
+            if (compactingSlot.coinData.coin_id.equals(this.coinData.next_coin_id)) {
+                this.nextSlot = compactingSlot;
+            }
+            
+            if (compactingSlot.coinData.coin_id.equals(this.coinData.previous_coin_id)) {
+                this.prevSlot = compactingSlot;
+            }
+        });
+    }
+
+    public boolean canAccess(int slot, ItemStack stack) {
+        return this.coinPouchContainer.canAccess(slot, stack) && stack.getItem() == defaultStack.getItem(); 
+    }
+
+    @Override
+    public boolean mayPlace(@NotNull ItemStack stack) {
+        return this.canAccess(this.getSlotIndex(), stack);
+    }
+
+    @Override
+    public boolean mayPickup(Player playerIn) {
+        return this.canAccess(this.getSlotIndex(), this.getItem());
     }
 
     @Override
@@ -37,7 +68,7 @@ public class CompactingSlot extends ConditionalReadSlot {
     public ItemStack getDefaultCopy() {
         return defaultStack.copy();
     }
-
+    
     @Override
     public void set(@NotNull ItemStack stack) {
         ((CoinPouchItem.Handler) this.getItemHandler()).setStackInSlotGUI(this.getSlotIndex(), stack);
@@ -66,12 +97,12 @@ public class CompactingSlot extends ConditionalReadSlot {
             ItemStack stack = prevSlot.getItem();
             int prevCount;
             if (stack.is(Items.AIR)) {
-                stack = ((CompactingSlot) prevSlot).getDefaultCopy();
-                prevCount = count * 9;
+                stack = prevSlot.getDefaultCopy();
+                prevCount = count * coinData.previous_coin_count_to_upgrade;
             } else {
                 prevCount = stack.getCount();
-                prevCount -= Mth.intFloorDiv(prevCount, 9) * 9;
-                prevCount += count * 9;
+                prevCount -= Mth.intFloorDiv(prevCount, coinData.previous_coin_count_to_upgrade) * coinData.previous_coin_count_to_upgrade;
+                prevCount += count * coinData.previous_coin_count_to_upgrade;
             }
 
             if (prevCount != prevSlot.getItem().getCount()) {
@@ -82,10 +113,10 @@ public class CompactingSlot extends ConditionalReadSlot {
         if (nextSlot != null) {
             ItemStack stack = nextSlot.getItem();
             if (stack.is(Items.AIR)) {
-                stack = ((CompactingSlot) nextSlot).getDefaultCopy();
+                stack = nextSlot.getDefaultCopy();
             }
 
-            int nextCount = Mth.intFloorDiv(count, 9);
+            int nextCount = Mth.intFloorDiv(count, nextSlot.coinData.previous_coin_count_to_upgrade);
             if (nextCount != nextSlot.getItem().getCount()) {
                 nextSlot.set(ItemHandlerHelper.copyStackWithSize(stack, nextCount));
             }

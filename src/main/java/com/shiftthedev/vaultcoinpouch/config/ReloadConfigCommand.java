@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
 import com.shiftthedev.vaultcoinpouch.network.ConfigSyncMessage;
+import com.shiftthedev.vaultcoinpouch.network.DataSyncMessage;
 import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -22,7 +23,8 @@ public class ReloadConfigCommand {
     }
 
     private static void register(LiteralArgumentBuilder<CommandSourceStack> builder) {
-        builder.then(Commands.literal("configs")).executes(ReloadConfigCommand::reloadConfig);
+        builder.then(Commands.literal("configs").executes(ReloadConfigCommand::reloadConfig));
+        builder.then(Commands.literal("data").executes(ReloadConfigCommand::reloadData));
     }
 
     private static int reloadConfig(CommandContext<CommandSourceStack> context) {
@@ -31,6 +33,18 @@ public class ReloadConfigCommand {
         if (sourceEntity == null || sourceEntity instanceof ServerPlayer) {
             VaultCoinPouch.LOGGER.info("Syncing reloaded configs to all players");
             NetworkManager.CHANNEL.send(PacketDistributor.ALL.noArg(), new ConfigSyncMessage(VCPConfig.GENERAL));
+        }
+
+        context.getSource().sendSuccess(new TextComponent("Coin Pouch configs reloaded!"), true);
+        return 1;
+    }
+    
+    private static int reloadData(CommandContext<CommandSourceStack> context) {
+        Entity sourceEntity = context.getSource().getEntity();
+        VCPConfig.reloadCoins();
+        if (sourceEntity == null || sourceEntity instanceof ServerPlayer) {
+            VaultCoinPouch.LOGGER.info("Syncing reloaded data to all players");
+            NetworkManager.CHANNEL.send(PacketDistributor.ALL.noArg(), new DataSyncMessage());
         }
 
         context.getSource().sendSuccess(new TextComponent("Coin Pouch configs reloaded!"), true);
