@@ -2,21 +2,19 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.shiftthedev.vaultcoinpouch.mixins",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "vaultcoinpouch.refmap.json",
   "mixins": [
+    "CoinPouchContainerMixin",
+    "CoinPouchHandlerMixin",
     "CoinPouchItemMixin",
-    "InventoryMixin",
-    "InventoryUtilMixin",
     "ItemShardPouchMixin",
-    "ItemStackMixin",
-    "SpiritEntityMixin"
+    "ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "AbstractContainerScreenMixin",
-    "GuiMixin"
+    "AbstractContainerScreenMixin"
   ]
 }

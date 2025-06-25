@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "vaultcoinpouch:coin_pouch"
+    "the_vault:coin_pouch"
   ]
 }

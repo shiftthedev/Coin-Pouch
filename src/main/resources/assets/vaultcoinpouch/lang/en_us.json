@@ -1,5 +1,4 @@
 {
-  "item.vaultcoinpouch.coin_pouch": "Coin Pouch",
   "curios.identifier.coin_pouch": "Coin Pouch",
 
   "key.categories.vaultcoinpouch": "Vault Coin Pouch",
@@ -8,69 +7,9 @@
   "tooltip.vaultcoinpouch.info": "Stores unlimited amounts of coins.\nCoins picked up will go directly into the pouch.\nAlso converts coins up and down like a compacting drawer.\n",
   "tooltip.vaultcoinpouch.soulbound": "Combine with Soulbound Jewel in an Anvil to add Soulbound.",
   
-  "tooltip.vaultcoinpouch.bronze": "%s Bronze Coin(s)",
-  "tooltip.vaultcoinpouch.silver": "%s Silver Coin(s)",
-  "tooltip.vaultcoinpouch.gold": "%s Gold Coin(s)",
-  "tooltip.vaultcoinpouch.platinum": "%s Platinum Coin(s)",
-  "tooltip.vaultcoinpouch.empty": "Empty",
-  
-  "configs.vaultcoinpouch.title": "Coin Pouch Configs",
-  "configs.vaultcoinpouch.page.prev": "Previous",
-  "configs.vaultcoinpouch.page.next": "Next",
-  "configs.vaultcoinpouch.page.interactions": "Interactions",
-  "configs.vaultcoinpouch.page.soulbound": "Soulbound",
-  "configs.vaultcoinpouch.page.hud": "Inventory HUD",
-  
-  "configs.vaultcoinpouch.save": "Save Configs",
-  "configs.vaultcoinpouch.save.tooltip": "Save all changed configs.",
-  "configs.vaultcoinpouch.cancel": "Cancel",
-  "configs.vaultcoinpouch.cancel.tooltip": "Discard all changed configs.",
-  
-  "configs.vaultcoinpouch.soulbound.name": "Coin Pouch Soulbound: %s",
-  "configs.vaultcoinpouch.soulbound.tooltip": "Enable / Disable the possibility to add §9Soulbound§r §rto the Coin Pouch.",
-
   "configs.vaultcoinpouch.shardPouchSoulbound.name": "Shard Pouch Soulbound: %s",
   "configs.vaultcoinpouch.shardPouchSoulbound.tooltip": "Enable / Disable the possibility to add §9Soulbound§r §rto the Shard Pouch.",
 
-  "configs.vaultcoinpouch.shopPedestalInteraction.name": "Shop Pedestal: %s",
-  "configs.vaultcoinpouch.shopPedestalInteraction.tooltip": "Enable / Disable interaction with §6Shop§r §6Pedestal§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.vaultForgeInteraction.name": "Vault Forge: %s",
-  "configs.vaultcoinpouch.vaultForgeInteraction.tooltip": "Enable / Disable interaction with §6Vault§r §6Forge§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.toolStationInteraction.name": "Tool Station: %s",
-  "configs.vaultcoinpouch.toolStationInteraction.tooltip": "Enable / Disable interaction with §6Tool§r §6Station§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.inscriptionTableInteraction.name": "Inscription Table: %s",
-  "configs.vaultcoinpouch.inscriptionTableInteraction.tooltip": "Enable / Disable interaction with §6Inscription§r §6Table§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.modifierWorkbenchInteraction.name": "Modifier Workbench: %s",
-  "configs.vaultcoinpouch.modifierWorkbenchInteraction.tooltip": "Enable / Disable interaction with §6Modifier§r §6Workbench§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.alchemyTableInteraction.name": "Alchemy Table: %s",
-  "configs.vaultcoinpouch.alchemyTableInteraction.tooltip": "Enable / Disable interaction with §6Alchemy§r §6Table§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.transmogTableInteraction.name": "Transmog Table: %s",
-  "configs.vaultcoinpouch.transmogTableInteraction.tooltip": "Enable / Disable interaction with §6Transmog§r §6Table§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.vaultArtisanStationInteraction.name": "Vault Artisan Station: %s",
-  "configs.vaultcoinpouch.vaultArtisanStationInteraction.tooltip": "Enable / Disable interaction with §6Vault§r §6Artisan§r §6Station§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.jewelCuttingStationInteraction.name": "Jewel Cutting Station: %s",
-  "configs.vaultcoinpouch.jewelCuttingStationInteraction.tooltip": "Enable / Disable interaction with §6Jewel§r §6Cutting§r §6Station §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.spiritExtractorInteraction.name": "Spirit Extractor: %s",
-  "configs.vaultcoinpouch.spiritExtractorInteraction.tooltip": "Enable / Disable interaction with §6Spirit§r §6Extractor§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.paradoxDoorInteraction.name": "Paradox Doors: %s",
-  "configs.vaultcoinpouch.paradoxDoorInteraction.tooltip": "Enable / Disable interaction with §6Paradox§r §6Doors§r §rwithout taking coins out of the pouch.",
-
-  "configs.vaultcoinpouch.showCoinCountInInventoryHud.name": "HUD Coin Display: %s",
-  "configs.vaultcoinpouch.showCoinCountInInventoryHud.tooltip": "Enable / Disable coin display in the Inventory HUD overlay.",
-
   "configs.vaultcoinpouch.useShortCoinCountInInventoryHud.name": "Short Display: %s",
-  "configs.vaultcoinpouch.useShortCoinCountInInventoryHud.tooltip": "Display 1k instead of 1000.",
-
-  "configs.vaultcoinpouch.horizontalAlignInInventoryHud.name": "Alignment: %s",
-  "configs.vaultcoinpouch.horizontalAlignInInventoryHud.tooltip": "How should coin display be align."
+  "configs.vaultcoinpouch.useShortCoinCountInInventoryHud.tooltip": "Display 1k instead of 1000."
 }

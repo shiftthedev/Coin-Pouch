@@ -1,7 +1,6 @@
 package com.shiftthedev.vaultcoinpouch.events;
 
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
-import com.shiftthedev.vaultcoinpouch.item.CoinPouchItem;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.gear.data.GearDataCache;
 import iskallia.vault.init.ModGearAttributes;
@@ -19,7 +18,7 @@ public class AnvilEvents {
 
     @SubscribeEvent
     public static void applySoulbound(AnvilUpdateEvent event) {
-        if (!VCPConfig.GENERAL.soulboundEnabled() && !VCPConfig.GENERAL.shardPouchSoulboundEnabled()) {
+        if (!VCPConfig.shardPouchSoulboundEnabled()) {
             return;
         }
 
@@ -29,9 +28,8 @@ public class AnvilEvents {
         }
 
         ItemStack pouch = event.getLeft();
-        boolean coin = VCPConfig.GENERAL.soulboundEnabled() && pouch.getItem() instanceof CoinPouchItem;
-        boolean shard = VCPConfig.GENERAL.shardPouchSoulboundEnabled() && pouch.getItem() instanceof ItemShardPouch;
-        if (coin || shard) {
+        boolean shard = VCPConfig.shardPouchSoulboundEnabled() && pouch.getItem() instanceof ItemShardPouch;
+        if (shard) {
             ItemStack result = event.getLeft().copy();
             AttributeGearData data = AttributeGearData.empty();
             data.createOrReplaceAttributeValue(ModGearAttributes.SOULBOUND, true);

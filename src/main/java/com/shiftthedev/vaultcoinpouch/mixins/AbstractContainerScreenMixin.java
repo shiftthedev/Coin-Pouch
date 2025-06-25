@@ -1,7 +1,7 @@
 package com.shiftthedev.vaultcoinpouch.mixins;
 
 import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
-import com.shiftthedev.vaultcoinpouch.container.CoinPouchContainer;
+import iskallia.vault.container.inventory.CoinPouchContainer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

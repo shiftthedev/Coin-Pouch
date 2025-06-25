@@ -12,6 +12,8 @@ public class ItemStackMixin {
     @Inject(method = "of", at = @At("HEAD"))
     private static void of_coinpouch(CompoundTag compoundTag, CallbackInfoReturnable<ItemStack> cir) {
         if (compoundTag.contains("id") && compoundTag.getString("id").equals("vaultcoinpouch:coin_pouch")) {
+            compoundTag.putString("id", "the_vault:coin_pouch");
+            
             if (compoundTag.contains("tag", 10)) {
                 CompoundTag tag = compoundTag.getCompound("tag");
                 if (tag.contains("Inventory", 10)) {

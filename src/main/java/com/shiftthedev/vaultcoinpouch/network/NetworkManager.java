@@ -18,7 +18,6 @@ public class NetworkManager {
     public static void initializeNetwork() {
         VaultCoinPouch.LOGGER.info("Initializing network with version " + VERSION);
         CHANNEL.registerMessage(nextId(), ConfigSyncMessage.class, ConfigSyncMessage::encode, ConfigSyncMessage::decode, ConfigSyncMessage::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(nextId(), KeyPressMessage.class, KeyPressMessage::encode, KeyPressMessage::decode, KeyPressMessage::handle);
         CHANNEL.registerMessage(nextId(), DataSyncMessage.class, DataSyncMessage::encode, DataSyncMessage::decode, DataSyncMessage::handle);
     }
 

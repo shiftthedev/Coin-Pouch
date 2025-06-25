@@ -18,7 +18,7 @@ public class PlayerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         VaultCoinPouch.LOGGER.info("Syncing config to {} ({})", event.getPlayer().getGameProfile().getName(), event.getPlayer().getGameProfile().getId());
-        NetworkManager.CHANNEL.sendTo(new ConfigSyncMessage(VCPConfig.GENERAL), ((ServerPlayer) event.getPlayer()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        NetworkManager.CHANNEL.sendTo(new ConfigSyncMessage(), ((ServerPlayer) event.getPlayer()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         NetworkManager.CHANNEL.sendTo(new DataSyncMessage(), ((ServerPlayer) event.getPlayer()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 }

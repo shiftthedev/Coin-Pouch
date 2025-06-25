@@ -2,7 +2,7 @@ package com.shiftthedev.vaultcoinpouch.network;
 
 import com.shiftthedev.vaultcoinpouch.VaultCoinPouch;
 import com.shiftthedev.vaultcoinpouch.config.CoinData;
-import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
+import com.shiftthedev.vaultcoinpouch.config.VCPData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -14,7 +14,7 @@ public class DataSyncMessage {
     List<CoinData> coinDataList = new ArrayList<>();
     
     public DataSyncMessage() {
-        this.coinDataList = VCPConfig.getCoinDataList();
+        this.coinDataList = VCPData.getCoinDataList();
     }
     
     public DataSyncMessage(List<CoinData> coinData) {
@@ -42,7 +42,7 @@ public class DataSyncMessage {
     public static void handle(DataSyncMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            VCPConfig.applyServerCoinData(message.coinDataList);
+            VCPData.applyServerCoinData(message.coinDataList);
             VaultCoinPouch.LOGGER.info("Received data from server.");
         });
         context.setPacketHandled(true);

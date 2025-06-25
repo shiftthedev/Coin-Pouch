@@ -1,4 +1,5 @@
-# 1.6.2+FINAL
-## INFO
-    This is the last update this mod will get. 
-    Use it to move to VH coin pouch.
+# 1.8.0
+## CHANGED
+    Added extendability to VH Coin Pouch
+    Added auto converter that will convert Coin Pouch to VH Coin Pouch
+    Added Curios slot support to VH Coin Pouch

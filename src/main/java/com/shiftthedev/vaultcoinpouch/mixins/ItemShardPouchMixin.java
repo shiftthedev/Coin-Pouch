@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class ItemShardPouchMixin {
     @Inject(method = "appendHoverText", at = @At("RETURN"))
     private void appendSoulbound(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag, CallbackInfo ci) {
-        if (VCPConfig.GENERAL.shardPouchSoulboundEnabled()) {
+        if (VCPConfig.shardPouchSoulboundEnabled()) {
             VaultCoinPouch.addSoulboundTooltip(stack, tooltip);
         }
     }

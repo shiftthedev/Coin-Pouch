@@ -1,9 +1,11 @@
 package com.shiftthedev.vaultcoinpouch;
 
+import com.electronwill.nightconfig.core.file.FormatDetector;
+import com.electronwill.nightconfig.toml.TomlFormat;
 import com.mojang.logging.LogUtils;
 import com.shiftthedev.vaultcoinpouch.config.ReloadConfigCommand;
-import com.shiftthedev.vaultcoinpouch.config.ShowConfigCommand;
 import com.shiftthedev.vaultcoinpouch.config.VCPConfig;
+import com.shiftthedev.vaultcoinpouch.config.VCPData;
 import com.shiftthedev.vaultcoinpouch.network.NetworkManager;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.init.ModGearAttributes;
@@ -20,7 +22,9 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -42,13 +46,13 @@ public class VaultCoinPouch {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::imc);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::registerCommand);
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::registerClientCommand);
-        });
+        FormatDetector.registerExtension("shift", TomlFormat::instance);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, VCPConfig.COMMON_SPEC, "shift_mods/" + MOD_ID + "/coinpouch-common.shift");
+
+        VCPData.loadData();
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        VCPConfig.initConfig();
         NetworkManager.initializeNetwork();
     }
 
@@ -63,11 +67,6 @@ public class VaultCoinPouch {
 
     private void registerCommand(RegisterCommandsEvent event) {
         ReloadConfigCommand.registerCommand(event.getDispatcher());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void registerClientCommand(RegisterCommandsEvent event) {
-        ShowConfigCommand.register(event.getDispatcher());
     }
 
     public static void addSoulboundTooltip(ItemStack stack, List<Component> tooltip) {
